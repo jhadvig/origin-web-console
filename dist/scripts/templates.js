@@ -3787,6 +3787,17 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "</div>\n" +
+    "<div ng-if=\"parameters.generated.length\">\n" +
+    "<h2>Applied Parameter Values</h2>\n" +
+    "<p>These parameters often include things like passwords. If you will need to reference these values later, copy them to a safe location.\n" +
+    "<span ng-if=\"parameters.wasGenerated.length > 1\">Parameters <span ng-repeat=\"paramName in parameters.wasGenerated\">{{paramName}}<span ng-if=\"!$last\">, </span></span> were generated automatically.</span>\n" +
+    "<span ng-if=\"parameters.wasGenerated.length === 1\">Parameter {{parameters.wasGenerated[0]}} was generated automatically.</span>\n" +
+    "</p>\n" +
+    "<div ng-if=\"!showParamsTable\" class=\"center\">\n" +
+    "<a href=\"\" ng-click=\"toggleParamsTable()\">Show parameter values</a>\n" +
+    "</div>\n" +
+    "<environment ng-if=\"showParamsTable\" env-vars=\"parameters.generated\" class=\"no-background\"></environment>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</div>\n" +
     "</div>\n" +
