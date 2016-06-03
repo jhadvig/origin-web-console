@@ -9,7 +9,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('SettingsController', function ($routeParams, $scope, DataService, ProjectsService, AlertMessageService, $filter, $location, LabelFilter, $timeout, Logger, annotationFilter, annotationNameFilter) {
+  .controller('SettingsController', function ($routeParams, $scope, DataService, ProjectsService, AlertMessageService, $filter, $location, LabelFilter, $timeout, Logger, annotationFilter, annotationNameFilter, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.quotas = {};
     $scope.limitRanges = {};
@@ -23,11 +23,20 @@ angular.module('openshiftConsole')
     $scope.renderOptions = $scope.renderOptions || {};
     $scope.renderOptions.hideFilterWidget = true;
 
+    $scope.canI = {
+      projects: {
+        update: false,
+        delete: false
+      }
+    };
+
     var watches = [];
 
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
+        $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
 
         var editableFields = function(resource) {
           return {

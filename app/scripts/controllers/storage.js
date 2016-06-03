@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('StorageController', function ($routeParams, $scope, AlertMessageService, DataService, ProjectsService, $filter, LabelFilter, Logger) {
+  .controller('StorageController', function ($routeParams, $scope, AlertMessageService, DataService, ProjectsService, $filter, LabelFilter, Logger, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.pvcs = {};
     $scope.unfilteredPVCs = {};
@@ -28,6 +28,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
          watches.push(DataService.watch("persistentvolumeclaims", context, function(pvcs) {
           $scope.unfilteredPVCs = pvcs.by("metadata.name");
           LabelFilter.addLabelSuggestionsFromResources($scope.unfilteredPVCs, $scope.labelSuggestions);

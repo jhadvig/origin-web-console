@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('EventsController', function ($routeParams, $scope, ProjectsService) {
+  .controller('EventsController', function ($routeParams, $scope, ProjectsService, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.renderOptions = {
       hideFilterWidget: true
@@ -18,6 +18,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         $scope.projectContext = context;
       }));
   });

@@ -15,6 +15,8 @@ angular.module('openshiftConsole')
         hpa: '=?',
         limitRanges: '=',
         project: '=',
+        canIScale: '=',
+        canI: '=',
 
         // Nested podTemplate fields
         imagesByDockerReference: '=',

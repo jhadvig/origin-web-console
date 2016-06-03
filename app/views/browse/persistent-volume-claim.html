@@ -20,7 +20,7 @@
               </small>
               <small class="meta">created <relative-timestamp timestamp="pvc.metadata.creationTimestamp"></relative-timestamp></small>
               <div class="pull-right dropdown">
-                <button type="button" class="dropdown-toggle btn btn-default actions-dropdown-btn hidden-xs" data-toggle="dropdown">
+                <button type="button" class="dropdown-toggle btn btn-default actions-dropdown-btn hidden-xs" data-toggle="dropdown" ng-hide="!canI.persistentvolumeclaims.update && !canI.persistentvolumeclaims.delete">
                   Actions
                   <span class="caret" aria-hidden="true"></span>
                 </button>
@@ -28,14 +28,14 @@
                    class="dropdown-toggle actions-dropdown-kebab visible-xs-inline"
                    data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
                 <ul class="dropdown-menu actions action-button">
-                  <li ng-if="!pvc.spec.volumeName">
+                  <li ng-if="!pvc.spec.volumeName && canI.persistentvolumeclaims.update">
                     <edit-link
                       resource="pvc"
                       kind="PersistentVolumeClaim"
                       alerts="alerts">
                     </edit-link>
                   </li>
-                  <li>
+                  <li ng-if="canI.persistentvolumeclaims.delete">
                     <delete-link
                       kind="PersistentVolumeClaim"
                       resource-name="{{pvc.metadata.name}}"

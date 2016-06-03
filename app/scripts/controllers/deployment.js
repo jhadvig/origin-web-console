@@ -18,7 +18,8 @@ angular.module('openshiftConsole')
                         ProjectsService,
                         DeploymentsService,
                         ImageStreamResolver,
-                        Navigate) {
+                        Navigate,
+                        AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.deployment = null;
     $scope.deploymentConfig = null;
@@ -72,6 +73,28 @@ angular.module('openshiftConsole')
     });
     AlertMessageService.clearAlerts();
 
+    $scope.canI = {
+      deploymentconfigs: {
+        update: false
+      },
+      replicationcontrollers: {
+        update: false,
+        delete: false
+      },
+      persistentvolumeclaims: {
+        create: false
+      },
+      events: {
+        watch: false
+      },
+      deploymentconfigrollbacks: {
+        create: false
+      },
+      "deploymentconfigs/log": {
+        get: false
+      }
+    };
+
     var watches = [];
 
     // Check if the metrics service is available so we know when to show the tab.
@@ -88,6 +111,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         // FIXME: DataService.createStream() requires a scope with a
         // projectPromise rather than just a namespace, so we have to pass the
         // context into the log-viewer directive.

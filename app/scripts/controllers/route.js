@@ -7,7 +7,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('RouteController', function ($scope, $routeParams, AlertMessageService, DataService, ProjectsService, $filter) {
+  .controller('RouteController', function ($scope, $routeParams, AlertMessageService, DataService, ProjectsService, $filter, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.route = null;
     $scope.alerts = {};
@@ -29,13 +29,20 @@ angular.module('openshiftConsole')
 
     AlertMessageService.clearAlerts();
 
+    $scope.canI = {
+      routes: {
+        update: false,
+        delete: false
+      }
+    };
+
     var watches = [];
 
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
-
+        AuthorizationService.reviewUserRules($scope);
         DataService.get("routes", $routeParams.route, context).then(
           // success
           function(route) {

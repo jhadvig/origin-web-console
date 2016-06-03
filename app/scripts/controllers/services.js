@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('ServicesController', function ($routeParams, $scope, AlertMessageService, DataService, ProjectsService, $filter, LabelFilter, Logger, $location, $anchorScroll) {
+  .controller('ServicesController', function ($routeParams, $scope, AlertMessageService, DataService, ProjectsService, $filter, LabelFilter, Logger, $location, $anchorScroll, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.services = {};
     $scope.unfilteredServices = {};
@@ -31,6 +31,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
          watches.push(DataService.watch("services", context, function(services, action) {
           $scope.unfilteredServices = services.by("metadata.name");
           LabelFilter.addLabelSuggestionsFromResources($scope.unfilteredServices, $scope.labelSuggestions);

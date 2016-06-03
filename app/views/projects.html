@@ -13,7 +13,7 @@
             <div ng-if="(projects | hashSize) === 0" class="text-muted" style="margin-top: 50px;">Loading...</div>
             <div ng-if="(projects | hashSize) !== 0" class="gutter-top">
               <h1 style="display: inline-block;">Projects</h1>
-              <a ng-if="canCreate" href="create-project" style="margin-top: 10px;" class="btn btn-lg btn-primary pull-right">New Project</a>
+              <a ng-if="canI.projectrequests.create" href="create-project" style="margin-top: 10px;" class="btn btn-lg btn-primary pull-right">New Project</a>
               <alerts alerts="alerts"></alerts>
               <div ng-repeat="project in projects | orderByDisplayName">
                 <div row flex cross-axis="center" class="tile tile-project tile-click tile-flex">
@@ -26,7 +26,7 @@
                       <truncate-long-text content="project | description" limit="512" use-word-boundary="true"></truncate-long-text>
                     </div>
                   </div>
-                  <div row flex main-axis="end" class="project-delete" ng-if="project.status.phase == 'Active'">
+                  <div row flex main-axis="end" class="project-delete" ng-if="project.status.phase == 'Active' && canI[project.metadata.name].delete">
                     <delete-link
                       class="fa-lg"
                       kind="Project"
@@ -40,7 +40,7 @@
                   </div>
                 </div>
               </div>
-              <div ng-if="canCreate === false" style="margin-top: 10px;">
+              <div ng-if="!canI.projectrequests.create" style="margin-top: 10px;">
                 <span ng-if="!newProjectMessage">A cluster admin can create a project for you by running the command
                   <code>oadm new-project &lt;projectname&gt; --admin={{user.metadata.name || '&lt;YourUsername&gt;'}}</code></span>
                 <span ng-if="newProjectMessage" ng-bind-html="newProjectMessage | linky" style="white-space:pre;"></span>
@@ -57,14 +57,14 @@
 
             <p>
               OpenShift helps you quickly develop, host, and scale applications.<br>
-              <span ng-if="canCreate">Create a project for your application.</span>
+              <span ng-if="canI.projectrequests.create">Create a project for your application.</span>
             </p>
 
-            <a ng-if="canCreate" href="create-project" class="btn btn-lg btn-primary">New Project</a>
+            <a ng-if="canI.projectrequests.create" href="create-project" class="btn btn-lg btn-primary">New Project</a>
 
             <p>To learn more, visit the OpenShift <a ng-href="{{'' | helpLink}}">documentation</a>.</p>
 
-            <p ng-if="canCreate === false">
+            <p ng-if="!canI.projectrequests.create">
               <span ng-if="!newProjectMessage">A cluster admin can create a project for you by running the command<br>
                 <code>oadm new-project &lt;projectname&gt; --admin={{user.metadata.name || '&lt;YourUsername&gt;'}}</code></span>
               <span ng-if="newProjectMessage" ng-bind-html="newProjectMessage | linky" style="white-space:pre;"></span>

@@ -2,7 +2,7 @@
 /* jshint eqeqeq: false, unused: false, expr: true */
 
 angular.module('openshiftConsole')
-.factory('DataService', function($cacheFactory, $http, $ws, $rootScope, $q, API_CFG, APIService, Notification, Logger, $timeout) {
+.factory('DataService', function($cacheFactory, $http, $ws, $rootScope, $q, API_CFG, APIService, Notification, Logger, $timeout, $filter) {
 
   function Data(array) {
     this._data = {};
@@ -237,6 +237,61 @@ angular.module('openshiftConsole')
       });
     });
     return deferred.promise;
+  };
+
+  DataService.prototype.rulesReview = function(ns, $scope) {
+    var self = this;
+    var object = {kind: "SelfSubjectRulesReview",
+                  apiVersion: "v1"
+                  // status:{rules:null}
+                };
+    self.create('selfsubjectrulesreviews', null, object, {namespace: ns}).then(
+      function(data) {
+        var i = 0;
+        _.each(data.status.rules, function(rule) {
+            console.log(i);
+            console.log(rule.resources);
+            console.log(rule.verbs);
+            console.log("----------------------------------------------");
+            i += 1;
+          _.each($scope.canI, function(verbs, resource) {
+            if (_.indexOf(rule.resources, resource) !== -1) {
+              _.each(verbs, function(value, verb) {
+                if (_.indexOf(rule.verbs, verb) !== -1) {
+                  $scope.canI[resource][verb] = true;
+                }
+                return false;
+              });
+              return false;
+            }
+          });
+        });
+      });
+  };
+
+  DataService.prototype.canI = function(ns, verb, kind, $scope, identifier) {
+    var self = this;
+    var kindObject = _.find(APIService.availableKinds(true), function(obj) {return obj.kind === kind;});
+    var resource = APIService.kindToResource(kind);
+    var object = {
+      kind:"SubjectAccessReview",
+      apiVersion:"v1",
+      verb: verb,
+      resource: resource,
+      namespace: ns
+    };
+    identifier = identifier || resource;
+    if (kindObject.group) {
+      object.resourceAPIGroup = kindObject.group;
+    }
+    console.log(object);
+    self.create('subjectaccessreviews', null, object, {namespace:ns}).then(
+      function(data) {
+        console.log(verb + "--> " + data.allowed);
+        $scope.canI[identifier][verb] = data.allowed;
+      }, function() {
+        $scope.canI[identifier][verb] = false;
+      });
   };
 
   // objects:   Array of API object data(eg. [{ kind: "Build", parameters: { ... } }] )

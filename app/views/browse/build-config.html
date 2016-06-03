@@ -16,9 +16,10 @@
                     data-toggle="tooltip"
                     data-original-title="Building from build configuration {{buildConfig.metadata.name}} has been paused.">
               </span>
-              <div class="pull-right dropdown" ng-if="buildConfig">
+              <div class="pull-right dropdown" ng-if="buildConfig" ng-hide="!canI['buildconfigs/instantiate'].create && !canI.buildconfigs.update && !canI.buildconfigs.delete">
                 <!-- Primary Actions -->
                 <button
+                    ng-if="canI['buildconfigs/instantiate'].create"
                     class="btn btn-default hidden-xs"
                     ng-click="startBuild()">
                   Start Build
@@ -33,22 +34,24 @@
                    class="dropdown-toggle actions-dropdown-kebab visible-xs-inline"
                    data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
                 <ul class="dropdown-menu actions action-button">
-                  <li class="visible-xs-inline">
+                  <li class="visible-xs-inline"
+                      ng-if="canI['buildconfigs/instantiate'].create">
                     <a href=""
                       role="button"
                       ng-click="startBuild()">Start Build</a>
                   </li>
-                  <li>
-                    <a ng-href="{{buildConfig | editResourceURL}}" role="button">Edit</a>
+                  <li ng-if="canI.buildconfigs.update">
+                    <a ng-href="{{buildConfig | editResourceURL}}"
+                      role="button">Edit</a>
                   </li>
-                  <li>
+                  <li ng-if="canI.buildconfigs.update">
                     <edit-link
                       resource="buildConfig"
                       kind="BuildConfig"
                       alerts="alerts">
                     </edit-link>
                   </li>
-                  <li>
+                  <li ng-if="canI.buildconfigs.delete">
                     <delete-link
                       kind="BuildConfig"
                       resource-name="{{buildConfig.metadata.name}}"

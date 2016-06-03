@@ -23,7 +23,7 @@
                 </span>
                 <span ng-if="deploymentConfigMissing" class="sr-only">Warning: The deployment's deployment config is missing.</span>
                 <small class="meta">created <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp></small>
-                <div class="pull-right dropdown">
+                <div class="pull-right dropdown" ng-hide="!canI.replicationcontrollers.update && !canI.replicationcontrollers.delete && !canI.persistentvolumeclaims.create">
                   <button type="button" class="dropdown-toggle btn btn-default actions-dropdown-btn hidden-xs" data-toggle="dropdown">
                     Actions
                     <span class="caret"></span>
@@ -91,7 +91,7 @@
                          we don't update in the background. -->
                     <metrics ng-if="selectedTab.metrics" deployment="deployment"></metrics>
                   </uib-tab>
-                  <uib-tab ng-if="deploymentConfigName && logOptions.version" active="selectedTab.logs">
+                  <uib-tab ng-if="deploymentConfigName && logOptions.version && canI['deploymentconfigs/log'].get" active="selectedTab.logs">
                     <uib-tab-heading>Logs</uib-tab-heading>
                     <log-viewer
                       ng-if="selectedTab.logs"
@@ -117,7 +117,7 @@
 
                     </log-viewer>
                   </uib-tab>
-                  <uib-tab active="selectedTab.events">
+                  <uib-tab active="selectedTab.events" ng-if="canI.events.watch">
                     <uib-tab-heading>Events</uib-tab-heading>
                     <events resource-kind="ReplicationController" resource-name="{{deployment.metadata.name}}" project-context="projectContext" ng-if="selectedTab.events"></events>
                   </uib-tab>

@@ -12,8 +12,9 @@
             <div ng-if="pod">
               <h1>
                 {{pod.metadata.name}}
-
-                <div class="pull-right dropdown">
+                {{pod | annotation:'deploymentConfig'}}
+                {{canI.deploymentconfigs.update}}
+                <div class="pull-right dropdown" ng-hide="!canI.deploymentconfigs.update && !canI.pods.update && !canI.pods.delete">
                   <button type="button" class="dropdown-toggle actions-dropdown-btn btn btn-default hidden-xs" data-toggle="dropdown">
                     Actions
                     <span class="caret"></span>
@@ -22,18 +23,18 @@
                      class="dropdown-toggle actions-dropdown-kebab visible-xs-inline"
                      data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
                   <ul class="dropdown-menu actions action-button">
-                    <li ng-if="pod | annotation:'deploymentConfig'">
+                    <li ng-if="(pod | annotation:'deploymentConfig') && canI.deploymentconfigs.update">
                       <a ng-href="project/{{project.metadata.name}}/attach-pvc?deploymentconfig={{pod | annotation:'deploymentConfig'}}"
                          role="button">Attach Storage</a>
                     </li>
-                    <li>
+                    <li ng-if="canI.pods.update">
                       <edit-link
                         resource="pod"
                         kind="Pod"
                         alerts="alerts">
                       </edit-link>
                     </li>
-                    <li>
+                    <li ng-if="canI.pods.delete">
                       <delete-link
                         kind="Pod"
                         resource-name="{{pod.metadata.name}}"
@@ -78,7 +79,7 @@
                     </metrics>
                   </uib-tab>
 
-                  <uib-tab active="selectedTab.logs">
+                  <uib-tab active="selectedTab.logs" ng-if="canI['pods/log'].get">
                     <uib-tab-heading>Logs</uib-tab-heading>
 
                     <log-viewer
@@ -122,7 +123,7 @@
                   <uib-tab active="selectedTab.terminal"
                     select="terminalTabWasSelected = true"
                     ng-init="containers = pod.status.containerStatuses"
-                    ng-if="containersRunning(pod.status.containerStatuses) > 0">
+                    ng-if="containersRunning(pod.status.containerStatuses) > 0 && canI['pods/attach'].get">
                     <uib-tab-heading>Terminal</uib-tab-heading>
                     <div>
                       <span class="pficon pficon-info" aria-hidden="true"></span>
@@ -139,7 +140,7 @@
                     </div>
     	            </uib-tab>
 
-                  <uib-tab active="selectedTab.events">
+                  <uib-tab active="selectedTab.events" ng-if="canI.events.watch">
                     <uib-tab-heading>Events</uib-tab-heading>
                     <events resource-kind="Pod" resource-name="{{pod.metadata.name}}" project-context="projectContext" ng-if="selectedTab.events"></events>
                   </uib-tab>

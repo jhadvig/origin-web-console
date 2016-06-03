@@ -22,6 +22,8 @@ angular.module('openshiftConsole')
         hpa: '=?',
         limitRanges: '=',
         project: '=',
+        canIScale: '=',
+        canI: '=',
 
         // Pods
         pods: '=',

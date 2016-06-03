@@ -8,11 +8,16 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('ProjectsController', function ($scope, $route, $timeout, $filter, $location, DataService, AuthService, AlertMessageService, Logger, hashSizeFilter) {
+  .controller('ProjectsController', function ($scope, $route, $timeout, $filter, $location, DataService, AuthService, AlertMessageService, Logger, hashSizeFilter, AuthorizationService) {
     $scope.projects = {};
     $scope.alerts = $scope.alerts || {};
     $scope.showGetStarted = false;
-    $scope.canCreate = undefined;
+
+    // $scope.canI = {
+    //   projectrequests: {
+    //     create: false
+    //   }
+    // };
 
     AlertMessageService.getAlerts().forEach(function(alert) {
       $scope.alerts[alert.name] = alert.data;
@@ -39,43 +44,23 @@ angular.module('openshiftConsole')
       loadProjects();
     });
 
-    // Test if the user can submit project requests. Handle error notifications
-    // ourselves because 403 responses are expected.
-    DataService.get("projectrequests", null, $scope, { errorNotification: false})
-    .then(function() {
-      $scope.canCreate = true;
-    }, function(result) {
-      $scope.canCreate = false;
+    AuthorizationService.setForceReload(true);
+    // AuthorizationService.reviewUserRules($scope);
 
-      var data = result.data || {};
-
-      // 403 Forbidden indicates the user doesn't have authority.
-      // Any other failure status is an unexpected error.
-      if (result.status !== 403) {
-        var msg = 'Failed to determine create project permission';
-        if (result.status !== 0) {
-          msg += " (" + result.status + ")";
-        }
-        Logger.warn(msg);
-        return;
-      }
-
-      // Check if there are detailed messages. If there are, show them instead of our default message.
-      if (data.details) {
-        var messages = [];
-        _.forEach(data.details.causes || [], function(cause) {
-          if (cause.message) { messages.push(cause.message); }
-        });
-        if (messages.length > 0) {
-          $scope.newProjectMessage = messages.join("\n");
-        }
-      }
-    });
+    AuthorizationService.canI(null, "create", "ProjectRequest", $scope);
 
     function loadProjects() {
       DataService.list("projects", $scope, function(projects) {
         $scope.projects = projects.by("metadata.name");
         $scope.showGetStarted = hashSizeFilter($scope.projects) === 0;
+        canIDeleteProjects();
+      });
+    }
+
+    function canIDeleteProjects() {
+      _.each($scope.projects, function(project) {
+        var projectName = project.metadata.name;
+        AuthorizationService.canI(projectName, "delete", "Project", $scope, projectName);
       });
     }
   });

@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('DeploymentsController', function ($routeParams, $scope, AlertMessageService, DataService, $filter, LabelFilter, Logger, ImageStreamResolver, DeploymentsService, ProjectsService) {
+  .controller('DeploymentsController', function ($routeParams, $scope, AlertMessageService, DataService, $filter, LabelFilter, Logger, ImageStreamResolver, DeploymentsService, ProjectsService, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.deployments = {};
     $scope.unfilteredDeploymentConfigs = {};
@@ -33,6 +33,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         watches.push(DataService.watch("replicationcontrollers", context, function(deployments, action, deployment) {
         $scope.deployments = deployments.by("metadata.name");
 

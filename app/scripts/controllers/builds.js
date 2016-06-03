@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('BuildsController', function ($routeParams, $scope, AlertMessageService, DataService, $filter, LabelFilter, Logger, $location, $anchorScroll, BuildsService, ProjectsService) {
+  .controller('BuildsController', function ($routeParams, $scope, AlertMessageService, DataService, $filter, LabelFilter, Logger, $location, $anchorScroll, BuildsService, ProjectsService, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.builds = {};
     $scope.unfilteredBuildConfigs = {};
@@ -36,6 +36,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         watches.push(DataService.watch("builds", context, function(builds, action, build) {
           $scope.builds = builds.by("metadata.name");
           $scope.emptyMessage = "No builds to show";

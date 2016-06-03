@@ -16,7 +16,8 @@ angular.module('openshiftConsole')
                                          ImageStreamResolver,
                                          MetricsService,
                                          PodsService,
-                                         ProjectsService) {
+                                         ProjectsService,
+                                         AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.pod = null;
     $scope.imageStreams = {};
@@ -43,6 +44,25 @@ angular.module('openshiftConsole')
       $scope.selectedTab = {};
       $scope.selectedTab[$routeParams.tab] = true;
     }
+
+    $scope.canI = {
+      events: {
+        watch: false
+      },
+      "pods/log": {
+        get: false
+      },
+      "pods/attach": {
+        get: false
+      },
+      deploymentconfigs: {
+        update: false
+      },
+      pods: {
+        update: false,
+        delete: false
+      }
+    };
 
     var watches = [];
 
@@ -91,6 +111,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         // FIXME: DataService.createStream() requires a scope with a
         // projectPromise rather than just a namespace, so we have to pass the
         // context into the log-viewer directive.

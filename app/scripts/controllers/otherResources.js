@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('OtherResourcesController', function ($routeParams, $scope, AlertMessageService, DataService, ProjectsService, $filter, LabelFilter, Logger, APIService ) {
+  .controller('OtherResourcesController', function ($routeParams, $scope, AlertMessageService, DataService, ProjectsService, $filter, LabelFilter, Logger, APIService,AuthorizationService ) {
     $scope.projectName = $routeParams.project;
     $scope.labelSuggestions = {};
     $scope.alerts = $scope.alerts || {};
@@ -49,6 +49,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         $scope.context = context;
         $scope.kindSelector.disabled = false;
       }));
@@ -70,6 +71,12 @@ angular.module('openshiftConsole')
       if (!selected) {
         return;
       }
+      // Check if resources can be update or deleted by the user
+      var projectName = $scope.project.metadata.name;
+      var selectedKind = selected.kind;
+      $scope.selectedResource = APIService.kindToResource(selectedKind);
+      AuthorizationService.canI(projectName, "delete", selectedKind, $scope);
+      AuthorizationService.canI(projectName, "update", selectedKind, $scope);
       // TODO - We can't watch because some of these resources do not support it (roles and rolebindings)
       DataService.list({
           group: selected.group,

@@ -7,7 +7,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('BuildController', function ($scope, $routeParams, DataService, ProjectsService, BuildsService, $filter) {
+  .controller('BuildController', function ($scope, $routeParams, DataService, ProjectsService, BuildsService, $filter, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.build = null;
     $scope.buildConfig = null;
@@ -41,6 +41,22 @@ angular.module('openshiftConsole')
       $scope.selectedTab[$routeParams.tab] = true;
     }
 
+    $scope.canI = {
+      builds: {
+        update: false,
+        delete: false
+      },
+      "builds/clone": {
+        create: false
+      },
+      "builds/log": {
+        get: false
+      },
+      events: {
+        watch: false
+      }
+    };
+
     var watches = [];
 
     var setLogVars = function(build) {
@@ -60,7 +76,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
-
+        AuthorizationService.reviewUserRules($scope);
         // FIXME: DataService.createStream() requires a scope with a
         // projectPromise rather than just a namespace, so we have to pass the
         // context into the log-viewer directive.
@@ -69,7 +85,6 @@ angular.module('openshiftConsole')
         DataService.get("builds", $routeParams.build, context).then(
           // success
           function(build) {
-
             $scope.loaded = true;
             $scope.build = build;
             setLogVars(build);

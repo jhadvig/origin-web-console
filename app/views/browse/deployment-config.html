@@ -13,10 +13,11 @@
               <h1>
                 {{deploymentConfigName}}
 
-                <div class="pull-right dropdown" ng-if="deploymentConfig">
+                <div class="pull-right dropdown" ng-if="deploymentConfig" ng-hide="!canI.persistentvolumeclaims.create && !canI.horizontalpodautoscalers.create && !canI.deploymentconfigs.update && !canI.deploymentconfigs.delete">
                   <!-- Primary Actions -->
                   <button
                       class="btn btn-default hidden-xs"
+                      ng-if="canI.deploymentconfigs.update"
                       ng-click="startLatestDeployment()"
                       ng-disabled="!canDeploy()">
                     Deploy
@@ -31,27 +32,29 @@
                      class="dropdown-toggle actions-dropdown-kebab visible-xs-inline"
                      data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
                   <ul class="dropdown-menu actions action-button">
-                    <li class="visible-xs-inline" ng-class="{ disabled: !canDeploy() }">
+                    <li class="visible-xs-inline"
+                      ng-class="{ disabled: !canDeploy() }"
+                      ng-if="canI.deploymentconfigs.update">
                       <a href=""
                         role="button"
                         ng-attr-aria-disabled="{{canDeploy() ? undefined : 'true'}}"
                         ng-class="{ 'disabled-link': !canDeploy() }"
                         ng-click="startLatestDeployment()">Deploy</a>
                     </li>
-                    <li>
+                    <li ng-if="canI.persistentvolumeclaims.create">
                       <a ng-href="project/{{project.metadata.name}}/attach-pvc?deploymentconfig={{deploymentConfig.metadata.name}}"
                          role="button">Attach Storage</a>
                     </li>
-                    <li>
+                    <li ng-if="canI.deploymentconfigs.update">
                       <a ng-href="project/{{projectName}}/set-limits?dcName={{deploymentConfig.metadata.name}}"
                         role="button">Set Resource Limits</a>
                     </li>
-                    <li ng-if="!autoscalers.length">
+                    <li ng-if="!autoscalers.length && canI.horizontalpodautoscalers.create">
                       <!-- Create a new HPA. -->
                       <a ng-href="project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}"
                          role="button">Add Autoscaler</a>
                     </li>
-                    <li ng-if="autoscalers.length === 1">
+                    <li ng-if="autoscalers.length === 1 && canI.horizontalpodautoscalers.update">
                       <!-- Edit an existing HPA. -->
                       <a ng-href="project/{{projectName}}/edit/autoscaler?kind=HorizontalPodAutoscaler&group=extensions&name={{autoscalers[0].metadata.name}}"
                         role="button">Edit Autoscaler</a>
@@ -59,14 +62,14 @@
                     <li>
                       <a ng-href="{{healthCheckURL}}" role="button">Edit Health Checks</a>
                     </li>
-                    <li>
+                    <li ng-if="canI.deploymentconfigs.update">
                       <edit-link
                         resource="deploymentConfig"
                         kind="DeploymentConfig"
                         alerts="alerts">
                       </edit-link>
                     </li>
-                    <li>
+                    <li ng-if="canI.deploymentconfigs.delete">
                       <delete-link
                         kind="DeploymentConfig"
                         resource-name="{{deploymentConfig.metadata.name}}"
@@ -102,7 +105,8 @@
                             <dd>
                               <replicas spec="deploymentConfig.spec.replicas"
                                         disable-scaling="autoscalers.length || deploymentInProgress"
-                                        scale-fn="scale(replicas)"></replicas>
+                                        scale-fn="scale(replicas)"
+                                        can-i-scale="canI['deploymentconfigs/scale'].update"></replicas>
                               <span ng-if="autoscalers.length">(autoscaled)</span>
                             </dd>
                             <div ng-if="deploymentConfig.spec.strategy.type">
@@ -129,10 +133,10 @@
                               images-by-docker-reference="imagesByDockerReference"
                               builds="builds"
                               detailed="true"
-                              add-health-check-url="{{healthCheckURL}}">
+                              add-health-check-url="{{(canI.deploymentconfigs.update) ? healthCheckURL : ''}}">
                           </pod-template>
-                          <h4>Volumes</h4>
-                          <p ng-if="!deploymentConfig.spec.template.spec.volumes.length">
+                          <h4 ng-hide="!deploymentConfig.spec.template.spec.volumes.length && !canI.deploymentconfigs.update">Volumes</h4>
+                          <p ng-if="!deploymentConfig.spec.template.spec.volumes.length && canI.deploymentconfigs.update">
                             <a ng-href="project/{{project.metadata.name}}/attach-pvc?deploymentconfig={{deploymentConfig.metadata.name}}">Attach storage</a>
                           </p>
                           <volumes volumes="deploymentConfig.spec.template.spec.volumes" namespace="project.metadata.name"></volumes>
@@ -150,13 +154,13 @@
 
                             <!-- If the CPU request is missing, add an action to set one. -->
                             <a ng-href="project/{{projectName}}/set-limits?dcName={{deploymentConfig.metadata.name}}"
-                               ng-if="warning.reason === 'NoCPURequest'"
+                               ng-if="warning.reason === 'NoCPURequest' && canI.deploymentconfigs.update"
                                role="button">Set resource
                               <span ng-if="!('cpu' | isRequestCalculated : project)">requests and</span> limits</a>
                           </div>
 
                           <!-- Create autoscaler -->
-                          <div ng-if="!autoscalers.length">
+                          <div ng-if="!autoscalers.length && canI.horizontalpodautoscalers.create">
                             <a ng-href="project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}"
                                role="button">Add autoscaler</a>
                           </div>
@@ -164,7 +168,7 @@
                           <!-- HPA details -->
                           <div ng-repeat="hpa in autoscalers">
                             <h4>{{hpa.metadata.name}}</h4>
-                            <hpa hpa="hpa" project="project" show-scale-target="false" alerts="alerts"></hpa>
+                            <hpa hpa="hpa" can-i="canI" project="project" show-scale-target="false" alerts="alerts"></hpa>
                           </div>
                         </div>
 
@@ -265,7 +269,7 @@
                       <em ng-if="!container.env.length">The container specification has no environment variables set.</em>
                     </div>
                   </uib-tab>
-                  <uib-tab active="selectedTab.events">
+                  <uib-tab active="selectedTab.events" ng-if="canI.events.watch">
                     <uib-tab-heading>Events</uib-tab-heading>
                     <events resource-kind="DeploymentConfig" resource-name="{{deploymentConfig.metadata.name}}" project-context="projectContext" ng-if="selectedTab.events"></events>
                   </uib-tab>

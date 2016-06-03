@@ -8,9 +8,9 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('LogoutController', function ($scope, $log, AuthService, AUTH_CFG) {
+  .controller('LogoutController', function ($scope, $log, AuthService, AUTH_CFG, AuthorizationService) {
     $log.debug("LogoutController");
-
+    AuthorizationService.clearAll();
     if (AuthService.isLoggedIn()) {
       $log.debug("LogoutController, logged in, initiating logout");
       $scope.logoutMessage = "Logging out...";

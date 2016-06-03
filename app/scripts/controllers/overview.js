@@ -27,7 +27,8 @@ angular.module('openshiftConsole')
                         $filter,
                         $interval,
                         RoutesService,
-                        AlertMessageService) {
+                        AlertMessageService,
+                        AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.pods = {};
     $scope.services = {};
@@ -107,6 +108,18 @@ angular.module('openshiftConsole')
     });
     AlertMessageService.clearAlerts();
 
+    $scope.canI = {
+      routes: {
+        create: false
+      },
+      "deploymentconfigs/scale": {
+        update: false
+      },
+      replicationcontrollers: {
+        update: false
+      }
+    };
+
     var intervals = [];
     var watches = [];
 
@@ -114,6 +127,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
 
         watches.push(DataService.watch("pods", context, function(pods) {
           $scope.pods = pods.by("metadata.name");

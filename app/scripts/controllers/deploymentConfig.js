@@ -19,7 +19,8 @@ angular.module('openshiftConsole')
                         Navigate,
                         ProjectsService,
                         LabelFilter,
-                        labelNameFilter) {
+                        labelNameFilter,
+                        AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.deploymentConfigName = $routeParams.deploymentconfig;
     $scope.deploymentConfig = null;
@@ -63,6 +64,27 @@ angular.module('openshiftConsole')
     });
     AlertMessageService.clearAlerts();
 
+    $scope.canI = {
+      deploymentconfigs: {
+        update: false,
+        delete: false
+      },
+      horizontalpodautoscalers: {
+        create: false,
+        update: false,
+        delete: false
+      },
+      persistentvolumeclaims: {
+        create: false
+      },
+      events: {
+        watch: false
+      },
+      "deploymentconfigs/scale": {
+        update: false
+      }
+    };
+
     var watches = [];
 
     ProjectsService
@@ -70,6 +92,7 @@ angular.module('openshiftConsole')
       .then(_.spread(function(project, context) {
         $scope.project = project;
         $scope.projectContext = context;
+        AuthorizationService.reviewUserRules($scope);
 
         var limitRanges = {};
 

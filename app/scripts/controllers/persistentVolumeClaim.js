@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('PersistentVolumeClaimController', function ($scope, $routeParams, DataService, ProjectsService, $filter) {
+  .controller('PersistentVolumeClaimController', function ($scope, $routeParams, DataService, ProjectsService, $filter, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.pvc = null;
     $scope.alerts = {};
@@ -24,12 +24,20 @@ angular.module('openshiftConsole')
       }
     ];
 
+    $scope.canI = {
+      persistentvolumeclaims: {
+        update: false,
+        delete: false
+      }
+    };
+
     var watches = [];
   
     ProjectsService
     .get($routeParams.project)
     .then(_.spread(function(project, context) {
       $scope.project = project;
+      AuthorizationService.reviewUserRules($scope);
       DataService.get("persistentvolumeclaims", $routeParams.pvc, context).then(
         // success
         function(pvc) {

@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('PodsController', function ($routeParams, $scope, DataService, ProjectsService, AlertMessageService, $filter, LabelFilter, Logger) {
+  .controller('PodsController', function ($routeParams, $scope, DataService, ProjectsService, AlertMessageService, $filter, LabelFilter, Logger, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.pods = {};
     $scope.unfilteredPods = {};
@@ -32,6 +32,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         watches.push(DataService.watch("pods", context, function(pods) {
           $scope.unfilteredPods = pods.by("metadata.name");
           $scope.pods = LabelFilter.getLabelSelector().select($scope.unfilteredPods);

@@ -7,7 +7,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('BuildConfigController', function ($scope, $routeParams, DataService, ProjectsService, BuildsService, $filter, LabelFilter, AlertMessageService) {
+  .controller('BuildConfigController', function ($scope, $routeParams, DataService, ProjectsService, BuildsService, $filter, LabelFilter, AlertMessageService, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.buildConfigName = $routeParams.buildconfig;
     $scope.buildConfig = null;
@@ -23,6 +23,16 @@ angular.module('openshiftConsole')
       }
     ];
     $scope.emptyMessage = "Loading...";
+
+    $scope.canI = {
+      "buildconfigs/instantiate": {
+        create: false
+      },
+      buildconfigs: {
+        update: false,
+        delete: false
+      }
+    };
 
     AlertMessageService.getAlerts().forEach(function(alert) {
       $scope.alerts[alert.name] = alert.data;
@@ -43,7 +53,7 @@ angular.module('openshiftConsole')
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
-
+        AuthorizationService.reviewUserRules($scope);
         DataService.get("buildconfigs", $routeParams.buildconfig, context).then(
           // success
           function(buildConfig) {

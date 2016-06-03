@@ -20,7 +20,7 @@ angular.module('openshiftConsole')
       templateUrl: "views/_sidebar-main-nav-item.html"
     };
   })
-  .directive('projectHeader', function($timeout, $location, $filter, DataService, projectOverviewURLFilter) {
+  .directive('projectHeader', function($timeout, $location, $filter, DataService, projectOverviewURLFilter, AuthorizationService) {
 
     // cache these to eliminate flicker
     var projects = {};
@@ -74,6 +74,7 @@ angular.module('openshiftConsole')
           select.selectpicker('refresh');
         };
 
+        // $scope.canCreateSomething = AuthorizationService.canCreateSomeResource;
 
         DataService.list("projects", $scope, function(items) {
           projects = items.by("metadata.name");

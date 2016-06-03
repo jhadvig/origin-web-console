@@ -7,7 +7,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('ImageController', function ($scope, $routeParams, DataService, ProjectsService, $filter, ImageStreamsService) {
+  .controller('ImageController', function ($scope, $routeParams, DataService, ProjectsService, $filter, ImageStreamsService, AuthorizationService) {
     $scope.projectName = $routeParams.project;
     $scope.imageStream = null;
     $scope.tagsByName = {};
@@ -26,12 +26,20 @@ angular.module('openshiftConsole')
     ];
     $scope.emptyMessage = "Loading...";
 
+    $scope.canI = {
+      imagestreams: {
+        update: false,
+        delete: false
+      }
+    };
+
     var watches = [];
 
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
         $scope.project = project;
+        AuthorizationService.reviewUserRules($scope);
         DataService.get("imagestreams", $routeParams.image, context).then(
           // success
           function(imageStream) {

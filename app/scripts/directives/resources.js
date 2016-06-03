@@ -157,7 +157,8 @@ angular.module('openshiftConsole')
         hpa: '=',
         project: '=',
         showScaleTarget: '=?',
-        alerts: '='
+        alerts: '=',
+        canI: '='
       },
       templateUrl: 'views/directives/hpa.html'
     };
