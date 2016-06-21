@@ -2,7 +2,7 @@
 
 angular.module('openshiftConsole')
   .factory('ProjectsService',
-    function($location, $q, $routeParams, AuthService, DataService, annotationNameFilter) {
+    function($location, $q, $routeParams, AuthService, DataService, annotationNameFilter, AuthorizationService) {
 
 
       var cleanEditableAnnotations = function(resource) {
@@ -32,10 +32,13 @@ angular.module('openshiftConsole')
                       return DataService
                               .get('projects', projectName, context, {errorNotification: false})
                               .then(function(project) {
-                                context.project = project;
-                                context.projectPromise.resolve(project);
-                                // TODO: fix need to return context & projectPromise
-                                return [project, context];
+                                return AuthorizationService.getProjectRules(projectName)
+                                        .then(function(rules) {
+                                          context.project = project;
+                                          context.projectPromise.resolve(project);
+                                          // TODO: fix need to return context & projectPromise
+                                          return [project, context, rules];
+                                        });
                               }, function(e) {
                                 context.projectPromise.reject(e);
                                 var description = 'The project could not be loaded.';

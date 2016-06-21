@@ -283,7 +283,7 @@ angular.module('openshiftConsole')
 
     ProjectsService
       .get($routeParams.project)
-      .then(_.spread(function(project, context) {
+      .then(_.spread(function(project, context, rules) {
         $scope.project = project;
 
         watches.push(DataService.watch("pods", context, function(podsData) {

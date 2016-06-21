@@ -70,6 +70,7 @@ angular.module('openshiftConsole')
       if (!selected) {
         return;
       }
+      $scope.selectedResource = APIService.kindToResource(selected.kind);
       // TODO - We can't watch because some of these resources do not support it (roles and rolebindings)
       DataService.list({
           group: selected.group,

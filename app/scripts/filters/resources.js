@@ -125,6 +125,50 @@ angular.module('openshiftConsole')
       return displayName;
     };
   })
+  .filter('canI', function(AuthorizationService) {
+    return function(resource, verb) {
+      return AuthorizationService.canI(resource, verb);
+    };
+  })
+  .filter('canIDoAny', function(canIFilter) {
+    var resourceRulesMap = {
+      "buildConfig": {"buildconfigs": ["delete", "update"], "buildconfigs/instantiate": ["create"]},
+      "build": {"builds/clone": ["create"], "builds": ["create", "update"]},
+      "deploymentConfig": {"horizontalpodautoscalers": ["create", "update"], "deploymentconfigs": ["create", "update"]},
+      "deployment": {"replicationcontrollers": ["update", "delete"]},
+      "imageStream": {"imagestreams": ["update", "delete"]},
+      "persistentVolumeClaim": {"persistentvolumeclaims": ["update", "delete"]},
+      "pod": {"pods": ["update", "delete"], "deploymentconfigs": ["update"]},
+      "replicationController": {"horizontalpodautoscalers": ["create", "update"], "replicationcontrollers": ["create", "update"]},
+      "route": {"routes": ["update", "delete"]},
+      "service": {"services": ["update", "create", "delete"]},
+      "project": {'projects': ['delete', 'update']},
+      "configmaps": {"configmaps": ['delete', 'update']},
+      "endpoints": {"endpoints": ['delete', 'update']},
+      "horizontalpodautoscalers": {"horizontalpodautoscalers": ['delete', 'update']},
+      "jobs": {"jobs": ['delete', 'update']}
+    };
+    return function(resource) {
+      var canIDoAny = false;
+      _.each(resourceRulesMap[resource], function(verbs, resource) {
+        _.each(verbs, function(verb) {
+          canIDoAny = canIFilter(resource,verb);
+        });
+      });
+      return canIDoAny;
+    };
+  })
+  .filter('canIScale', function(canIFilter) {
+    return function(deploymentConfig) {
+      var canIScale = false;
+      if (deploymentConfig) {
+        canIScale = canIFilter("deploymentconfigs/scale", "update");
+      } else {
+        canIScale = canIFilter("replicationcontrollers", "update");
+      }
+      return canIScale;
+    };
+  })
   .filter('tags', function(annotationFilter) {
     return function(resource, /* optional */ annotationKey) {
       annotationKey = annotationKey || "tags";

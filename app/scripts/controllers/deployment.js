@@ -39,6 +39,7 @@ angular.module('openshiftConsole')
       }
     ];
 
+    $scope.hasDeploymentConfig = ($routeParams.deploymentconfig) ? true : false;
     // if this is an RC it won't have deploymentconfig
     if ($routeParams.deploymentconfig){
       $scope.breadcrumbs.push({

@@ -55,7 +55,7 @@
             <span ng-if="(services | hashSize) > 1">Add a service to group them together.</span>
           </p>
           <div ng-if="(services | hashSize) > 1">
-            <button class="btn btn-primary" ng-show="(services | hashSize) > 1" ng-click="linkService()">
+            <button class="btn btn-primary" ng-show="(services | hashSize) > 1" ng-if="'services' | canI : 'update'" ng-click="linkService()">
               Link Service
             </button>
           </div>
