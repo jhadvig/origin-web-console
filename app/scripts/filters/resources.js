@@ -127,8 +127,8 @@ angular.module('openshiftConsole')
     };
   })
   .filter('canI', function(AuthorizationService) {
-    return function(resource, verb, namespace) {
-      return AuthorizationService.canI(verb, resource, namespace);
+    return function(resource, verb, groupAndNamespace) {
+      return AuthorizationService.canI(verb, resource, groupAndNamespace);
     };
   })
   .filter('canIAddToProject', function(AuthorizationService) {
@@ -138,23 +138,23 @@ angular.module('openshiftConsole')
   })
   .filter('canIDoAny', function(canIFilter) {
     var resourceRulesMap = {
-      "buildConfigs": {"buildconfigs": ["delete", "update"], "buildconfigs/instantiate": ["create"]},
+      "buildConfigs": {"buildconfigs": {verbs: ["delete", "update"]}, "buildconfigs/instantiate": {verbs: ["create"]}},
       "builds": {"builds/clone": ["create"], "builds": ["delete", "update"]},
-      "deploymentConfigs": {"extensions/horizontalpodautoscalers": ["create", "update"], "deploymentconfigs": ["create", "update"]},
-      "deployments": {"replicationcontrollers": ["update", "delete"]},
-      "horizontalPodAutoscalers": {"extensions/horizontalpodautoscalers": ["update", "delete"]},
-      "imageStreams": {"imagestreams": ["update", "delete"]},
-      "persistentVolumeClaims": {"persistentvolumeclaims": ["update", "delete"]},
-      "pods": {"pods": ["update", "delete"], "deploymentconfigs": ["update"]},
-      "replicationControllers": {"horizontalpodautoscalers": ["create", "update"], "replicationcontrollers": ["create", "update"]},
-      "routes": {"routes": ["update", "delete"]},
-      "services": {"services": ["update", "create", "delete"]},
-      "projects": {'projects': ['delete', 'update']}
+      "deploymentConfigs": {"horizontalpodautoscalers": {verbs: ["create", "update"], group: "autoscaling"}, "deploymentconfigs": {verbs: ["create", "update"]}},
+      "deployments": {"replicationcontrollers": {verbs: ["update", "delete"]}},
+      "horizontalPodAutoscalers": {"horizontalpodautoscalers": {verbs: ["update", "delete"], group: "autoscaling"}},
+      "imageStreams": {"imagestreams": {verbs: ["update", "delete"]}},
+      "persistentVolumeClaims": {"persistentvolumeclaims": {verbs: ["update", "delete"]}},
+      "pods": {"pods": {verbs: ["update", "delete"]}, "deploymentconfigs": {verbs: ["update"]}},
+      "replicationControllers": {"horizontalpodautoscalers": {verbs: ["create", "update"], group: "autoscaling"}, "replicationcontrollers": {verbs: ["create", "update"]}},
+      "routes": {"routes": {verbs: ["update", "delete"]}},
+      "services": {"services": {verbs: ["update", "create", "delete"]}},
+      "projects": {'projects': {verbs: ['delete', 'update']}}
     };
     return function(resource) {
-      return _.some(resourceRulesMap[resource], function(verbs, resource) {
-        return _.some(verbs, function(verb) {
-          return canIFilter(resource,verb);
+      return _.some(resourceRulesMap[resource], function(verbsAndGroup, resource) {
+        return _.some(verbsAndGroup.verbs, function(verb) {
+          return canIFilter(resource,verb, {group: (verbsAndGroup.group || "")});
         });
       });
     };

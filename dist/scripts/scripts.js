@@ -737,9 +737,9 @@ number:10
 }), i = !1, j = [ "localresourceaccessreviews", "localsubjectaccessreviews", "resourceaccessreviews", "selfsubjectrulesreviews", "subjectaccessreviews" ], k = function(a) {
 var b = {};
 return _.each(a, function(a) {
-_.each(a.resources, function(c) {
-_.each(a.apiGroups, function(d) {
-b["" === d ? c :d + "/" + c] = a.verbs;
+_.each(a.apiGroups, function(c) {
+b[c] || (b[c] = {}), _.each(a.resources, function(d) {
+b[c][d] = a.verbs;
 });
 });
 }), b;
@@ -778,17 +778,25 @@ i = !0, d.resolve();
 return d.promise;
 }, o = function(a) {
 return _.get(h.get(a || g), [ "rules" ]);
-}, p = function(a, b, c) {
-c = c || g;
-var d = o(c);
-return !!i || !!d && (d[b] ? _.contains(d[b], a) || _.contains(d[b], "*") :!!d["*"] && (_.contains(d["*"], a) || _.contains(d["*"], "*")));
-}, q = function(a) {
+}, p = function(a, b, c, d) {
+var e = a[c];
+if (!e) return !1;
+var f = e[d];
+return !!f && (_.contains(f, b) || _.contains(f, "*"));
+}, q = function(a, b, c) {
+if (i) return !0;
+var d = e.toResourceGroupVersion(b);
+d.group = c ? c.group :"";
+var f = o(c ? c.projectName :g);
+return !!f && (p(f, a, d.group, d.resource) || p(f, a, "*", "*") || p(f, a, d.group, "*") || p(f, a, "*", d.resource));
+}, r = function(a) {
 return !!i || !!_.get(h.get(a || g), [ "canAddToProject" ]);
 };
 return {
+checkResource:l,
 getProjectRules:n,
-canI:p,
-canIAddToProject:q,
+canI:q,
+canIAddToProject:r,
 getRulesForProject:o
 };
 } ]), angular.module("openshiftConsole").factory("DataService", [ "$cacheFactory", "$http", "$ws", "$rootScope", "$q", "API_CFG", "APIService", "Notification", "Logger", "$timeout", function(a, b, c, d, e, f, g, h, i, j) {
@@ -4233,8 +4241,11 @@ return !0;
 b.alerts[a.name] = a.data;
 }), c.clearAlerts(), f.get(a.project).then(_.spread(function(a, c) {
 b.kinds = _.filter(b.kinds, function(a) {
-var c = j.kindToResource(a.kind);
-return d.canI("list", a.group ? a.group + "/" + c :c, b.projectName);
+var c = j.kindToResource(a.kind), e = a.group || "";
+return !!d.checkResource(c) && d.canI("list", c, {
+group:e,
+projectName:b.projectName
+});
 }), b.project = a, b.context = c, b.kindSelector.disabled = !1;
 })), b.loadKind = l, b.$watch("kindSelector.selected", function() {
 b.alerts = {}, l();
@@ -8960,51 +8971,86 @@ return a.canIAddToProject(b);
 } ]).filter("canIDoAny", [ "canIFilter", function(a) {
 var b = {
 buildConfigs:{
-buildconfigs:[ "delete", "update" ],
-"buildconfigs/instantiate":[ "create" ]
+buildconfigs:{
+verbs:[ "delete", "update" ]
+},
+"buildconfigs/instantiate":{
+verbs:[ "create" ]
+}
 },
 builds:{
 "builds/clone":[ "create" ],
 builds:[ "delete", "update" ]
 },
 deploymentConfigs:{
-"extensions/horizontalpodautoscalers":[ "create", "update" ],
-deploymentconfigs:[ "create", "update" ]
+horizontalpodautoscalers:{
+verbs:[ "create", "update" ],
+group:"autoscaling"
+},
+deploymentconfigs:{
+verbs:[ "create", "update" ]
+}
 },
 deployments:{
-replicationcontrollers:[ "update", "delete" ]
+replicationcontrollers:{
+verbs:[ "update", "delete" ]
+}
 },
 horizontalPodAutoscalers:{
-"extensions/horizontalpodautoscalers":[ "update", "delete" ]
+horizontalpodautoscalers:{
+verbs:[ "update", "delete" ],
+group:"autoscaling"
+}
 },
 imageStreams:{
-imagestreams:[ "update", "delete" ]
+imagestreams:{
+verbs:[ "update", "delete" ]
+}
 },
 persistentVolumeClaims:{
-persistentvolumeclaims:[ "update", "delete" ]
+persistentvolumeclaims:{
+verbs:[ "update", "delete" ]
+}
 },
 pods:{
-pods:[ "update", "delete" ],
-deploymentconfigs:[ "update" ]
+pods:{
+verbs:[ "update", "delete" ]
+},
+deploymentconfigs:{
+verbs:[ "update" ]
+}
 },
 replicationControllers:{
-horizontalpodautoscalers:[ "create", "update" ],
-replicationcontrollers:[ "create", "update" ]
+horizontalpodautoscalers:{
+verbs:[ "create", "update" ],
+group:"autoscaling"
+},
+replicationcontrollers:{
+verbs:[ "create", "update" ]
+}
 },
 routes:{
-routes:[ "update", "delete" ]
+routes:{
+verbs:[ "update", "delete" ]
+}
 },
 services:{
-services:[ "update", "create", "delete" ]
+services:{
+verbs:[ "update", "create", "delete" ]
+}
 },
 projects:{
-projects:[ "delete", "update" ]
+projects:{
+verbs:[ "delete", "update" ]
+}
 }
 };
 return function(c) {
 return _.some(b[c], function(b, c) {
-return _.some(b, function(b) {
-return a(c, b);
+return _.some(b.verbs, function(d) {
+return a(c, d, {
+group:b.group || ""
+});
 });
 });
 };

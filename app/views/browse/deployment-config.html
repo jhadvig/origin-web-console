@@ -47,12 +47,12 @@
                       <a ng-href="project/{{projectName}}/set-limits?dcName={{deploymentConfig.metadata.name}}"
                         role="button">Set Resource Limits</a>
                     </li>
-                    <li ng-if="!autoscalers.length && ('extensions/horizontalpodautoscalers' | canI : 'create')">
+                    <li ng-if="!autoscalers.length && ('horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'})">
                       <!-- Create a new HPA. -->
                       <a ng-href="project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}"
                          role="button">Add Autoscaler</a>
                     </li>
-                    <li ng-if="autoscalers.length === 1 && ('extensions/horizontalpodautoscalers' | canI : 'update')">
+                    <li ng-if="autoscalers.length === 1 && ('horizontalpodautoscalers' | canI : 'update' : {group: 'autoscaling'})">
                       <!-- Edit an existing HPA. -->
                       <a ng-href="project/{{projectName}}/edit/autoscaler?kind=HorizontalPodAutoscaler&group=extensions&name={{autoscalers[0].metadata.name}}"
                         role="button">Edit Autoscaler</a>
@@ -160,9 +160,9 @@
 
                           <!-- Create autoscaler -->
                           <div ng-if="!autoscalers.length">
-                            <a ng-if="'extensions/horizontalpodautoscalers' | canI : 'create'" ng-href="project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}"
+                            <a ng-if="'horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'}" ng-href="project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}"
                                role="button">Add autoscaler</a>
-                            <span ng-if="!('extensions/horizontalpodautoscalers' | canI : 'create')">none</span>
+                            <span ng-if="!('horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'})">none</span>
                           </div>
 
                           <!-- HPA details -->

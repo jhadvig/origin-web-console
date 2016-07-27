@@ -1869,11 +1869,11 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<li ng-if=\"'deploymentconfigs' | canI : 'update'\">\n" +
     "<a ng-href=\"project/{{projectName}}/set-limits?dcName={{deploymentConfig.metadata.name}}\" role=\"button\">Set Resource Limits</a>\n" +
     "</li>\n" +
-    "<li ng-if=\"!autoscalers.length && ('extensions/horizontalpodautoscalers' | canI : 'create')\">\n" +
+    "<li ng-if=\"!autoscalers.length && ('horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'})\">\n" +
     "\n" +
     "<a ng-href=\"project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}\" role=\"button\">Add Autoscaler</a>\n" +
     "</li>\n" +
-    "<li ng-if=\"autoscalers.length === 1 && ('extensions/horizontalpodautoscalers' | canI : 'update')\">\n" +
+    "<li ng-if=\"autoscalers.length === 1 && ('horizontalpodautoscalers' | canI : 'update' : {group: 'autoscaling'})\">\n" +
     "\n" +
     "<a ng-href=\"project/{{projectName}}/edit/autoscaler?kind=HorizontalPodAutoscaler&group=extensions&name={{autoscalers[0].metadata.name}}\" role=\"button\">Edit Autoscaler</a>\n" +
     "</li>\n" +
@@ -1958,8 +1958,8 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "\n" +
     "<div ng-if=\"!autoscalers.length\">\n" +
-    "<a ng-if=\"'extensions/horizontalpodautoscalers' | canI : 'create'\" ng-href=\"project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}\" role=\"button\">Add autoscaler</a>\n" +
-    "<span ng-if=\"!('extensions/horizontalpodautoscalers' | canI : 'create')\">none</span>\n" +
+    "<a ng-if=\"'horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'}\" ng-href=\"project/{{projectName}}/edit/autoscaler?kind=DeploymentConfig&name={{deploymentConfig.metadata.name}}\" role=\"button\">Add autoscaler</a>\n" +
+    "<span ng-if=\"!('horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'})\">none</span>\n" +
     "</div>\n" +
     "\n" +
     "<div ng-repeat=\"hpa in autoscalers\">\n" +
@@ -2583,11 +2583,11 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<li ng-if=\"'replicationcontrollers' | canI : 'update'\">\n" +
     "<a ng-href=\"project/{{projectName}}/set-limits?rcName={{deployment.metadata.name}}\" role=\"button\">Set Resource Limits</a>\n" +
     "</li>\n" +
-    "<li ng-if=\"!autoscalers.length && ('extensions/horizontalpodautoscalers' | canI : 'create')\">\n" +
+    "<li ng-if=\"!autoscalers.length && ('horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'})\">\n" +
     "\n" +
     "<a ng-href=\"project/{{projectName}}/edit/autoscaler?kind=ReplicationController&name={{deployment.metadata.name}}\" role=\"button\">Add Autoscaler</a>\n" +
     "</li>\n" +
-    "<li ng-if=\"autoscalers.length === 1 && ('extensions/horizontalpodautoscalers' | canI : 'update')\">\n" +
+    "<li ng-if=\"autoscalers.length === 1 && ('horizontalpodautoscalers' | canI : 'update' : {group: 'autoscaling'})\">\n" +
     "\n" +
     "<a ng-href=\"project/{{projectName}}/edit/autoscaler?kind=HorizontalPodAutoscaler&group=extensions&name={{autoscalers[0].metadata.name}}\" role=\"button\">Edit Autoscaler</a>\n" +
     "</li>\n" +
@@ -4957,9 +4957,9 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</dl>\n" +
     "\n" +
     "<div ng-hide=\"!('horizontalPodAutoscalers' | canIDoAny)\">\n" +
-    "<a ng-if=\"'extensions/horizontalpodautoscalers' | canI : 'update'\" ng-href=\"project/{{hpa.metadata.namespace}}/edit/autoscaler?kind=HorizontalPodAutoscaler&group=extensions&name={{hpa.metadata.name}}\" role=\"button\">Edit</a>\n" +
+    "<a ng-if=\"'horizontalpodautoscalers' | canI : 'update' : {group: 'autoscaling'}\" ng-href=\"project/{{hpa.metadata.namespace}}/edit/autoscaler?kind=HorizontalPodAutoscaler&group=extensions&name={{hpa.metadata.name}}\" role=\"button\">Edit</a>\n" +
     "<span class=\"action-divider\">|</span>\n" +
-    "<delete-link ng-if=\"'extensions/horizontalpodautoscalers' | canI : 'delete'\" kind=\"HorizontalPodAutoscaler\" group=\"extensions\" resource-name=\"{{hpa.metadata.name}}\" project-name=\"{{hpa.metadata.namespace}}\" label=\"Remove\" alerts=\"alerts\" stay-on-current-page=\"true\">\n" +
+    "<delete-link ng-if=\"'horizontalpodautoscalers' | canI : 'delete' : {group: 'autoscaling'}\" kind=\"HorizontalPodAutoscaler\" group=\"extensions\" resource-name=\"{{hpa.metadata.name}}\" project-name=\"{{hpa.metadata.namespace}}\" label=\"Remove\" alerts=\"alerts\" stay-on-current-page=\"true\">\n" +
     "</delete-link>\n" +
     "</div>"
   );

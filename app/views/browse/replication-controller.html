@@ -30,12 +30,12 @@
                     <a ng-href="project/{{projectName}}/set-limits?rcName={{deployment.metadata.name}}"
                        role="button">Set Resource Limits</a>
                   </li>
-                  <li ng-if="!autoscalers.length && ('extensions/horizontalpodautoscalers' | canI : 'create')">
+                  <li ng-if="!autoscalers.length && ('horizontalpodautoscalers' | canI : 'create' : {group: 'autoscaling'})">
                     <!-- Create a new HPA. -->
                     <a ng-href="project/{{projectName}}/edit/autoscaler?kind=ReplicationController&name={{deployment.metadata.name}}"
                       role="button">Add Autoscaler</a>
                   </li>
-                  <li ng-if="autoscalers.length === 1 && ('extensions/horizontalpodautoscalers' | canI : 'update')">
+                  <li ng-if="autoscalers.length === 1 && ('horizontalpodautoscalers' | canI : 'update' : {group: 'autoscaling'})">
                     <!-- Edit an existing HPA. -->
                     <a ng-href="project/{{projectName}}/edit/autoscaler?kind=HorizontalPodAutoscaler&group=extensions&name={{autoscalers[0].metadata.name}}"
                       role="button">Edit Autoscaler</a>

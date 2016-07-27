@@ -50,7 +50,13 @@ angular.module('openshiftConsole')
       .then(_.spread(function(project, context) {
         $scope.kinds = _.filter($scope.kinds, function(kind){
           var resource = APIService.kindToResource(kind.kind);
-          return AuthorizationService.canI("list", kind.group ? kind.group + "/" + resource : resource, $scope.projectName);
+          var apiGroup = kind.group || '';
+          // exclude 'projectrequests', subresources, and REVIEW_RESOURCES from the list
+          if (AuthorizationService.checkResource(resource)) {
+            return AuthorizationService.canI("list", resource, {group: apiGroup, projectName: $scope.projectName});
+          } else {
+            return false;
+          }
         });
         $scope.project = project;
         $scope.context = context;
