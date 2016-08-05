@@ -9,6 +9,7 @@ HELP:{
 cli:"https://docs.openshift.org/latest/cli_reference/overview.html",
 get_started_cli:"https://docs.openshift.org/latest/cli_reference/get_started_cli.html",
 basic_cli_operations:"https://docs.openshift.org/latest/cli_reference/basic_cli_operations.html",
+"build-triggers":"https://docs.openshift.org/latest/dev_guide/builds.html#build-triggers",
 webhooks:"https://docs.openshift.org/latest/dev_guide/builds.html#webhook-triggers",
 new_app:"https://docs.openshift.org/latest/dev_guide/new_app.html",
 "start-build":"https://docs.openshift.org/latest/dev_guide/builds.html#starting-a-build",
@@ -4809,14 +4810,11 @@ images:!1,
 contextDir:!1,
 none:!0
 }, a.triggers = {
-present:{
-githubWebhook:!1,
-genericWebhook:!1,
-imageChange:!1,
-configChange:!1
-},
+githubWebhooks:[],
+genericWebhooks:[],
+imageChangeTriggers:[],
 builderImageChangeTrigger:{},
-imageChangeTriggers:[]
+configChangeTrigger:{}
 }, a.runPolicyTypes = [ "Serial", "Parallel", "SerialLatestOnly" ], a.availableProjects = [], i.getAlerts().forEach(function(b) {
 a.alerts[b.name] = b.data;
 }), i.clearAlerts();
@@ -4890,33 +4888,45 @@ function d(b, c) {
 var d = e("imageObjectRef")(b, a.projectName), f = e("imageObjectRef")(c, a.projectName);
 return d === f;
 }
-var f = e("buildStrategy")(a.buildConfig).from;
-if (c.forEach(function(a) {
+function f(a, b) {
+return {
+disabled:b,
+data:a
+};
+}
+function g(a, b) {
+return {
+present:b,
+data:a
+};
+}
+var h = e("buildStrategy")(a.buildConfig).from;
+return c.forEach(function(a) {
 switch (a.type) {
 case "Generic":
-b.present.genericWebhook = !0;
+b.genericWebhooks.push(f(a, !1));
 break;
 
 case "GitHub":
-b.present.githubWebhook = !0;
+b.githubWebhooks.push(f(a, !1));
 break;
 
 case "ImageChange":
 var c = a.imageChange.from;
-c || (c = f), d(c, f) && (b.present.imageChange = !0, b.builderImageChangeTrigger = a), b.imageChangeTriggers.push(a);
+c || (c = h);
+var e = g(a, !0);
+d(c, h) ? b.builderImageChangeTrigger = e :b.imageChangeTriggers.push(e);
 break;
 
 case "ConfigChange":
-b.present.configChange = !0;
+b.configChangeTrigger = g(a, !0);
 }
-}), _.isEmpty(b.builderImageChangeTrigger)) {
-var g = {
+}), _.isEmpty(b.builderImageChangeTrigger) && (b.builderImageChangeTrigger = g({
 imageChange:{},
 type:"ImageChange"
-};
-b.imageChangeTriggers.push(g), b.builderImageChangeTrigger = g;
-}
-return b;
+}, !1)), _.isEmpty(b.configChangeTrigger) && (b.configChangeTrigger = g({
+type:"ConfigChange"
+}, !1)), b;
 }, a.setPickedVariables = function(a, b, c, d, e, f, g) {
 return a.pickedType = b, a.pickedNamespace = c, a.pickedImageStream = d, a.pickedTag = e, f && (a.pickedImageStreamImage = f), a.pickedDockerImage = g, a;
 }, a.assambleInputType = function(b, c) {
@@ -5008,27 +5018,21 @@ kind:a.pickedType,
 namespace:a.pickedNamespace,
 name:a.pickedImageStreamImage
 }), b;
-}, a.updateTriggers = function() {
-function b(b) {
-var c = _.filter(a.buildConfig.spec.triggers, function(a) {
-return a.type === b;
-});
-if (_.isEmpty(c)) {
-var d = {
+}, a.addWebhookTrigger = function(b) {
+var c = {
+disabled:!1,
+data:{
 type:b
+}
 };
-d["GitHub" === b ? "github" :"generic"] = {
+c.data["GitHub" === b ? "github" :"generic"] = {
 secret:f._generateSecret()
-}, c.push(d);
-}
-return c;
-}
-var c = a.triggers.present, d = [];
-return c.githubWebhook && (d = d.concat(b("GitHub"))), c.genericWebhook && (d = d.concat(b("Generic"))), c.configChange && d.push({
-type:"ConfigChange"
-}), d = d.concat(a.triggers.imageChangeTriggers), c.imageChange || _.remove(d, function(b) {
-return b === a.triggers.builderImageChangeTrigger;
-}), d;
+}, a.triggers["GitHub" === b ? "githubWebhooks" :"genericWebhooks"].push(c), a.form.$setDirty();
+}, a.updateTriggers = function() {
+var b = [].concat(a.triggers.githubWebhooks, a.triggers.genericWebhooks, a.triggers.imageChangeTriggers, a.triggers.builderImageChangeTrigger, a.triggers.configChangeTrigger);
+return b = _.filter(b, function(a) {
+return a.disabled === !1 || a.present;
+}), b = _.map(b, "data");
 }, a.save = function() {
 switch (a.disableInputs = !0, e("buildStrategy")(a.updatedBuildConfig).forcePull = a.options.forcePull, a.strategyType) {
 case "Docker":
@@ -7626,15 +7630,16 @@ $(this).hide(), $(".reveal-contents", b).show();
 return {
 restrict:"E",
 scope:{
-clipboardText:"="
+clipboardText:"=",
+isDisabled:"=?"
 },
 templateUrl:"views/directives/_copy-to-clipboard.html",
 controller:[ "$scope", function(a) {
-a.id = _.uniqueId("clipboardJs");
+a.id = _.uniqueId("clipboardJs"), a.isDisabled = !!a.isDisabled;
 } ],
 link:function(b, c) {
 if (a) return void (b.hidden = !0);
-var d = $("button", c), e = new Clipboard(d.get(0));
+var d = $("a", c), e = new Clipboard(d.get(0));
 e.on("success", function(a) {
 $(a.trigger).attr("title", "Copied!").tooltip("fixTitle").tooltip("show").attr("title", "Copy to clipboard").tooltip("fixTitle"), a.clearSelection();
 }), e.on("error", function(a) {

@@ -75,11 +75,13 @@ angular.module('openshiftConsole')
     return {
       restrict: 'E',
       scope: {
-        clipboardText: "="
+        clipboardText: "=",
+        isDisabled: "=?"
       },
       templateUrl: 'views/directives/_copy-to-clipboard.html',
       controller: function($scope) {
         $scope.id = _.uniqueId('clipboardJs');
+        $scope.isDisabled = ($scope.isDisabled) ? true : false;
       },
       link: function($scope, element) {
         if (IS_IOS) {
@@ -87,7 +89,7 @@ angular.module('openshiftConsole')
           return;
         }
 
-        var node = $('button', element);
+        var node = $('a', element);
         var clipboard = new Clipboard( node.get(0) );
         clipboard.on('success', function (e) {
           $(e.trigger)

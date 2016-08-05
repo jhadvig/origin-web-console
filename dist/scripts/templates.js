@@ -3804,7 +3804,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"checkbox\">\n" +
     "<label>\n" +
     "<input type=\"checkbox\" ng-model=\"buildConfig.buildOnConfigChange\"/>\n" +
-    "Automatically build a new image when the build configuration changes\n" +
+    "Launch the first build when the build configuration is created\n" +
     "</label>\n" +
     "</div>\n" +
     "<h3>Environment Variables (Build and Runtime) <span class=\"help action-inline\">\n" +
@@ -4279,9 +4279,9 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
   $templateCache.put('views/directives/_copy-to-clipboard.html',
     "<div class=\"input-group copy-to-clipboard\">\n" +
-    "<input id=\"{{id}}\" type=\"text\" class=\"form-control\" value=\"{{clipboardText}}\" readonly select-on-focus>\n" +
+    "<input id=\"{{id}}\" type=\"text\" class=\"form-control\" value=\"{{clipboardText}}\" ng-disabled=\"isDisabled\" ng-readonly=\"!isDisabled\" select-on-focus>\n" +
     "<span class=\"input-group-btn\" ng-hide=\"hidden\">\n" +
-    "<button data-clipboard-target=\"#{{id}}\" data-toggle=\"tooltip\" title=\"Copy to clipboard\" class=\"btn btn-default\"><i class=\"fa fa-clipboard\"/></button>\n" +
+    "<a data-clipboard-target=\"#{{id}}\" ng-disabled=\"isDisabled\" data-toggle=\"tooltip\" title=\"Copy to clipboard\" class=\"btn btn-default\"><i class=\"fa fa-clipboard\"/></a>\n" +
     "</span>\n" +
     "</div>"
   );
@@ -6566,44 +6566,64 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "<div class=\"section\">\n" +
-    "<h3>Triggers</h3>\n" +
+    "<h3>Triggers\n" +
+    "<a href=\"{{'build-triggers' | helpLink}}\" target=\"_blank\"><span class=\"learn-more-inline\">Learn more<i class=\"fa fa-external-link\"></i></span></a>\n" +
+    "</h3>\n" +
     "<dl class=\"dl-horizontal left\">\n" +
     "<div>\n" +
     "<div ng-if=\"sources.git\">\n" +
-    "<div class=\"checkbox\">\n" +
-    "<label>\n" +
-    "<input type=\"checkbox\" ng-model=\"triggers.present.githubWebhook\"/>\n" +
-    "Enable the GitHub webhook build trigger\n" +
+    "<h5>GihHub webhooks\n" +
     "<span class=\"help action-inline\">\n" +
     "<a href>\n" +
     "<i class=\"pficon pficon-help\" data-toggle=\"tooltip\" aria-hidden=\"true\" data-original-title=\"The GitHub source repository must be configured to use the webhook to trigger a build when source is committed.\">\n" +
     "</i>\n" +
     "</a>\n" +
     "</span>\n" +
-    "</label>\n" +
+    "</h5>\n" +
+    "<div ng-repeat=\"trigger in triggers.githubWebhooks\">\n" +
+    "<div class=\"trigger-info\">\n" +
+    "<span class=\"trigger-url\">\n" +
+    "<copy-to-clipboard is-disabled=\"trigger.disabled\" clipboard-text=\"buildConfig.metadata.name | webhookURL : trigger.data.type : trigger.data.github.secret : project.metadata.name\"></copy-to-clipboard>\n" +
+    "</span>\n" +
+    "<span class=\"trigger-actions\">\n" +
+    "<a href=\"\" ng-if=\"!trigger.disabled\" ng-click=\"trigger.disabled = true; form.$setDirty()\">Remove</a>\n" +
+    "<a href=\"\" ng-if=\"trigger.disabled\" ng-click=\"trigger.disabled = false\">Undo</a>\n" +
+    "</span>\n" +
     "</div>\n" +
-    "<div class=\"checkbox\">\n" +
-    "<label>\n" +
-    "<input type=\"checkbox\" ng-model=\"triggers.present.genericWebhook\"/>\n" +
-    "Enable the Generic webhook build trigger\n" +
+    "</div>\n" +
+    "<span class=\"learn-more-inline checkbox\">\n" +
+    "<a href=\"\" ng-click=\"addWebhookTrigger('GitHub')\">Add GitHub webhook</a>\n" +
+    "</span>\n" +
+    "<h5>Generic webhooks\n" +
     "<span class=\"help action-inline\">\n" +
     "<a href>\n" +
     "<i class=\"pficon pficon-help\" data-toggle=\"tooltip\" aria-hidden=\"true\" data-original-title=\"A generic webhook can be triggered by any system capable of making a web request.\">\n" +
     "</i>\n" +
     "</a>\n" +
     "</span>\n" +
-    "</label>\n" +
+    "</h5>\n" +
+    "<div ng-repeat=\"trigger in triggers.genericWebhooks\">\n" +
+    "<div class=\"trigger-info\">\n" +
+    "<span class=\"trigger-url\">\n" +
+    "<copy-to-clipboard is-disabled=\"trigger.disabled\" clipboard-text=\"buildConfig.metadata.name | webhookURL : trigger.data.type : trigger.data.generic.secret : project.metadata.name\"></copy-to-clipboard>\n" +
+    "</span>\n" +
+    "<span class=\"trigger-actions\">\n" +
+    "<a href=\"\" ng-if=\"!trigger.disabled\" ng-click=\"trigger.disabled = true; form.$setDirty()\">Remove</a>\n" +
+    "<a href=\"\" ng-if=\"trigger.disabled\" ng-click=\"trigger.disabled = false\">Undo</a>\n" +
+    "</span>\n" +
     "</div>\n" +
     "</div>\n" +
+    "<span class=\"learn-more-inline checkbox\">\n" +
+    "<a href=\"\" ng-click=\"addWebhookTrigger('Generic')\">Add Generic webhook</a>\n" +
+    "</span>\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "<div ng-if=\"!(updatedBuildConfig | isJenkinsPipelineStrategy)\">\n" +
+    "<h5>Image change</h5>\n" +
     "<div class=\"checkbox\">\n" +
     "<label>\n" +
-    "<input type=\"checkbox\" ng-model=\"triggers.present.configChange\"/>\n" +
-    "Automatically build a new image when the build configuration changes\n" +
-    "</label>\n" +
-    "</div>\n" +
-    "<div ng-if=\"!(updatedBuildConfig | isJenkinsPipelineStrategy)\" class=\"checkbox\">\n" +
-    "<label>\n" +
-    "<input type=\"checkbox\" ng-model=\"triggers.present.imageChange\" ng-disabled=\"builderOptions.pickedType === 'None'\"/>\n" +
+    "<input type=\"checkbox\" ng-model=\"triggers.builderImageChangeTrigger.present\" ng-disabled=\"builderOptions.pickedType === 'None'\"/>\n" +
     "Automatically build a new image when the builder image changes\n" +
     "<span class=\"help action-inline\">\n" +
     "<a href>\n" +
@@ -6612,6 +6632,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</a>\n" +
     "</span>\n" +
     "</label>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</div>\n" +
     "</dl>\n" +
