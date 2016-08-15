@@ -682,20 +682,6 @@ angular.module('openshiftConsole')
       return imageObject;
     };
 
-    $scope.addWebhookTrigger = function(type) {
-      var webhook = {
-        disabled: false,
-        data: {
-          type: type
-        }
-      };
-      webhook.data[(type === "GitHub") ? "github" : "generic"] = {
-        secret: ApplicationGenerator._generateSecret()
-      };
-      $scope.triggers[(type === "GitHub") ? "githubWebhooks" : "genericWebhooks"].push(webhook);
-      $scope.form.$setDirty();
-    }
-
     $scope.updateTriggers = function() {
       var triggers = [].concat($scope.triggers.githubWebhooks, 
                               $scope.triggers.genericWebhooks, 
