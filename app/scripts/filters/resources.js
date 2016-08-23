@@ -331,6 +331,16 @@ angular.module('openshiftConsole')
       return imageName.split(':')[0];
     };
   })
+  .filter('parseImageStreamTag', function() {
+    return function(imageStreamTag) {
+      var parsedImageStreamTag = imageStreamTag.split('/');
+      return {
+        namespace: parsedImageStreamTag[0],
+        imageStream: parsedImageStreamTag.split(':')[0],
+        tag: parsedImageStreamTag.split(':')[1]
+      };
+    };
+  })
   .filter('stripSHA', function() {
     // Strips the trailing `@sha:...` if present from an image name.
     return function(imageName) {
