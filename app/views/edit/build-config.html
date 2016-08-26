@@ -143,15 +143,16 @@
                           </div>
 
                           <div class="form-groups" ng-show="sources.images">
-
                             <div class="single-image-source" ng-if="sourceImages.length === 1">
+
                               <div class="form-group">
-                                <label for="imageSourceFrom">Image Source From</label>
-                                <select
-                                  class="form-control simpleselector"
-                                  ng-model="imageOptions.fromSource.type"
-                                  ng-options="type.id as type.title for type in imageSourceTypes">
-                                </select>
+                                <label>Image Source From</label>
+                                <ui-select required ng-model="imageOptions.fromSource.type" search-enabled="false">
+                                  <ui-select-match>{{$select.selected | startCase}}</ui-select-match>
+                                  <ui-select-choices repeat="type in (imageSourceTypes | filter : $select.search)">
+                                    <div ng-bind-html="type | startCase"></div>
+                                  </ui-select-choices>
+                                </ui-select>
                               </div>
 
                               <div class="form-group" ng-if="imageOptions.fromSource.type==='ImageStreamTag'" >
@@ -283,11 +284,12 @@
                           <div>
                             <div class="form-group">
                               <label for="buildFrom">Build From</label>
-                              <select
-                                class="form-control simpleselector"
-                                ng-model="imageOptions.from.type"
-                                ng-options="type.id as type.title for type in buildFromTypes">
-                              </select>
+                              <ui-select required ng-model="imageOptions.from.type" search-enabled="false">
+                                <ui-select-match>{{$select.selected | startCase}}</ui-select-match>
+                                <ui-select-choices repeat="type in (buildFromTypes | filter : $select.search)">
+                                  <div ng-bind-html="type | startCase"></div>
+                                </ui-select-choices>
+                              </ui-select>
                             </div>
 
 
@@ -338,11 +340,12 @@
                           <div>
                             <div class="form-group">
                               <label for="buildFrom">Push To</label>
-                              <select
-                                class="form-control simpleselector"
-                                ng-model="imageOptions.to.type"
-                                ng-options="type.id as type.title for type in pushToTypes">
-                              </select>
+                              <ui-select required ng-model="imageOptions.to.type" search-enabled="false">
+                                <ui-select-match>{{$select.selected | startCase}}</ui-select-match>
+                                <ui-select-choices repeat="type in (pushToTypes | filter : $select.search)">
+                                  <div ng-bind-html="type | startCase"></div>
+                                </ui-select-choices>
+                              </ui-select>
                             </div>
                             <div class="form-group" ng-if="imageOptions.to.type==='ImageStreamTag'">
                               <istag-select prepopulate="true"
@@ -450,11 +453,14 @@
                           </span>
                         </h3>
                         <div class="form-group">
-                          <select
-                            class="form-control"
-                            ng-model="updatedBuildConfig.spec.runPolicy"
-                            ng-options="type as (type | sentenceCase) for type in runPolicyTypes">
-                          </select>
+                          <label class="sr-only">Run policy type</label>
+                          <ui-select required ng-model="updatedBuildConfig.spec.runPolicy" search-enabled="false">
+                            <ui-select-match>{{$select.selected | sentenceCase}}</ui-select-match>
+                            <ui-select-choices repeat="type in runPolicyTypes">
+                              <div ng-bind-html="type | sentenceCase"></div>
+                            </ui-select-choices>
+                          </ui-select>
+
                         </div>
                         <div ng-switch="updatedBuildConfig.spec.runPolicy">
                           <div ng-switch-when="Serial">Builds triggered from this Build Configuration will run one at the time, in the order they have been triggered.</div>

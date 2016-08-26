@@ -23,34 +23,18 @@ angular.module('openshiftConsole')
       ImageStreamImage: "Image Stream Image",
       DockerImage: "Docker Image Repository"
     };
+
     $scope.buildFromTypes = [
-      {
-        "id": "ImageStreamTag",
-        "title": "Image Stream Tag"
-      },
-      {
-        "id": "ImageStreamImage",
-        "title": "Image Stream Image"
-      },
-      {
-        "id": "DockerImage",
-        "title": "Docker Image Repository"
-      }
+      "ImageStreamTag",
+      "ImageStreamImage",
+      "DockerImage"
     ];
     $scope.pushToTypes = [
-      {
-        "id": "ImageStreamTag",
-        "title": "Image Stream Tag"
-      },
-      {
-        "id": "DockerImage",
-        "title": "Docker Image Repository"
-      },
-      {
-        "id": "None",
-        "title": "--- None ---"
-      }
+      "ImageStreamTag",
+      "DockerImage",
+      "None"
     ];
+
     $scope.jenkinsfileTypes = [{
       "id": "path",
       "title": "From Source Repository"
@@ -96,16 +80,6 @@ angular.module('openshiftConsole')
       fromSource: {}
     }
 
-    $scope.buildFrom = {
-      projects: [],
-      imageStreams: [],
-      tags: {},
-    };
-    $scope.pushTo = {
-      projects: [],
-      imageStreams: [],
-      tags: {},
-    };
     $scope.sources = {
       "binary": false,
       "dockerfile": false,
@@ -166,9 +140,9 @@ angular.module('openshiftConsole')
 
             var setPickedVariables = function(imageOptions, imageData) {
               imageOptions.type = (imageData && imageData.kind) ? imageData.kind : "None";
-              var ist = {};
-              var isi = "";
-              var di = "";
+              var ist = {},
+                  isi = "",
+                  di = "";
 
               if (imageOptions.type === "ImageStreamTag") {
                 ist = {namespace: imageData.namespace || buildConfig.metadata.namespace, imageStream: imageData.name.split(':')[0], tag: {tag: imageData.name.split(':')[1]}};
@@ -219,7 +193,7 @@ angular.module('openshiftConsole')
             if ($scope.strategyType === "Docker") {
               $scope.options.noCache = !!$scope.buildConfig.spec.strategy.dockerStrategy.noCache;
               // Only DockerStrategy can have empty Strategy object and therefore it's from object
-              $scope.buildFromTypes.push({"id": "None", "title": "--- None ---"});
+              $scope.buildFromTypes.push("None");
             }
 
             // If we found the item successfully, watch for changes on it
