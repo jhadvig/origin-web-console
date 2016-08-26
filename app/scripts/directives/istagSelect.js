@@ -9,8 +9,12 @@ angular.module("openshiftConsole")
    *     {
    *       namespace: "",
    *       imageStream: "",
-   *       tag: ""
+   *       tagObject: {
+   *          tag: "",
+   *          items: []
+   *        }
    *     }
+   *   The tagObject.items array is only present in images that exist and are not pre-populated
    *
    * selectDisabled:
    *   An expression that will disable the form (default: false)
@@ -43,7 +47,7 @@ angular.module("openshiftConsole")
               status: {tags: []}
             };
             // Tag is missing
-            $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags.push({tag: $scope.istag.tag.tag});
+            $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags.push({tag: $scope.istag.tagObject.tag});
           } else {
             DataService.list('imagestreams', { namespace: ns }, function(isData) {
               $scope.isByNamespace[ns] = isData.by('metadata.name');
@@ -58,8 +62,8 @@ angular.module("openshiftConsole")
                 $scope.isByNamespace[ns][$scope.istag.imageStream].status = { tags: []};
               }
               // Tag is missing
-              if (!_.find( $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags, {tag: $scope.istag.tag.tag})) {
-                $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags.push({tag: $scope.istag.tag.tag});
+              if (!_.find( $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags, {tag: $scope.istag.tagObject.tag})) {
+                $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags.push({tag: $scope.istag.tagObject.tag});
               }
             });
           }

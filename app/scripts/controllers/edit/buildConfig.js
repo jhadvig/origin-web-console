@@ -145,9 +145,9 @@ angular.module('openshiftConsole')
                   di = "";
 
               if (imageOptions.type === "ImageStreamTag") {
-                ist = {namespace: imageData.namespace || buildConfig.metadata.namespace, imageStream: imageData.name.split(':')[0], tag: {tag: imageData.name.split(':')[1]}};
+                ist = {namespace: imageData.namespace || buildConfig.metadata.namespace, imageStream: imageData.name.split(':')[0], tagObject: {tag: imageData.name.split(':')[1]}};
               } else {
-                ist = {namespace: "", imageStream: "", tag: {tag: ""}};
+                ist = {namespace: "", imageStream: "", tagObject: {tag: ""}};
               }
 
               if (imageOptions.type === "ImageStreamImage") {
@@ -309,7 +309,7 @@ angular.module('openshiftConsole')
       if (optionsModel.type === "ImageStreamTag") {
         imageObject = {
           kind: optionsModel.type,
-          name: optionsModel.imageStreamTag.imageStream + ":" + optionsModel.imageStreamTag.tag.tag
+          name: optionsModel.imageStreamTag.imageStream + ":" + optionsModel.imageStreamTag.tagObject.tag
         };
         if (optionsModel.imageStreamTag.namespace !== $scope.buildConfig.metadata.namespace) {
           imageObject.namespace = optionsModel.imageStreamTag.namespace;
