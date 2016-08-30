@@ -139,27 +139,27 @@ angular.module('openshiftConsole')
 
             var setImageOptions = function(imageOptions, imageData) {
               imageOptions.type = (imageData && imageData.kind) ? imageData.kind : "None";
-              var ist = {},
-                  isi = "",
-                  di = "";
+              var istag = {},
+                  isimage = "",
+                  dockerImage = "";
 
               if (imageOptions.type === "ImageStreamTag") {
-                ist = {namespace: imageData.namespace || buildConfig.metadata.namespace, imageStream: imageData.name.split(':')[0], tagObject: {tag: imageData.name.split(':')[1]}};
+                istag = {namespace: imageData.namespace || buildConfig.metadata.namespace, imageStream: imageData.name.split(':')[0], tagObject: {tag: imageData.name.split(':')[1]}};
               } else {
-                ist = {namespace: "", imageStream: "", tagObject: {tag: ""}};
+                istag = {namespace: "", imageStream: "", tagObject: {tag: ""}};
               }
 
               if (imageOptions.type === "ImageStreamImage") {
-                isi = (imageData.namespace) ? imageData.namespace + "/" + imageData.name : buildConfig.metadata.namespace + "/" + imageData.name;                
+                isimage = (imageData.namespace || buildConfig.metadata.namespace) + "/" + imageData.name;               
               } else {
-                isi = "";
+                isimage = "";
               }
 
-              di = imageOptions.type === "DockerImage" ? imageData.name : "";
+              dockerImage = imageOptions.type === "DockerImage" ? imageData.name : "";
 
-              imageOptions.imageStreamTag = ist;
-              imageOptions.imageStreamImage = isi;
-              imageOptions.dockerImage = di;
+              imageOptions.imageStreamTag = istag;
+              imageOptions.imageStreamImage = isimage;
+              imageOptions.dockerImage = dockerImage;
             };
 
             setImageOptions($scope.imageOptions.from, $scope.buildStrategy.from);
@@ -305,7 +305,8 @@ angular.module('openshiftConsole')
 
     var constructImageObject = function(optionsModel) {
       var imageObject = {};
-      if (optionsModel.type === "ImageStreamTag") {
+      switch (optionsModel.type) {
+      case 'ImageStreamTag':
         imageObject = {
           kind: optionsModel.type,
           name: optionsModel.imageStreamTag.imageStream + ":" + optionsModel.imageStreamTag.tagObject.tag
@@ -313,18 +314,21 @@ angular.module('openshiftConsole')
         if (optionsModel.imageStreamTag.namespace !== $scope.buildConfig.metadata.namespace) {
           imageObject.namespace = optionsModel.imageStreamTag.namespace;
         }
-      } else if (optionsModel.type === "DockerImage") {
+        break;
+      case 'DockerImage':
         imageObject = {
           kind: optionsModel.type,
           name: optionsModel.dockerImage
         };
-      } else if(optionsModel.type === "ImageStreamImage") {
+        break;
+      case 'ImageStreamImage':
         var namespaceAndName = optionsModel.imageStreamImage.split("/");
         imageObject = {
           kind: optionsModel.type,
           name: _.last(namespaceAndName)
         };
-        imageObject.namespace = (namespaceAndName.length !== 1) ? namespaceAndName[0] : $scope.buildConfig.metadata.namespace; 
+        imageObject.namespace = (namespaceAndName.length !== 1) ? namespaceAndName[0] : $scope.buildConfig.metadata.namespace;
+        break;
       }
       return imageObject;
     };

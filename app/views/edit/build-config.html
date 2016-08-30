@@ -149,14 +149,14 @@
                                 <label>Image Source From</label>
                                 <ui-select required ng-model="imageOptions.fromSource.type" search-enabled="false">
                                   <ui-select-match>{{$select.selected | startCase}}</ui-select-match>
-                                  <ui-select-choices repeat="type in (imageSourceTypes | filter : $select.search)">
-                                    <div ng-bind-html="type | startCase"></div>
+                                  <ui-select-choices repeat="type in imageSourceTypes">
+                                    {{type | startCase}}
                                   </ui-select-choices>
                                 </ui-select>
                               </div>
 
                               <div class="form-group" ng-if="imageOptions.fromSource.type==='ImageStreamTag'" >
-                                <istag-select include-openshift="true"
+                                <istag-select include-shared-namespace="true"
                                               model="imageOptions.fromSource.imageStreamTag"></istag-select>
                               </div>
 
@@ -285,15 +285,15 @@
                               <label for="buildFrom">Build From</label>
                               <ui-select required ng-model="imageOptions.from.type" search-enabled="false">
                                 <ui-select-match>{{$select.selected | startCase}}</ui-select-match>
-                                <ui-select-choices repeat="type in (buildFromTypes | filter : $select.search)">
-                                  <div ng-bind-html="type | startCase"></div>
+                                <ui-select-choices repeat="type in buildFromTypes">
+                                  {{type | startCase}}
                                 </ui-select-choices>
                               </ui-select>
                             </div>
 
 
                             <div class="form-group" ng-if="imageOptions.from.type==='ImageStreamTag'">
-                              <istag-select include-openshift="true"
+                              <istag-select include-shared-namespace="true"
                                             model="imageOptions.from.imageStreamTag"></istag-select>
                             </div>
 
@@ -340,14 +340,14 @@
                               <label for="buildFrom">Push To</label>
                               <ui-select required ng-model="imageOptions.to.type" search-enabled="false">
                                 <ui-select-match>{{$select.selected | startCase}}</ui-select-match>
-                                <ui-select-choices repeat="type in (pushToTypes | filter : $select.search)">
-                                  <div ng-bind-html="type | startCase"></div>
+                                <ui-select-choices repeat="type in pushToTypes">
+                                  {{type | startCase}}
                                 </ui-select-choices>
                               </ui-select>
                             </div>
                             <div class="form-group" ng-if="imageOptions.to.type==='ImageStreamTag'">
                               <istag-select model="imageOptions.to.imageStreamTag"
-                                            custom-tag-value="true"></istag-select>
+                                            allow-custom-tag="true"></istag-select>
                             </div>
 
                             <div ng-if="imageOptions.to.type==='DockerImage'" class="form-group">
@@ -454,7 +454,7 @@
                           <ui-select required ng-model="updatedBuildConfig.spec.runPolicy" search-enabled="false">
                             <ui-select-match>{{$select.selected | sentenceCase}}</ui-select-match>
                             <ui-select-choices repeat="type in runPolicyTypes">
-                              <div ng-bind-html="type | sentenceCase"></div>
+                              {{type | sentenceCase}}
                             </ui-select-choices>
                           </ui-select>
 
