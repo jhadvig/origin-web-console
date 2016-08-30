@@ -102,7 +102,6 @@ angular.module('openshiftConsole')
       "Parallel",
       "SerialLatestOnly"
     ];
-    $scope.availableProjects = [];
 
     AlertMessageService.getAlerts().forEach(function(alert) {
       $scope.alerts[alert.name] = alert.data;
@@ -138,7 +137,7 @@ angular.module('openshiftConsole')
               $scope.jenkinsfileOptions.type = 'inline';
             }
 
-            var setPickedVariables = function(imageOptions, imageData) {
+            var setImageOptions = function(imageOptions, imageData) {
               imageOptions.type = (imageData && imageData.kind) ? imageData.kind : "None";
               var ist = {},
                   isi = "",
@@ -163,15 +162,15 @@ angular.module('openshiftConsole')
               imageOptions.dockerImage = di;
             };
 
-            setPickedVariables($scope.imageOptions.from, $scope.buildStrategy.from);
-            setPickedVariables($scope.imageOptions.to, $scope.updatedBuildConfig.spec.output.to);
+            setImageOptions($scope.imageOptions.from, $scope.buildStrategy.from);
+            setImageOptions($scope.imageOptions.to, $scope.updatedBuildConfig.spec.output.to);
 
             if ($scope.sources.images) {
               $scope.sourceImages = $scope.buildConfig.spec.source.images;
               // If only one Image Source is present in the buildConfig make it editable, if more then one show them as readonly.
               if ($scope.sourceImages.length === 1) {
                 $scope.imageSourceTypes = angular.copy($scope.buildFromTypes);
-                setPickedVariables($scope.imageOptions.fromSource, $scope.sourceImages[0].from);
+                setImageOptions($scope.imageOptions.fromSource, $scope.sourceImages[0].from);
                 $scope.imageSourcePaths = _.map($scope.sourceImages[0].paths, function(path) {
                   return {
                     name: path.sourcePath,
@@ -236,7 +235,7 @@ angular.module('openshiftConsole')
         var builderRef = $filter('imageObjectRef')(buildConfigFrom, $scope.projectName);
         return imageChangeRef === builderRef;
       }
-      var buildConfigFrom = $filter('buildStrategy')($scope.buildConfig).from;
+      var buildConfigFrom = buildStrategy($scope.buildConfig).from;
 
       triggers.forEach(function(trigger) {
         switch (trigger.type) {
@@ -345,14 +344,25 @@ angular.module('openshiftConsole')
       return triggers;
     };
 
+    var getSourceMap = function(sourceMap, sources) {
+      if (sources.type === "None") {
+        return sourceMap;
+      }
+      sourceMap.none = false;
+      angular.forEach(sources, function(value, key) {
+        sourceMap[key] = true;
+      });
+      return sourceMap;
+    };
+
     $scope.save = function() {
       $scope.disableInputs = true;
       // Update Configuration
-      $filter('buildStrategy')($scope.updatedBuildConfig).forcePull = $scope.options.forcePull;
+      buildStrategy($scope.updatedBuildConfig).forcePull = $scope.options.forcePull;
 
       switch ($scope.strategyType) {
       case 'Docker':
-        $filter('buildStrategy')($scope.updatedBuildConfig).noCache = $scope.options.noCache;
+        buildStrategy($scope.updatedBuildConfig).noCache = $scope.options.noCache;
         break;
       case 'JenkinsPipeline':
         if ($scope.jenkinsfileOptions.type === 'path') {
@@ -374,9 +384,9 @@ angular.module('openshiftConsole')
 
       // Construct updated builder image object based on it's kind
       if ($scope.imageOptions.from.type === "None") {
-        delete $filter('buildStrategy')($scope.updatedBuildConfig).from;
+        delete buildStrategy($scope.updatedBuildConfig).from;
       } else {
-        $filter('buildStrategy')($scope.updatedBuildConfig).from = constructImageObject($scope.imageOptions.from);
+        buildStrategy($scope.updatedBuildConfig).from = constructImageObject($scope.imageOptions.from);
       }
 
       // Construct updated output image object based on it's kind. Only Image Stream Tag, Docker Image and None can
@@ -390,7 +400,7 @@ angular.module('openshiftConsole')
       }
 
       // Update envVars
-      $filter('buildStrategy')($scope.updatedBuildConfig).env = keyValueEditorUtils.compactEntries($scope.envVars);
+      buildStrategy($scope.updatedBuildConfig).env = keyValueEditorUtils.compactEntries($scope.envVars);
 
       // Update triggers
       $scope.updatedBuildConfig.spec.triggers = updateTriggers();
@@ -419,16 +429,4 @@ angular.module('openshiftConsole')
         }
       );
     };
-
-    var getSourceMap = function(sourceMap, sources) {
-      if (sources.type === "None") {
-        return sourceMap;
-      }
-      sourceMap.none = false;
-      angular.forEach(sources, function(value, key) {
-        sourceMap[key] = true;
-      });
-      return sourceMap;
-    };
-
   });

@@ -26,7 +26,6 @@ angular.module("openshiftConsole")
       scope: {
         istag: '=model',
         selectDisabled: '=',
-        prepopulate: '=',
         includeOpenshift: '=',
         customTagValue: '='
       },
@@ -35,19 +34,17 @@ angular.module("openshiftConsole")
         $scope.isByNamespace = {};
         $scope.isNamesByNamespace = {};
 
+        // Check if the istag object contains data about namespace/imageStream/tag so the ui-select will be pre-populated with them
+        $scope.prepopulate = ($scope.istag.namespace && $scope.istag.imageStream && $scope.istag.tagObject.tag) ? true : false ;
+
         var prepopulate = function(ns) {
           $scope.isByNamespace[ns] = {};
           $scope.isNamesByNamespace[ns] = [];
 
           if (!_.contains($scope.namespaces, ns)) {
             $scope.namespaces.push(ns);
-            //  Image stream is missing
             $scope.isNamesByNamespace[ns] = $scope.isNamesByNamespace[ns].concat($scope.istag.imageStream);
-             $scope.isByNamespace[ns][$scope.istag.imageStream] = {
-              status: {tags: []}
-            };
-            // Tag is missing
-            $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags.push({tag: $scope.istag.tagObject.tag});
+            $scope.isByNamespace[ns][$scope.istag.imageStream] = {status: {tags: [{tag: $scope.istag.tagObject.tag}]}};
           } else {
             DataService.list('imagestreams', { namespace: ns }, function(isData) {
               $scope.isByNamespace[ns] = isData.by('metadata.name');
@@ -59,7 +56,7 @@ angular.module("openshiftConsole")
                 $scope.isByNamespace[ns][$scope.istag.imageStream] = {status: {}};
               }
               if (!$scope.isByNamespace[ns][$scope.istag.imageStream].status.tags) {
-                $scope.isByNamespace[ns][$scope.istag.imageStream].status = { tags: []};
+                $scope.isByNamespace[ns][$scope.istag.imageStream].status = {tags: []};
               }
               // Tag is missing
               if (!_.find( $scope.isByNamespace[ns][$scope.istag.imageStream].status.tags, {tag: $scope.istag.tagObject.tag})) {
@@ -118,10 +115,10 @@ angular.module("openshiftConsole")
                 return 'AVAILABLE TAGS';
                 } else {
                   return 'NEW TAG';
-                };
+                }
               } else {
                 return '';
-              };
+              }
             };
 
           });

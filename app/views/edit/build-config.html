@@ -156,8 +156,7 @@
                               </div>
 
                               <div class="form-group" ng-if="imageOptions.fromSource.type==='ImageStreamTag'" >
-                                <istag-select prepopulate="true"
-                                              include-openshift="true"
+                                <istag-select include-openshift="true"
                                               model="imageOptions.fromSource.imageStreamTag"></istag-select>
                               </div>
 
@@ -294,8 +293,7 @@
 
 
                             <div class="form-group" ng-if="imageOptions.from.type==='ImageStreamTag'">
-                              <istag-select prepopulate="true"
-                                            include-openshift="true"
+                              <istag-select include-openshift="true"
                                             model="imageOptions.from.imageStreamTag"></istag-select>
                             </div>
 
@@ -348,8 +346,7 @@
                               </ui-select>
                             </div>
                             <div class="form-group" ng-if="imageOptions.to.type==='ImageStreamTag'">
-                              <istag-select prepopulate="true"
-                                            model="imageOptions.to.imageStreamTag"
+                              <istag-select model="imageOptions.to.imageStreamTag"
                                             custom-tag-value="true"></istag-select>
                             </div>
 
