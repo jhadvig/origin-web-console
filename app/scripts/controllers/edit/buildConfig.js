@@ -7,7 +7,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('EditBuildConfigController', function ($scope, $routeParams, DataService, ProjectsService, $filter, ApplicationGenerator, Navigate, $location, AlertMessageService, SOURCE_URL_PATTERN, keyValueEditorUtils) {
+  .controller('EditBuildConfigController', function ($scope, $routeParams, DataService, SecretsService, ProjectsService, $filter, ApplicationGenerator, Navigate, $location, AlertMessageService, SOURCE_URL_PATTERN, keyValueEditorUtils) {
 
     $scope.projectName = $routeParams.project;
     $scope.buildConfig = null;
@@ -103,12 +103,13 @@ angular.module('openshiftConsole')
       "SerialLatestOnly"
     ];
 
+
     AlertMessageService.getAlerts().forEach(function(alert) {
       $scope.alerts[alert.name] = alert.data;
     });
     AlertMessageService.clearAlerts();
+    $scope.secrets = {};
     var watches = [];
-
     var buildStrategy = $filter('buildStrategy');
 
     ProjectsService
@@ -136,6 +137,11 @@ angular.module('openshiftConsole')
             if (_.has(buildConfig, 'spec.strategy.jenkinsPipelineStrategy.jenkinsfile')) {
               $scope.jenkinsfileOptions.type = 'inline';
             }
+
+            SecretsService.loadSecrets($scope.projectName, $scope).then(function(secretsByType) {
+              $scope.secrets.secretsByType = secretsByType
+              loadBuildConfigSecrets();
+            });
 
             var setImageOptions = function(imageOptions, imageData) {
               imageOptions.type = (imageData && imageData.kind) ? imageData.kind : "None";
@@ -228,7 +234,6 @@ angular.module('openshiftConsole')
     );
 
     var getTriggerMap = function(triggerMap, triggers) {
-
       // Even if `from` is set in the image change trigger check if its not pointing to the builder image
       function isBuilder(imageChangeFrom, buildConfigFrom) {
         var imageChangeRef = $filter('imageObjectRef')(imageChangeFrom, $scope.projectName);
@@ -348,6 +353,36 @@ angular.module('openshiftConsole')
       return triggers;
     };
 
+    var loadBuildConfigSecrets = function() {
+      $scope.secrets.picked = {
+        gitSecret: $scope.buildConfig.spec.source.sourceSecret || {name: ""},
+        pullSecret: buildStrategy($scope.buildConfig).pullSecret || {name: ""},
+        pushSecret: $scope.buildConfig.spec.output.pushSecret || {name: ""},
+      }
+
+      if ($scope.strategyType === "Source" || $scope.strategyType === "Docker") {
+        $scope.secrets.picked.sourceSecrets = $scope.buildConfig.spec.source.secrets || [{secret: { name: ""}, destinationDir: ""}];
+      } else if ($scope.strategyType === "Custom") {
+        $scope.secrets.picked.sourceSecrets = buildStrategy($scope.buildConfig).secrets || [{secretSource: { name: ""}, mountPath: ""}];
+      }
+    }
+
+    var updateSecrets = function(object, pickedSecret, secretFieldName) {
+      if (!_.isEmpty(pickedSecret.name)) {
+        object[secretFieldName] = pickedSecret;
+      } else {
+        delete object[secretFieldName];
+      }
+    }
+
+    var updateSourceSecrets = function(object, pickedSecrets) {
+      if (!_.isEmpty(pickedSecrets[0][$scope.strategyType === "secretSource" ? "mountPath" : "secret"].name)) {
+        object.secrets = pickedSecrets;
+      } else {
+        delete object.secrets;
+      }
+    }
+
     var getSourceMap = function(sourceMap, sources) {
       if (sources.type === "None") {
         return sourceMap;
@@ -402,13 +437,23 @@ angular.module('openshiftConsole')
       } else {
         $scope.updatedBuildConfig.spec.output.to = constructImageObject($scope.imageOptions.to);
       }
-
       // Update envVars
       buildStrategy($scope.updatedBuildConfig).env = keyValueEditorUtils.compactEntries($scope.envVars);
 
+      // Update secrets
+      updateSecrets($scope.updatedBuildConfig.spec.source, $scope.secrets.picked.gitSecret, "sourceSecret");
+      updateSecrets(buildStrategy($scope.updatedBuildConfig), $scope.secrets.picked.pullSecret, "pullSecret");
+      updateSecrets($scope.updatedBuildConfig.spec.output, $scope.secrets.picked.pushSecret, "pushSecret");
+      
+      
+      if ($scope.strategyType === "Source" || $scope.strategyType === "Docker") {
+        updateSourceSecrets($scope.updatedBuildConfig.spec.source, $scope.secrets.picked.sourceSecrets);
+      } else if ($scope.strategyType === "Custom") {
+        updateSourceSecrets(buildStrategy($scope.updatedBuildConfig), $scope.secrets.picked.sourceSecrets);
+      }
+
       // Update triggers
       $scope.updatedBuildConfig.spec.triggers = updateTriggers();
-
       DataService.update("buildconfigs", $scope.updatedBuildConfig.metadata.name, $scope.updatedBuildConfig, {
         namespace: $scope.updatedBuildConfig.metadata.namespace
       }).then(
