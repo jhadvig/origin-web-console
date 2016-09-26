@@ -360,10 +360,14 @@ angular.module('openshiftConsole')
         pushSecret: $scope.buildConfig.spec.output.pushSecret || {name: ""},
       }
 
-      if ($scope.strategyType === "Source" || $scope.strategyType === "Docker") {
+      switch ($scope.strategyType) {
+      case "Source":
+      case "Docker":
         $scope.secrets.picked.sourceSecrets = $scope.buildConfig.spec.source.secrets || [{secret: { name: ""}, destinationDir: ""}];
-      } else if ($scope.strategyType === "Custom") {
+        break;
+      case "Custom":
         $scope.secrets.picked.sourceSecrets = buildStrategy($scope.buildConfig).secrets || [{secretSource: { name: ""}, mountPath: ""}];
+        break;
       }
     }
 
@@ -376,7 +380,9 @@ angular.module('openshiftConsole')
     }
 
     var updateSourceSecrets = function(object, pickedSecrets) {
-      if (!_.isEmpty(pickedSecrets[0][$scope.strategyType === "secretSource" ? "mountPath" : "secret"].name)) {
+      var lastPickedSecret = _.head(pickedSecrets);
+      var property = $scope.strategyType === "Custom" ? "mountPath" : "destinationDir";
+      if (lastPickedSecret[property]) {
         object.secrets = pickedSecrets;
       } else {
         delete object.secrets;
@@ -445,11 +451,15 @@ angular.module('openshiftConsole')
       updateSecrets(buildStrategy($scope.updatedBuildConfig), $scope.secrets.picked.pullSecret, "pullSecret");
       updateSecrets($scope.updatedBuildConfig.spec.output, $scope.secrets.picked.pushSecret, "pushSecret");
       
-      
-      if ($scope.strategyType === "Source" || $scope.strategyType === "Docker") {
+
+      switch ($scope.strategyType) {
+      case "Source":
+      case "Docker":
         updateSourceSecrets($scope.updatedBuildConfig.spec.source, $scope.secrets.picked.sourceSecrets);
-      } else if ($scope.strategyType === "Custom") {
+        break;
+      case "Custom":
         updateSourceSecrets(buildStrategy($scope.updatedBuildConfig), $scope.secrets.picked.sourceSecrets);
+        break;
       }
 
       // Update triggers

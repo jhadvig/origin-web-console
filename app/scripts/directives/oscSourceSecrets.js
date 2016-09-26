@@ -13,7 +13,7 @@ angular.module("openshiftConsole")
         displayType: "@",
         namespace: "=",
         alerts: '=',
-        serviceAccountToLink: '@'
+        serviceAccountToLink: '@?'
       },
       templateUrl: 'views/directives/osc-source-secrets.html',
       controller: function($scope) {

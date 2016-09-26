@@ -5,22 +5,29 @@ angular.module("openshiftConsole")
   .directive("createSecret", function() {
     return {
       restrict: 'E',
-      scope: false,
+      scope: {
+        type: '=',
+        serviceAccountToLink: '=',
+        namespace: '=',
+        alerts: '=',
+        postCreateAction: '&',
+        cancel: '&'
+      },
       templateUrl: 'views/directives/create-secret.html',
       controller: function($scope, $filter, DataService, SecretsService) {
 
         $scope.secretAuthTypeMap = {
           image: {
-            name: "Image Pull/Push Secret",
+            label: "Image Secret",
             authTypes: ["Docker Registry Credentials","Docker Config"]
           },
           source: {
-            name: "Source Secret",
+            label: "Source Secret",
             authTypes: ["Basic Authentication", "SSH Key"]
           }
         };
 
-        $scope.secretTypes = _.map($scope.secretAuthTypeMap, 'name');
+        $scope.secretTypes = _.map($scope.secretAuthTypeMap, 'label');
 
         // newSecret format:
         //   - type:                       image || source
