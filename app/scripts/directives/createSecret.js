@@ -19,16 +19,33 @@ angular.module("openshiftConsole")
         $scope.secretAuthTypeMap = {
           image: {
             label: "Image Secret",
-            authTypes: ["Docker Registry Credentials","Docker Config"]
+            authTypes: [
+              {
+                id: "kubernetes.io/dockercfg",
+                label: "Docker Registry Credentials"
+              },
+              {
+                id: "kubernetes.io/dockerconfigjson",
+                label: "Docker Config"
+              }
+            ]
           },
           source: {
             label: "Source Secret",
-            authTypes: ["Basic Authentication", "SSH Key"]
+            authTypes: [
+              {
+                id: "kubernetes.io/basic-auth",
+                label: "Basic Authentication"
+              },
+              {
+                id: "kubernetes.io/ssh-auth",
+                label: "SSH Key"
+              }
+            ]
           }
         };
 
-        $scope.secretTypes = _.map($scope.secretAuthTypeMap, 'label');
-
+        $scope.secretTypes = _.keys($scope.secretAuthTypeMap);
         // newSecret format:
         //   - type:                       image || source
         //   - authType:                   image  = ["Credentials","Docker Config"]
@@ -43,7 +60,7 @@ angular.module("openshiftConsole")
         //                                  - as a 'imagePullSecret'
         $scope.newSecret = {
           type: $scope.type,
-          authType: $scope.secretAuthTypeMap[$scope.type].authTypes[0],
+          authType: $scope.secretAuthTypeMap[$scope.type].authTypes[0].id,
           data: {},
           pickedServiceAccountToLink: $scope.serviceAccountToLink || "",
           linkAs: {
@@ -64,39 +81,43 @@ angular.module("openshiftConsole")
           };
         });
 
-        function constructSecretDataAndType(data, authType) {
-          var secretType = "";
-          var secretData = {};
+        var constructSecret = function(data, authType) {
+          var secret = {
+            apiVersion: "v1",
+            kind: "Secret",
+            metadata: {
+              name: $scope.newSecret.data.secretName
+            },
+            type: authType,
+            data: {}
+          };
+
           switch (authType) {
-            case "Basic Authentication":
-              secretType = "kubernetes.io/basic-auth";
-              secretData = {password: window.btoa(data.password)};
+            case "kubernetes.io/basic-auth":
+              secret.data = {password: window.btoa(data.password)};
               if (data.username) {
-                secretData.username = window.btoa(data.username);
+                secret.data.username = window.btoa(data.username);
               }
               if (data.gitconfig) {
-                secretData[".gitconfig"] = window.btoa(data.gitconfig);
+                secret.data[".gitconfig"] = window.btoa(data.gitconfig);
               }
               break;
-            case "SSH Key":
-              secretType = "kubernetes.io/ssh-auth";
-              secretData = {'ssh-privatekey': window.btoa(data.privateKey)};
+            case "kubernetes.io/ssh-auth":
+              secret.data = {'ssh-privatekey': window.btoa(data.privateKey)};
               if (data.gitconfig) {
-                secretData[".gitconfig"] = window.btoa(data.gitconfig);
+                secret.data[".gitconfig"] = window.btoa(data.gitconfig);
               }
               break;
-            case "Docker Config":
+            case "kubernetes.io/dockerconfigjson":
               var encodedConfig = window.btoa(data.dockerConfig);
-              if (data.dockerConfig.auths) {
-                secretType = "kubernetes.io/dockerconfigjson";
-                secretData[".dockerconfigjson"] = encodedConfig;
+              if (JSON.parse(data.dockerConfig).auths) {
+                secret.data[".dockerconfigjson"] = encodedConfig;
               } else {
-                secretType = "kubernetes.io/dockercfg";
-                secretData[".dockercfg"] = encodedConfig;
+                secret.type = "kubernetes.io/dockercfg";
+                secret.data[".dockercfg"] = encodedConfig;
               }
               break;
-            case "Docker Registry Credentials":
-              secretType = "kubernetes.io/dockercfg";
+            case "kubernetes.io/dockercfg":
               var auth = window.btoa(data.dockerUsername + ":" + data.dockerPassword);
               var configData = {};
               configData[data.dockerServer] = {
@@ -105,43 +126,39 @@ angular.module("openshiftConsole")
                 email: data.dockerMail,
                 auth: auth
               };
-              secretData[".dockercfg"] = window.btoa(JSON.stringify(configData));
+              secret.data[".dockercfg"] = window.btoa(JSON.stringify(configData));
               break;
           }
-          return {data: secretData, type: secretType};
-        }
+          return secret;
+        };
+
+        var linkSecretToServiceAccount = function(secret) {
+          var updatedSA = angular.copy($scope.serviceAccounts[$scope.newSecret.pickedServiceAccountToLink]);
+          if ($scope.newSecret.linkAs.secrets) {
+            updatedSA.secrets.push({name: secret.metadata.name});
+          }
+          if ($scope.newSecret.linkAs.imagePullSecrets) {
+            updatedSA.imagePullSecrets.push({name: secret.metadata.name});
+          }
+          DataService.update('serviceaccounts', $scope.newSecret.pickedServiceAccountToLink, updatedSA, $scope).then(function(sa) {
+            $scope.alerts["createAndLink"] = {
+              type: "success",
+              message: "Secret " + secret.metadata.name + " was created and linked with service account " + sa.metadata.name + "."
+            };
+          }, function(result){
+            $scope.alerts["createAndLink"] = {
+              type: "error",
+              message: "An error occurred while linking the secret with service account.",
+              details: $filter('getErrorDetails')(result)
+            };
+          });
+        };
 
         $scope.create = function() {
-          var secretDataAndType = constructSecretDataAndType($scope.newSecret.data, $scope.newSecret.authType);
-          DataService.create('secrets', null, {
-            apiVersion: "v1",
-            kind: "Secret",
-            type: secretDataAndType.type,
-            metadata: {
-              name: $scope.newSecret.data.secretName
-            },
-            data: secretDataAndType.data
-          }, $scope).then(function(secret) { // Success
+          var newSecret = constructSecret($scope.newSecret.data, $scope.newSecret.authType);
+          DataService.create('secrets', null, newSecret, $scope).then(function(secret) { // Success
             if ($scope.newSecret.pickedServiceAccountToLink) {
-              var updatedSA = angular.copy($scope.serviceAccounts[$scope.newSecret.pickedServiceAccountToLink]);
-              if ($scope.newSecret.linkAs.secrets) {
-                updatedSA.secrets.push({name: secret.metadata.name});
-              }
-              if ($scope.newSecret.linkAs.imagePullSecrets) {
-                updatedSA.imagePullSecrets.push({name: secret.metadata.name});
-              }
-              DataService.update('serviceaccounts', $scope.newSecret.pickedServiceAccountToLink, updatedSA, $scope).then(function(sa) {
-                $scope.alerts["createAndLink"] = {
-                  type: "success",
-                  message: "Secret " + secret.metadata.name + " was created and linked with service account " + sa.metadata.name + "."
-                };
-              }, function(result){
-                $scope.alerts["createAndLink"] = {
-                  type: "error",
-                  message: "An error occurred while linking the secret with service account.",
-                  details: $filter('getErrorDetails')(result)
-                };
-              });
+              linkSecretToServiceAccount(secret);
             } else {
               $scope.alerts["create"] = {
                 type: "success",
