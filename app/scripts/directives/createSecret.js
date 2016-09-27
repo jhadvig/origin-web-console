@@ -167,15 +167,9 @@ angular.module("openshiftConsole")
             }
             $scope.postCreateAction({newSecret: secret});
           }, function(result) { // Failure
-            var alert = {
-              type: "error",
-              message: "An error occurred creating the secret.",
-              details: $filter('getErrorDetails')(result)
-            };
-            if ($scope.modalAlerts) {
-               $scope.modalAlerts["create"] = alert;
-             } else {
-              $scope.alerts["create"] = alert;
+            var data = result.data || {};
+            if (data.reason === 'AlreadyExists') {
+              $scope.nameTaken = true;
             }
           });
         };
