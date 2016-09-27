@@ -26,12 +26,10 @@ angular.module("openshiftConsole")
             scope: $scope
           });
 
-          modalInstance.result.then(function() {
+          modalInstance.result.then(function(newSecret) {
             SecretsService.loadSecrets($scope.namespace, $scope.alerts).then(function(secretsByType) {
-              var newestSecret = SecretsService.getNewestSecretName();
-              // Ensure that the newly created secret is added
-              $scope.secretsByType[$scope.type] = _.uniq(secretsByType[$scope.type].concat(newestSecret));
-              $scope.pickedSecret.name = newestSecret;
+              $scope.secretsByType[$scope.type] = secretsByType[$scope.type];
+              $scope.pickedSecret.name = newSecret.metadata.name;
             });
           });
         };

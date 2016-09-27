@@ -166,7 +166,7 @@ angular.module("openshiftConsole")
               };
             }
             SecretsService.setNewestSecretName($scope.newSecret.data.secretName);
-            $scope.postCreateAction();
+            $scope.postCreateAction({newSecret: secret});
           }, function(result) { // Failure
             var alert = {
               type: "error",

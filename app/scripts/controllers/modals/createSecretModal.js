@@ -12,8 +12,8 @@ angular.module('openshiftConsole')
   .controller('CreateSecretModalController', function ($scope, $uibModalInstance) {
     $scope.modalAlerts = {};
 
-    $scope.postCreateAction = function() {
-      $uibModalInstance.close('create');
+    $scope.postCreateAction = function(newSecret) {
+      $uibModalInstance.close(newSecret);
     };
 
     $scope.cancel = function() {
