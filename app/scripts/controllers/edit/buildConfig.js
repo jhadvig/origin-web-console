@@ -138,9 +138,15 @@ angular.module('openshiftConsole')
               $scope.jenkinsfileOptions.type = 'inline';
             }
 
-            SecretsService.loadSecrets($scope.projectName, $scope).then(function(secretsByType) {
-              $scope.secrets.secretsByType = secretsByType
+            DataService.list("secrets", {namespace: $scope.projectName}, function(secrets) {
+              $scope.secrets.secretsByType = SecretsService.groupSecretsByType(secrets, true);
               loadBuildConfigSecrets();
+            },function(result) {
+              $scope.alerts["loadSecrets"] = {
+                type: "error",
+                message: "Could not load secrets.",
+                details: "Reason: " + $filter('getErrorDetails')(result)
+              };
             });
 
             var setImageOptions = function(imageOptions, imageData) {
@@ -372,7 +378,7 @@ angular.module('openshiftConsole')
     }
 
     var updateSecrets = function(object, pickedSecret, secretFieldName) {
-      if (!_.isEmpty(pickedSecret.name)) {
+      if (pickedSecret.name) {
         object[secretFieldName] = pickedSecret;
       } else {
         delete object[secretFieldName];

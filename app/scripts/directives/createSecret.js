@@ -14,7 +14,7 @@ angular.module("openshiftConsole")
         cancel: '&'
       },
       templateUrl: 'views/directives/create-secret.html',
-      controller: function($scope, $filter, DataService, SecretsService) {
+      controller: function($scope, $filter, DataService) {
 
         $scope.secretAuthTypeMap = {
           image: {
@@ -165,7 +165,6 @@ angular.module("openshiftConsole")
                 message: "Secret " + secret.metadata.name + " was created."
               };
             }
-            SecretsService.setNewestSecretName($scope.newSecret.data.secretName);
             $scope.postCreateAction({newSecret: secret});
           }, function(result) { // Failure
             var alert = {

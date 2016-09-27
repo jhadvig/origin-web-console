@@ -46,7 +46,7 @@
                                   <span class="text-warning" ng-if="form.sourceUrl.$dirty && !sourceURLPattern.test(updatedBuildConfig.spec.source.git.uri)">Git repository should be a URL.</span>
                                 </div>
                                 <div class="help-block">
-                                  Location of source code to use as an input for the build.
+                                  Git URL of the source code to build.
                                   <span ng-if="!advancedOptions">In case your your Git repository is secured, switch to the 'advanced options' view to set up your credentials.</span>
                                 </div>
                               </div>
@@ -495,7 +495,6 @@
                         Build Secrets
                         <a href="{{'source_secrets' | helpLink}}" aria-hidden="true" target="_blank"><span class="learn-more-inline">Learn more<i class="fa fa-external-link"></i></span></a>
                       </h3>
-
                       <div class="form-group">
                         <osc-source-secrets model="secrets.picked.sourceSecrets" 
                                     namespace="projectName"

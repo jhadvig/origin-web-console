@@ -2,7 +2,7 @@
 
 angular.module("openshiftConsole")
 
-  .directive("oscSecrets", function($uibModal, SecretsService) {
+  .directive("oscSecrets", function($uibModal, $filter, DataService, SecretsService) {
     return {
       restrict: 'E',
       scope: {
@@ -27,9 +27,15 @@ angular.module("openshiftConsole")
           });
 
           modalInstance.result.then(function(newSecret) {
-            SecretsService.loadSecrets($scope.namespace, $scope.alerts).then(function(secretsByType) {
-              $scope.secretsByType[$scope.type] = secretsByType[$scope.type];
+            DataService.list("secrets", {namespace: $scope.namespace}, function(secrets) {
+              $scope.secretsByType[$scope.type] = SecretsService.groupSecretsByType(secrets, true)[$scope.type];
               $scope.pickedSecret.name = newSecret.metadata.name;
+            },function(result) {
+              $scope.alerts["loadSecrets"] = {
+                type: "error",
+                message: "Could not load secrets.",
+                details: "Reason: " + $filter('getErrorDetails')(result)
+              };
             });
           });
         };

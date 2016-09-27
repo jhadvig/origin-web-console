@@ -2,7 +2,7 @@
 
 angular.module("openshiftConsole")
 
-  .directive("oscSourceSecrets", function($uibModal, SecretsService) {
+  .directive("oscSourceSecrets", function($uibModal, $filter, DataService, SecretsService) {
     return {
       restrict: 'E',
       scope: {
@@ -20,24 +20,49 @@ angular.module("openshiftConsole")
 
         $scope.canAddSourceSecret = function() {
           var lastSecret = _.last($scope.pickedSecrets);
-          return ($scope.strategyType === "Custom") ? (!_.isEmpty(lastSecret.secretSource.name) && !_.isEmpty(lastSecret.mountPath)) : (!_.isEmpty(lastSecret.secret.name) && !_.isEmpty(lastSecret.destinationDir));
+          switch ($scope.strategyType) {
+          case 'Custom':
+            return lastSecret.secretSource.name && lastSecret.mountPath;
+          default:
+            return lastSecret.secret.name && lastSecret.destinationDir;
+          }
         };
 
         $scope.setLastSecretsName = function(secretName) {
           var lastSecret = _.last($scope.pickedSecrets);
-          ($scope.strategyType === "Custom") ? lastSecret.secretSource.name = secretName : lastSecret.secret.name = secretName;
+          switch ($scope.strategyType) {
+          case 'Custom':
+            lastSecret.secretSource.name = secretName;
+            return;
+          default:
+            lastSecret.secret.name = secretName;
+            return;
+          }
         };
 
         $scope.addSourceSecret = function() {
-          ($scope.strategyType === "Custom") ? $scope.pickedSecrets.push({secretSource: {name: ""}, mountPath: ""}) : $scope.pickedSecrets.push({secret: {name: ""}, destinationDir: ""});
+          switch ($scope.strategyType) {
+          case 'Custom':
+            $scope.pickedSecrets.push({secretSource: {name: ""}, mountPath: ""});
+            return;
+          default:
+            $scope.pickedSecrets.push({secret: {name: ""}, destinationDir: ""});
+            return;
+          }
         };
 
         $scope.removeSecret = function(index) {
           if ($scope.pickedSecrets.length === 1) {
-            $scope.pickedSecrets = ($scope.strategyType === "Custom") ? [{secretSource: {name: ""}, mountPath: ""}] : [{secret: {name: ""}, destinationDir: ""}];
-            return;
-          }
-          $scope.pickedSecrets.splice(index,1);
+            switch ($scope.strategyType) {
+            case 'Custom':
+              $scope.pickedSecrets = [{secretSource: {name: ""}, mountPath: ""}];
+              break;
+            default:
+              $scope.pickedSecrets = [{secret: {name: ""}, destinationDir: ""}];
+            }
+          } else {
+            $scope.pickedSecrets.splice(index,1);
+          }          
           $scope.secretsForm.$setDirty();
         };
       },
@@ -51,9 +76,15 @@ angular.module("openshiftConsole")
           });
 
           modalInstance.result.then(function(newSecret) {
-            SecretsService.loadSecrets($scope.namespace, $scope.alerts).then(function(secretsByType) {
-              $scope.secretsByType[$scope.type] = secretsByType[$scope.type];
+            DataService.list("secrets", {namespace: $scope.namespace}, function(secrets) {
+              $scope.secretsByType[$scope.type] = SecretsService.groupSecretsByType(secrets, true)[$scope.type];
               $scope.setLastSecretsName(newSecret.metadata.name);
+            },function(result) {
+              $scope.alerts["loadSecrets"] = {
+                type: "error",
+                message: "Could not load secrets.",
+                details: "Reason: " + $filter('getErrorDetails')(result)
+              };
             });
           });
         };

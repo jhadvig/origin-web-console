@@ -120,7 +120,7 @@
                           </div>
                           </div>
 
-                          <div click-to-reveal ng-click="advancedOptions = !advancedOptions" link-text="Show advanced routing, build, and deployment options">
+                          <div ng-if="advancedOptions">
                             <div class="form-group">
                               <label for="contextdir">Context Dir</label>
                               <div>
@@ -378,6 +378,9 @@
                                 can-toggle="false"
                                 help-text="Each label is applied to each created resource.">
                             </label-editor>
+                          </div>
+                          <div class="gutter-top">
+                            <a href="" ng-click="advancedOptions = !advancedOptions" role="button">{{advancedOptions ? 'Hide' : 'Show'}} advanced routing, build, and deployment options</a>
                           </div>
                           <div class="buttons gutter-top-bottom gutter-top-bottom-2x">
                             <!-- unable to use form.valid.  need to fix validators in labels and key values directive -->
