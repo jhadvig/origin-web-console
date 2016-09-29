@@ -16,8 +16,7 @@ angular.module("openshiftConsole")
         serviceAccountToLink: '@?'
       },
       templateUrl: 'views/directives/osc-source-secrets.html',
-      controller: function($scope) {
-
+      link: function($scope) {
         $scope.canAddSourceSecret = function() {
           var lastSecret = _.last($scope.pickedSecrets);
           switch ($scope.strategyType) {
@@ -65,8 +64,7 @@ angular.module("openshiftConsole")
           }          
           $scope.secretsForm.$setDirty();
         };
-      },
-      link: function($scope) {
+
         $scope.openCreateSecretModal = function() {
           var modalInstance = $uibModal.open({
             animation: true,
@@ -77,14 +75,11 @@ angular.module("openshiftConsole")
 
           modalInstance.result.then(function(newSecret) {
             DataService.list("secrets", {namespace: $scope.namespace}, function(secrets) {
-              $scope.secretsByType[$scope.type] = SecretsService.groupSecretsByType(secrets, true)[$scope.type];
+              var secretsByType = SecretsService.groupSecretsByType(secrets);
+              $scope.secretsByType = _.each(secretsByType, function(secretsArray) {
+                secretsArray.unshift("");
+              });
               $scope.setLastSecretsName(newSecret.metadata.name);
-            },function(result) {
-              $scope.alerts["loadSecrets"] = {
-                type: "error",
-                message: "Could not load secrets.",
-                details: "Reason: " + $filter('getErrorDetails')(result)
-              };
             });
           });
         };

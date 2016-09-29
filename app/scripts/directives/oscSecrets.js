@@ -28,15 +28,12 @@ angular.module("openshiftConsole")
 
           modalInstance.result.then(function(newSecret) {
             DataService.list("secrets", {namespace: $scope.namespace}, function(secrets) {
-              $scope.secretsByType[$scope.type] = SecretsService.groupSecretsByType(secrets, true)[$scope.type];
+              var secretsByType = SecretsService.groupSecretsByType(secrets);
+              $scope.secretsByType = _.each(secretsByType, function(secretsArray) {
+                secretsArray.unshift("");
+              });
               $scope.pickedSecret.name = newSecret.metadata.name;
               $scope.secretsForm.$setDirty();
-            },function(result) {
-              $scope.alerts["loadSecrets"] = {
-                type: "error",
-                message: "Could not load secrets.",
-                details: "Reason: " + $filter('getErrorDetails')(result)
-              };
             });
           });
         };

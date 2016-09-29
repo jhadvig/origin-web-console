@@ -139,15 +139,10 @@ angular.module('openshiftConsole')
               $scope.jenkinsfileOptions.type = 'inline';
             }
 
-            DataService.list("secrets", {namespace: $scope.projectName}, function(secrets) {
-              $scope.secrets.secretsByType = SecretsService.groupSecretsByType(secrets, true);
+            DataService.list("secrets", context, function(secrets) {
+              var secretsByType = SecretsService.groupSecretsByType(secrets);
+              $scope.secrets.secretsByType = _.each(secretsByType, function(secretsArray) {secretsArray.unshift("")})
               loadBuildConfigSecrets();
-            },function(result) {
-              $scope.alerts["loadSecrets"] = {
-                type: "error",
-                message: "Could not load secrets.",
-                details: "Reason: " + $filter('getErrorDetails')(result)
-              };
             });
 
             var setImageOptions = function(imageOptions, imageData) {
@@ -364,8 +359,8 @@ angular.module('openshiftConsole')
       $scope.secrets.picked = {
         gitSecret: $scope.buildConfig.spec.source.sourceSecret || {name: ""},
         pullSecret: buildStrategy($scope.buildConfig).pullSecret || {name: ""},
-        pushSecret: $scope.buildConfig.spec.output.pushSecret || {name: ""},
-      }
+        pushSecret: $scope.buildConfig.spec.output.pushSecret || {name: ""}
+      };
 
       switch ($scope.strategyType) {
       case "Source":
@@ -376,7 +371,7 @@ angular.module('openshiftConsole')
         $scope.secrets.picked.sourceSecrets = buildStrategy($scope.buildConfig).secrets || [{secretSource: { name: ""}, mountPath: ""}];
         break;
       }
-    }
+    };
 
     var updateSecrets = function(object, pickedSecret, secretFieldName) {
       if (pickedSecret.name) {
@@ -384,7 +379,7 @@ angular.module('openshiftConsole')
       } else {
         delete object[secretFieldName];
       }
-    }
+    };
 
     var updateSourceSecrets = function(object, pickedSecrets) {
       var lastPickedSecret = _.head(pickedSecrets);
@@ -394,7 +389,7 @@ angular.module('openshiftConsole')
       } else {
         delete object.secrets;
       }
-    }
+    };
 
     var getSourceMap = function(sourceMap, sources) {
       if (sources.type === "None") {
@@ -471,9 +466,7 @@ angular.module('openshiftConsole')
 
       // Update triggers
       $scope.updatedBuildConfig.spec.triggers = updateTriggers();
-      DataService.update("buildconfigs", $scope.updatedBuildConfig.metadata.name, $scope.updatedBuildConfig, {
-        namespace: $scope.updatedBuildConfig.metadata.namespace
-      }).then(
+      DataService.update("buildconfigs", $scope.updatedBuildConfig.metadata.name, $scope.updatedBuildConfig, context).then(
         function() {
           AlertMessageService.addAlert({
             name: $scope.updatedBuildConfig.metadata.name,

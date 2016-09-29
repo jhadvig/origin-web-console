@@ -40,12 +40,13 @@
                                     autocorrect="off"
                                     autocapitalize="off"
                                     spellcheck="false"
+                                    aria-describedby="source-url-help"
                                     required>
                                 </div>
                                 <div>
                                   <span class="text-warning" ng-if="form.sourceUrl.$dirty && !sourceURLPattern.test(updatedBuildConfig.spec.source.git.uri)">Git repository should be a URL.</span>
                                 </div>
-                                <div class="help-block">
+                                <div class="help-block" id="source-url-help">
                                   Git URL of the source code to build.
                                   <span ng-if="!view.advancedOptions">If your Git repository is private, view the <a href="" ng-click="view.advancedOptions = true">advanced options</a> to set up authentication.</span>
                                 </div>
@@ -64,9 +65,10 @@
                                     placeholder="master"
                                     autocorrect="off"
                                     autocapitalize="off"
-                                    spellcheck="false">
+                                    spellcheck="false"
+                                    aria-describedby="source-ref-help">
                                 </div>
-                                <div class="help-block">Optional branch, tag, or commit.</div>
+                                <div class="help-block" id="source-ref-help">Optional branch, tag, or commit.</div>
                               </div>
                             </div>
                           </div>
@@ -83,9 +85,10 @@
                                   placeholder="/"
                                   autocorrect="off"
                                   autocapitalize="off"
-                                  spellcheck="false">
+                                  spellcheck="false"
+                                  aria-describedby="context-dir-help">
                               </div>
-                              <div class="help-block">Optional subdirectory for the application source code, used as the context directory for the build.</div>
+                              <div class="help-block" id="context-dir-help">Optional subdirectory for the application source code, used as the context directory for the build.</div>
                             </div>
                             <div class="form-group">
                               <osc-secrets model="secrets.picked.gitSecret" 

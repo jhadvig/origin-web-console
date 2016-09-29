@@ -73,11 +73,6 @@ angular.module("openshiftConsole")
         DataService.list("serviceaccounts", {namespace: $scope.namespace}, function(result) {
           $scope.serviceAccounts = result.by('metadata.name');
           $scope.serviceAccountsNames = _.keys($scope.serviceAccounts);
-        },function(result) {
-          $scope.error = {
-            message: 'Could not load service accounts.',
-            details: $filter('getErrorDetails')(result)
-          };
         });
 
         var constructSecretObject = function(data, authType) {
@@ -139,7 +134,7 @@ angular.module("openshiftConsole")
           if ($scope.newSecret.linkAs.imagePullSecrets) {
             updatedSA.imagePullSecrets.push({name: secret.metadata.name});
           }
-          DataService.update('serviceaccounts', $scope.newSecret.pickedServiceAccountToLink, updatedSA, $scope).then(function(sa) {
+          DataService.update('serviceaccounts', $scope.newSecret.pickedServiceAccountToLink, updatedSA, {namespace: $scope.namespace}).then(function(sa) {
             $scope.alerts["createAndLink"] = {
               type: "success",
               message: "Secret " + secret.metadata.name + " was created and linked with service account " + sa.metadata.name + "."
@@ -169,6 +164,13 @@ angular.module("openshiftConsole")
             var data = result.data || {};
             if (data.reason === 'AlreadyExists') {
               $scope.nameTaken = true;
+            } else {
+              $scope.alerts["create"] = {
+                type: "success",
+                message: "An error occurred while creating the secret.",
+                details: $filter('getErrorDetails')(result)
+              };
+              $scope.cancel();
             }
           });
         };
