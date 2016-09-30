@@ -21,28 +21,49 @@
                   <div class="col-lg-12">
                     <div class="section">
                       <h3>Deployment Strategy Configuration</h3>
-                      <dl class="dl-horizontal left"></dl>
+                      <dl class="dl-horizontal left">
+                        
+                      </dl>
                     </div>
 
 
-
-
-
+                    <div class="section">
+                      <h3 class="with-divider">Image Configuration</h3>
+                      <dl class="dl-horizontal left">
+                        <osc-secrets model="pullSecrets"
+                                    namespace="projectName"
+                                    display-type="pull"
+                                    type="image"
+                                    secrets-by-type="secretsByType"
+                                    service-account-to-link="builder"
+                                    alerts="alerts"
+                                    allow-multiple-secrets="true">
+                        </osc-secrets>
+                      </dl>
+                    </div>
 
 
                     <div class="section">
                       <h3 class="with-divider">Environment Variables<span class="help action-inline">
                         <a href="">
-                        <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="Environment variables are used to configure and pass information to running containers.  These environment variables will be available during your build and at runtime."></i>
+                        <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="Environment variables are used to configure and pass information to running containers.  These environment variables will be available during your container's runtime."></i>
                         </a>
                       </span></h3>
-                      <div>
+
+                      <div ng-repeat="(containerName, containerEnvVars) in containersEnvVarMap" class="">
+                        <div class="container-name">
+                          <h4>Container {{containerName}}</h4>
+                        </div>
                         <key-value-editor
-                          ng-if="envVars"
-                          entries="envVars"
+                          ng-if="containerEnvVars"
+                          entries="containerEnvVars"
                           key-validator="[a-zA-Z][a-zA-Z0-9_]*"
                           key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
                           add-row-link="Add environment variable"></key-value-editor>
+                      </div>
+
+                      <div>
+
                       </div>
                     </div>
 

@@ -360,9 +360,9 @@ angular.module('openshiftConsole')
 
     var loadBuildConfigSecrets = function() {
       $scope.secrets.picked = {
-        gitSecret: $scope.buildConfig.spec.source.sourceSecret || {name: ""},
-        pullSecret: buildStrategy($scope.buildConfig).pullSecret || {name: ""},
-        pushSecret: $scope.buildConfig.spec.output.pushSecret || {name: ""}
+        gitSecret: $scope.buildConfig.spec.source.sourceSecret ? [$scope.buildConfig.spec.source.sourceSecret] : [{name: ""}],
+        pullSecret: buildStrategy($scope.buildConfig).pullSecret ? [buildStrategy($scope.buildConfig).pullSecret] : [{name: ""}],
+        pushSecret: $scope.buildConfig.spec.output.pushSecret ? [$scope.buildConfig.spec.output.pushSecret] : [{name: ""}]
       };
 
       switch ($scope.strategyType) {
@@ -452,9 +452,9 @@ angular.module('openshiftConsole')
       buildStrategy($scope.updatedBuildConfig).env = keyValueEditorUtils.compactEntries($scope.envVars);
 
       // Update secrets
-      updateSecrets($scope.updatedBuildConfig.spec.source, $scope.secrets.picked.gitSecret, "sourceSecret");
-      updateSecrets(buildStrategy($scope.updatedBuildConfig), $scope.secrets.picked.pullSecret, "pullSecret");
-      updateSecrets($scope.updatedBuildConfig.spec.output, $scope.secrets.picked.pushSecret, "pushSecret");
+      updateSecrets($scope.updatedBuildConfig.spec.source, _.head($scope.secrets.picked.gitSecret), "sourceSecret");
+      updateSecrets(buildStrategy($scope.updatedBuildConfig), _.head($scope.secrets.picked.pullSecret), "pullSecret");
+      updateSecrets($scope.updatedBuildConfig.spec.output, _.head($scope.secrets.picked.pushSecret), "pushSecret");
 
       switch ($scope.strategyType) {
       case "Source":
