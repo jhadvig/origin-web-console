@@ -60,6 +60,8 @@ angular.module('openshiftConsole')
             $scope.deploymentConfig = deploymentConfig;
             $scope.updatedDeploymentConfig = angular.copy($scope.deploymentConfig);
 
+            $scope.containersEnvVarMap = AssociateContainerWithEnvVar($scope.deploymentConfig.spec.template.spec.containers);
+
 
             // If we found the item successfully, watch for changes on it
             watches.push(DataService.watchObject("deploymentconfigs", $routeParams.deploymentconfig, context, function(deploymentConfig, action) {
@@ -92,6 +94,14 @@ angular.module('openshiftConsole')
         );
       })
     );
+
+    var AssociateContainerWithEnvVar = function(containers) {
+      var containersEnvVarMap = {};
+      _.each(containers, function(container) {
+        containersEnvVarMap[container.name] = container.env;
+      })
+      return containersEnvVarMap;
+    };
 
     // $scope.aceLoaded = function(editor) {
     //   var session = editor.getSession();
