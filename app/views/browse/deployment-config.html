@@ -60,6 +60,9 @@
                       <a ng-href="{{healthCheckURL}}" role="button">Edit Health Checks</a>
                     </li>
                     <li ng-if="'deploymentconfigs' | canI : 'update'">
+                      <a ng-href="{{deploymentConfig | editResourceURL}}" role="button">Edit</a>
+                    </li>
+                    <li ng-if="'deploymentconfigs' | canI : 'update'">
                       <a ng-href="{{deploymentConfig | editYamlURL}}" role="button">Edit YAML</a>
                     </li>
                     <li ng-if="'deploymentconfigs' | canI : 'delete'">
