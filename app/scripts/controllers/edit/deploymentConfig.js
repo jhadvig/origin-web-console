@@ -34,12 +34,11 @@ angular.module('openshiftConsole')
       }
     ];
 
-    $scope.deploymtnyConfigStrategyTypes = [
+    $scope.deploymentConfigStrategyTypes = [
       "Recreate",
       "Rolling",
       "Custom"
     ];
-
 
     AlertMessageService.getAlerts().forEach(function(alert) {
       $scope.alerts[alert.name] = alert.data;
@@ -60,9 +59,25 @@ angular.module('openshiftConsole')
           // success
           function(deploymentConfig) {
             $scope.deploymentConfig = deploymentConfig;
+
             $scope.updatedDeploymentConfig = angular.copy($scope.deploymentConfig);
-            $scope.containersEnvVarMap = AssociateContainerWithEnvVar($scope.deploymentConfig.spec.template.spec.containers);
-            $scope.pullSecrets = $scope.deploymentConfig.spec.template.spec.imagePullSecrets || [{name: ""}];
+            $scope.containersName = [''].concat(_.map($scope.deploymentConfig.spec.template.spec.containers, 'name'));
+            $scope.containersDataMap = associateContainerWithData($scope.deploymentConfig.spec.template.spec.containers);
+            $scope.pullSecrets = $scope.deploymentConfig.spec.template.spec.imagePullSecrets || [{name: ''}];
+            $scope.volumes = _.map($scope.deploymentConfig.spec.template.spec.volumes, 'name');
+
+            var strategyData = angular.copy($scope.deploymentConfig.spec.strategy);
+            $scope.strategyData = {
+              type: strategyData.type,
+              params: strategyData[strategyData.type.toLowerCase() + 'Params']
+            }
+
+            // if ($scope.strategyData.type === "Rolling") {
+            //   $scope.strategyData.params.maxUnavailable = $filter('stripPercentageChar')($scope.strategyData.params.maxUnavailable);
+            //   $scope.strategyData.params.maxSurge = $filter('stripPercentageChar')($scope.strategyData.params.maxSurge);
+            // } 
+
+            $scope.hooksDefined = _.has($scope.strategyData.params, 'pre') || _.has($scope.strategyData.params, 'mid') || _.has($scope.strategyData.params, 'post');
             
             DataService.list("secrets", context, function(secrets) {
               var secretsByType = SecretsService.groupSecretsByType(secrets);
@@ -71,7 +86,6 @@ angular.module('openshiftConsole')
                 secretsArray.unshift("");
               });
             });
-
 
             // If we found the item successfully, watch for changes on it
             watches.push(DataService.watchObject("deploymentconfigs", $routeParams.deploymentconfig, context, function(deploymentConfig, action) {
@@ -105,28 +119,25 @@ angular.module('openshiftConsole')
       })
     );
 
-    var AssociateContainerWithEnvVar = function(containers) {
-      var containersEnvVarMap = {};
+    var associateContainerWithData = function(containers) {
+      var containersDataMap = {};
       _.each(containers, function(container) {
-        containersEnvVarMap[container.name] = container.env;
+        containersDataMap[container.name] = 
+        {
+          envVars: container.env || [],
+          imageName: container.image
+        }
       })
-      return containersEnvVarMap;
+      return containersDataMap;
     };
-
-    // $scope.aceLoaded = function(editor) {
-    //   var session = editor.getSession();
-    //   session.setOption('tabSize', 2);
-    //   session.setOption('useSoftTabs', true);
-    //   editor.$blockScrolling = Infinity;
-    // };
 
     $scope.save = function() {
       $scope.disableInputs = true;
 
       // Update envVars for each container
-      _.each($scope.containersEnvVarMap, function(envVars, containerName) {
+      _.each($scope.containersDataMap, function(containerData, containerName) {
         var matchingContainer = _.find($scope.updatedDeploymentConfig.spec.template.spec.containers, function(o) { return o.name === containerName});
-        matchingContainer.env = keyValueEditorUtils.compactEntries(envVars);
+        matchingContainer.env = keyValueEditorUtils.compactEntries(containerData.envVars);
       });
 
       $scope.updatedDeploymentConfig.spec.template.spec.imagePullSecrets

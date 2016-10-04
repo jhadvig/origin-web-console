@@ -22,7 +22,234 @@
                     <div class="section">
                       <h3>Deployment Strategy Configuration</h3>
                       <dl class="dl-horizontal left">
-                        
+                        {{strategyParamsName}}
+                        <div class="form-group strategy-name">
+                          <label class="picker-label">Strategy Type</label>
+                          <ui-select ng-model="strategyData.type" search-enabled="false">
+                            <ui-select-match>{{$select.selected}}</ui-select-match>
+                            <ui-select-choices repeat="strategyType in deploymentConfigStrategyTypes">
+                              {{strategyType}}
+                            </ui-select-choices>
+                          </ui-select>
+                        </div>
+
+                        <div ng-if="strategyData.type === 'Custom'" >
+<!--                           <label for="imageName" class="required">Image Name</label>
+                          <div>
+                            <input class="form-control"
+                              id="imageName"
+                              name="imageName"
+                              ng-model="containerData.imageName"
+                              type="text"
+                              autocorrect="off"
+                              autocapitalize="off"
+                              spellcheck="false"
+                              required>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Environment Variables</label>
+                            <key-value-editor
+                              entries="hookParams.execNewPod.env"
+                              key-validator="[a-zA-Z][a-zA-Z0-9_]*"
+                              key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
+                              add-row-link="Add environment variable"></key-value-editor>
+                          </div> -->
+                        </div>
+
+                        <div ng-if="strategyData.type !== 'Custom'" >
+                          <div class="form-group">
+                            <label for="strategyTimeout">Timeout</label>
+                            <span class="input-group"
+                               ng-class="{ 'has-error': form.strategyTimeout.$invalid && form.strategyTimeout.$touched }">
+                              <input id="strategyTimeout"
+                                  type="number"
+                                  name="strategyTimeout"
+                                  ng-model="strategyData.params.timeoutSeconds"
+                                  placeholder="600"
+                                  ng-pattern="/^\d+$/"
+                                  min="0"
+                                  select-on-focus
+                                  class="form-control"
+                                  aria-describedby="strategyTimeout">
+                              <span class="input-group-addon">seconds</span>
+                            </span>
+                            <div class="help-block" ng-attr-id="strategyTimeout">
+                              How long to wait for updates before giving up.
+                            </div>
+                            <div ng-if="form.strategyTimeout.$invalid && form.strategyTimeout.$touched" class="has-error">
+                              <div ng-if="form.strategyTimeout.$error.number" class="help-block">
+                                Must be a number.
+                              </div>
+                              <div ng-if="form.strategyTimeout.$error.min" class="help-block">
+                                Delay can't be negative.
+                              </div>
+                              <span ng-if="form.strategyTimeout.$error.pattern && !form.strategyTimeout.$error.min" class="help-block">
+                                Must be a whole number.
+                              </span>
+                            </div>
+                          </div>
+
+                          <div ng-if="strategyData.type === 'Rolling'">
+                            <div class="form-group">
+                              <label for="updatePeriod">Update Period</label>
+                              <span class="input-group"
+                                 ng-class="{ 'has-error': form.updatePeriod.$invalid && form.updatePeriod.$touched }">
+                                <input id="updatePeriod"
+                                    type="number"
+                                    placeholder="1"
+                                    name="updatePeriod"
+                                    ng-model="strategyData.params.updatePeriodSeconds"
+                                    ng-pattern="/^\d+$/"
+                                    min="0"
+                                    select-on-focus
+                                    class="form-control"
+                                    aria-describedby="updatePeriod">
+                                <span class="input-group-addon">seconds</span>
+                              </span>
+                              <div class="help-block" ng-attr-id="updatePeriod">
+                                How long to wait for updates before giving up.
+                              </div>
+                              <div ng-if="form.updatePeriod.$invalid && form.updatePeriod.$touched" class="has-error">
+                                <div ng-if="form.updatePeriod.$error.number" class="help-block">
+                                  Must be a number.
+                                </div>
+                                <div ng-if="form.updatePeriod.$error.min" class="help-block">
+                                  Delay can't be negative.
+                                </div>
+                                <span ng-if="form.updatePeriod.$error.pattern && !form.updatePeriod.$error.min" class="help-block">
+                                  Must be a whole number.
+                                </span>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <label for="interval">Interval</label>
+                              <span class="input-group"
+                                 ng-class="{ 'has-error': form.interval.$invalid && form.interval.$touched }">
+                                <input id="interval"
+                                    type="number"
+                                    placeholder="1"
+                                    name="interval"
+                                    ng-model="strategyData.params.intervalSeconds"
+                                    ng-pattern="/^\d+$/"
+                                    min="0"
+                                    select-on-focus
+                                    class="form-control"
+                                    aria-describedby="interval">
+                                <span class="input-group-addon">seconds</span>
+                              </span>
+                              <div class="help-block" ng-attr-id="interval">
+                                How long to wait for updates before giving up.
+                              </div>
+                              <div ng-if="form.interval.$invalid && form.interval.$touched" class="has-error">
+                                <div ng-if="form.interval.$error.number" class="help-block">
+                                  Must be a number.
+                                </div>
+                                <div ng-if="form.interval.$error.min" class="help-block">
+                                  Delay can't be negative.
+                                </div>
+                                <span ng-if="form.interval.$error.pattern && !form.interval.$error.min" class="help-block">
+                                  Must be a whole number.
+                                </span>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <label for="maxUnavailable">Maximal Unavailable</label>
+                              <div ng-class="{ 'has-error': form.maxUnavailable.$invalid && form.maxUnavailable.$touched }">
+                                <input id="maxUnavailable"
+                                    type="text"
+                                    placeholder="1"
+                                    name="maxUnavailable"
+                                    ng-model="strategyData.params.maxUnavailable"
+                                    ng-pattern="/^\d+[%]{0,1}$/"
+                                    min="0"
+                                    select-on-focus
+                                    class="form-control"
+                                    aria-describedby="maxUnavailable">
+                              </div>
+                              <div class="help-block" ng-attr-id="maxUnavailable">
+                                How long to wait for updates before giving up.
+                              </div>
+                              <div ng-if="form.maxUnavailable.$invalid && form.maxUnavailable.$touched" class="has-error">
+                                <span ng-if="form.maxUnavailable.$error.pattern && !form.maxUnavailable.$error.min" class="help-block">
+                                  Must be a whole number or percentage.
+                                </span>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <label for="maxSurge">Maximal Surge</label>
+                              <div ng-class="{ 'has-error': form.maxSurge.$invalid && form.maxSurge.$touched }">
+                                <input id="maxSurge"
+                                    type="text"
+                                    placeholder="1"
+                                    name="maxSurge"
+                                    ng-model="strategyData.params.maxSurge"
+                                    ng-pattern="/^\d+[%]{0,1}$/"
+                                    min="0"
+                                    select-on-focus
+                                    class="form-control"
+                                    aria-describedby="maxSurge">
+                              </div>
+                              <div class="help-block" ng-attr-id="maxSurge">
+                                How long to wait for updates before giving up.
+                              </div>
+                              <div ng-if="form.maxSurge.$invalid && form.maxSurge.$touched" class="has-error">
+                                <span ng-if="form.maxSurge.$error.pattern" class="help-block">
+                                  Must be a whole number or percentage.
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+
+                          <div class="checkbox form-group">
+                            <label>
+                              <input type="checkbox" ng-model="hooksDefined">
+                              Define hooks that will be executed during different etaps of your deploymnet. 
+                              <span class="help action-inline">
+                                <a href="">
+                                  <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
+                                  </i>
+                                </a>
+                              </span>
+                            </label>
+                          </div>
+
+                          <div ng-if="strategyData.params && hooksDefined">
+                            <uib-tabset>
+                              <uib-tab>
+                                <uib-tab-heading>Pre Lifecycle Hook</uib-tab-heading>
+                                <life-cycle-hook model='strategyData.params.pre'
+                                                  type='pre'
+                                                  available-volumes='volumes'
+                                                  available-containers='containersName'
+                                                  namespace="projectName">
+                                </life-cycle-hook>
+                              </uib-tab>
+                              <uib-tab ng-if="strategyData.type !== 'Rolling'" active="selectedTab.mid" >
+                                <uib-tab-heading>Mid Lifecycle Hook</uib-tab-heading>
+                                <life-cycle-hook model='strategyData.params.mid'
+                                                  type='mid'
+                                                  available-volumes='volumes'
+                                                  available-containers='containersName'
+                                                  namespace="projectName">
+                                </life-cycle-hook>
+                              </uib-tab>
+                              <uib-tab active="selectedTab.post">
+                                <uib-tab-heading>Post Lifecycle Hook</uib-tab-heading>
+                                <life-cycle-hook model='strategyData.params.post'
+                                                  type='post'
+                                                  available-volumes='volumes'
+                                                  available-containers='containersName'
+                                                  namespace="projectName">
+                                </life-cycle-hook>
+                              </uib-tab>
+                            </uib-tabset>
+                          </div>
+                        </div>
                       </dl>
                     </div>
 
@@ -30,15 +257,36 @@
                     <div class="section">
                       <h3 class="with-divider">Image Configuration</h3>
                       <dl class="dl-horizontal left">
-                        <osc-secrets model="pullSecrets"
-                                    namespace="projectName"
-                                    display-type="pull"
-                                    type="image"
-                                    secrets-by-type="secretsByType"
-                                    service-account-to-link="builder"
-                                    alerts="alerts"
-                                    allow-multiple-secrets="true">
-                        </osc-secrets>
+
+                        <div ng-repeat="(containerName, containerData) in containersDataMap" class="">
+                          <div class="container-name">
+                            <h4>Container {{containerName}}</h4>
+                          </div>
+                          <label for="imageName" class="required">Image Name</label>
+                          <div>
+                            <input class="form-control"
+                              id="imageName"
+                              name="imageName"
+                              ng-model="containerData.imageName"
+                              type="text"
+                              autocorrect="off"
+                              autocapitalize="off"
+                              spellcheck="false"
+                              required>
+                          </div>
+                        </div>
+
+                        <div class="gutter-top">
+                          <osc-secrets model="pullSecrets"
+                                      namespace="projectName"
+                                      display-type="pull"
+                                      type="image"
+                                      secrets-by-type="secretsByType"
+                                      service-account-to-link="builder"
+                                      alerts="alerts"
+                                      allow-multiple-secrets="true">
+                          </osc-secrets>
+                        </div>
                       </dl>
                     </div>
 
@@ -50,20 +298,16 @@
                         </a>
                       </span></h3>
 
-                      <div ng-repeat="(containerName, containerEnvVars) in containersEnvVarMap" class="">
+                      <div ng-repeat="(containerName, containerData) in containersDataMap" class="">
                         <div class="container-name">
                           <h4>Container {{containerName}}</h4>
                         </div>
                         <key-value-editor
-                          ng-if="containerEnvVars"
-                          entries="containerEnvVars"
+                          ng-if="containerData"
+                          entries="containerData.envVars"
                           key-validator="[a-zA-Z][a-zA-Z0-9_]*"
                           key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
                           add-row-link="Add environment variable"></key-value-editor>
-                      </div>
-
-                      <div>
-
                       </div>
                     </div>
 
