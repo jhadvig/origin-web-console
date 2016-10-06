@@ -7,7 +7,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('EditDeploymentConfigController', function ($scope, $routeParams, DataService, SecretsService, ProjectsService, $filter, ApplicationGenerator, Navigate, $location, AlertMessageService, SOURCE_URL_PATTERN, keyValueEditorUtils) {
+  .controller('EditDeploymentConfigController', function ($scope, $routeParams, $uibModal, DataService, SecretsService, ProjectsService, $filter, ApplicationGenerator, Navigate, $location, AlertMessageService, SOURCE_URL_PATTERN, keyValueEditorUtils) {
 
     $scope.projectName = $routeParams.project;
     $scope.deploymentConfig = null;
@@ -61,23 +61,17 @@ angular.module('openshiftConsole')
             $scope.deploymentConfig = deploymentConfig;
 
             $scope.updatedDeploymentConfig = angular.copy($scope.deploymentConfig);
-            $scope.containersName = [''].concat(_.map($scope.deploymentConfig.spec.template.spec.containers, 'name'));
+            $scope.containersName = _.map($scope.deploymentConfig.spec.template.spec.containers, 'name');
+            // $scope.containersName = [''].concat(_.map($scope.deploymentConfig.spec.template.spec.containers, 'name'));
+
             $scope.containersDataMap = associateContainerWithData($scope.deploymentConfig.spec.template.spec.containers);
             $scope.pullSecrets = $scope.deploymentConfig.spec.template.spec.imagePullSecrets || [{name: ''}];
             $scope.volumes = _.map($scope.deploymentConfig.spec.template.spec.volumes, 'name');
 
-            var strategyData = angular.copy($scope.deploymentConfig.spec.strategy);
-            $scope.strategyData = {
-              type: strategyData.type,
-              params: strategyData[strategyData.type.toLowerCase() + 'Params']
-            }
-
-            // if ($scope.strategyData.type === "Rolling") {
-            //   $scope.strategyData.params.maxUnavailable = $filter('stripPercentageChar')($scope.strategyData.params.maxUnavailable);
-            //   $scope.strategyData.params.maxSurge = $filter('stripPercentageChar')($scope.strategyData.params.maxSurge);
-            // } 
-
-            $scope.hooksDefined = _.has($scope.strategyData.params, 'pre') || _.has($scope.strategyData.params, 'mid') || _.has($scope.strategyData.params, 'post');
+            $scope.strategyData = angular.copy($scope.deploymentConfig.spec.strategy);
+            $scope.originalStrategy = $scope.strategyData.type;
+            $scope.displayedParams = getParamsString($scope.strategyData.type);
+            $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
             
             DataService.list("secrets", context, function(secrets) {
               var secretsByType = SecretsService.groupSecretsByType(secrets);
@@ -131,6 +125,72 @@ angular.module('openshiftConsole')
       return containersDataMap;
     };
 
+    $scope.strategyChange = function(pickedStrategy) {
+      var pickedStrategyParams = getParamsString(pickedStrategy);
+      switch (true) {
+        case $scope.originalStrategy === "Recreate" && pickedStrategy === "Rolling":
+        case $scope.originalStrategy === "Rolling" && pickedStrategy === "Recreate":
+
+          if (!_.has($scope.strategyData, pickedStrategyParams)) {
+            var modalInstance = $uibModal.open({
+              animation: true,
+              templateUrl: 'views/modals/confirm.html',
+              controller: 'ConfirmModalController',
+              resolve: {
+                modalConfig: function() {
+                  return {
+                    alerts: $scope.alerts,
+                    message: "Move the existing " + $scope.originalStrategy + " strategy parameters into " + pickedStrategy + " strategy parameters?",
+                    details: "Moving will remove " + $scope.originalStrategy + " strategy parameters.",
+                    okButtonText: "Move",
+                    okButtonClass: "btn-primary",
+                    cancelButtonText: "Cancel"
+                  };
+                }
+              }
+            });
+
+            modalInstance.result.then(function () {
+              // Move parameters that belong to the origial strategy to the picked one.
+              $scope.strategyData[pickedStrategyParams] = $scope.strategyData[getParamsString($scope.originalStrategy)];
+              $scope.paramsMoved = true;
+              postStrategyChange(pickedStrategy);
+            }, function() {
+              // Create empty parameters for the newly picked strategy
+              $scope.strategyData[pickedStrategyParams] = {};
+              postStrategyChange(pickedStrategy);
+            });
+          } else {
+            postStrategyChange(pickedStrategy);
+          }
+          break;
+        default:
+          if (!_.has($scope.strategyData, pickedStrategyParams)) {
+            if (pickedStrategy !== 'Custom') {
+              $scope.strategyData[pickedStrategyParams] = {};
+            } else {
+              $scope.strategyData[pickedStrategyParams] = {
+                image: "",
+                command: [],
+                environment: []
+              }
+            }
+            
+          }
+          postStrategyChange(pickedStrategy);
+          break;
+      }
+    };
+
+    var postStrategyChange = function(pickedStrategy) {
+      $scope.displayedParams = getParamsString(pickedStrategy);
+      $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
+    };
+
+    var getParamsString = function(strategyType) {
+      return strategyType.toLowerCase() + 'Params'
+    }
+
     $scope.save = function() {
       $scope.disableInputs = true;
 
@@ -141,6 +201,10 @@ angular.module('openshiftConsole')
       });
 
       $scope.updatedDeploymentConfig.spec.template.spec.imagePullSecrets
+
+      // if ($scope.paramsMoved) {
+        // remove $scope.strategyData[getParamsString($scope.originalStrategy)];
+      // }
 
       DataService.update("deploymentconfigs", $scope.updatedDeploymentConfig.metadata.name, $scope.updatedDeploymentConfig, $scope.context).then(
         function() {

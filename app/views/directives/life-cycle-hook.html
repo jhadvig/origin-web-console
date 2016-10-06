@@ -1,101 +1,128 @@
-
-<fieldset class="life-cycle-hook" ng-disabled="isDisabled">
-  <div class="hook-type">
-    <span class="hook-actions">
-      <a href="" role="button" ng-if="!isDisabled" ng-click="disableInputs(true)">Disable</a>
-      <a href="" role="button" ng-if="isDisabled" ng-click="disableInputs(false)">Enable</a>
-    </span>
+<!-- <div ng-switch="type">
+  <div class="help-block" ng-switch-when="pre">
+    Builds triggered from this Build Configuration will run one at the time, in the order they have been triggered.
   </div>
-  <div class="form-group failure-policy">
-    <label for="failurePolicy" class="picker-label">Failure Policy</label>
-    <ui-select ng-model="hookParams.failurePolicy" search-enabled="false" ng-disabled="isDisabled">
-      <ui-select-match>{{$select.selected}}</ui-select-match>
-      <ui-select-choices repeat="failurePolicyTypes in lifecycleHookFailurePolicyTypes">
-        {{failurePolicyTypes}}
-      </ui-select-choices>
-    </ui-select>
-  </div>
+  <div class="help-block" ng-switch-when="Recreate">Builds triggered from this Build Configuration will run all at the same time. The order in which they will finish is not guranteed.</div>
+  <div class="help-block" ng-switch-when="Rolling">Builds triggered from this Build Configuration will run one at the time. When a currently running build completes, the next build that will run is the latest build created. Other queued builds will be cancelled.</div>
+  <div class="help-block" ng-switch-default>Builds triggered from this Build Configuration will run using the {{updatedBuildConfig.spec.runPolicy | sentenceCase}} policy.</div>
+</div> -->
 
-  <div class="checkbox form-group">
-    <label>
-      <input type="checkbox" ng-model="options.execNewPod">
-      Run a command in a new pod based on the specified container from the deployment template.
-      <span class="help action-inline">
-        <a href="">
-          <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
-          </i>
-        </a>
-      </span>
-    </label>
-  </div>
+<span ng-if="!view.hookExistes">
+  Hook not defined. 
+  <a href="" role="button" ng-click="view.hookExistes = true"> Add {{type | startCase}} Lifecycle Hook</a>
+</span>
 
-  <div ng-if="options.execNewPod">
-    <div class="form-group">
-      <label>Command</label>
-      <edit-command args="hookParams.execNewPod.command" is-required="true"></edit-command>
+<div ng-if="view.hookExistes">
+  <fieldset class="life-cycle-hook" ng-disabled="view.isDisabled">
+    <div class="checkbox form-group">
+      <label>
+        <input type="checkbox" ng-model="options.execNewPod">
+        Run a command in a new pod, based on the specified container from the deployment template.
+        <span class="help action-inline">
+          <a href="">
+            <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
+            </i>
+          </a>
+        </span>
+      </label>
     </div>
 
-    <div class="form-group">
-      <label>Environment Variables</label>
-      <key-value-editor
-        entries="hookParams.execNewPod.env"
-        key-validator="[a-zA-Z][a-zA-Z0-9_]*"
-        key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
-        add-row-link="Add environment variable"></key-value-editor>
+    <div ng-if="options.execNewPod">
+      <div class="form-group">
+        <label class="required">Command</label>
+        <edit-command args="hookParams.execNewPod.command" is-required="true"></edit-command>
+      </div>
+
+      <div class="form-group">
+        <label for="containerName" class="required">Container Name</label>
+        <ui-select ng-model="hookParams.execNewPod.containerName" required>
+          <ui-select-match>{{$select.selected}}</ui-select-match>
+          <ui-select-choices repeat="container in (availableContainers | filter : $select.search)" ng-disabled="view.isDisabled">
+            <div ng-bind-html="container | highlight : $select.search"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+      <div class="form-group">
+        <label>Environment Variables</label>
+        <key-value-editor
+          entries="hookParams.execNewPod.env"
+          key-validator="[a-zA-Z][a-zA-Z0-9_]*"
+          key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
+          add-row-link="Add environment variable"></key-value-editor>
+      </div>
+
+      <div class="form-group">
+      <label for="volumes">Volumes</label>
+        <ui-select multiple placeholder="Pick volume" ng-model="hookParams.execNewPod.volumes" ng-disabled="view.isDisabled">
+          <ui-select-match>{{$item}}</ui-select-match>
+          <ui-select-choices repeat="volume in availableVolumes | filter : $select.search">
+            <div ng-bind-html="volume | highlight : $select.search"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="containerName">Container Name</label>
-      <ui-select ng-model="hookParams.execNewPod.containerName" required>
+    <div class="checkbox form-group">
+      <label>
+        <input type="checkbox" ng-model="options.tagImageHook">
+        Tag current image referenced under a container onto an image stream tag if the deployment succeeds.
+        <span class="help action-inline">
+          <a href="">
+            <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
+            </i>
+          </a>
+        </span>
+      </label>
+    </div>
+
+    <div ng-if="options.tagImageHook">
+      <div class="form-group">
+        <label for="tagImageContainerName" class="required">Container Name</label>
+        <ui-select ng-model="hookParams.tagImages[0].containerName" ng-disabled="view.isDisabled" required>
+          <ui-select-match>{{$select.selected}}</ui-select-match>
+          <ui-select-choices repeat="container in (availableContainers | filter : $select.search)">
+            <div ng-bind-html="container | highlight : $select.search"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+      <div class="help-block">
+        Name of a container in the deployment config whose image value will be used as the source of the tag.
+      </div>
+
+      <div class="form-group">
+        <label class="required">Tag as</label>
+        <istag-select model="istagHook" allow-custom-tag="true" select-disabled="view.isDisabled"></istag-select>
+      </div>
+      <div class="help-block">
+        Target tag to set the container's image onto.
+      </div>
+
+    </div>
+
+    <div class="form-group failure-policy">
+      <label for="failurePolicy" class="picker-label">Failure Policy</label>
+      <ui-select ng-model="hookParams.failurePolicy" search-enabled="false" ng-disabled="view.isDisabled">
         <ui-select-match>{{$select.selected}}</ui-select-match>
-        <ui-select-choices repeat="container in (availableContainers | filter : $select.search)" ng-disabled="isDisabled">
-          <div ng-bind-html="container | highlight : $select.search"></div>
+        <ui-select-choices repeat="failurePolicyTypes in lifecycleHookFailurePolicyTypes">
+          {{failurePolicyTypes}}
         </ui-select-choices>
       </ui-select>
     </div>
-
-    <div class="form-group">
-    <label for="volumes">Volumes</label>
-      <ui-select multiple placeholder="Pick volume" ng-model="hookParams.execNewPod.volumes" ng-disabled="isDisabled">
-        <ui-select-match>{{$item}}</ui-select-match>
-        <ui-select-choices repeat="volume in availableVolumes | filter : $select.search">
-          <div ng-bind-html="volume | highlight : $select.search"></div>
-        </ui-select-choices>
-      </ui-select>
+    <div ng-switch="hookParams.failurePolicy">
+      <div class="help-block" ng-switch-when="Retry">The hook execution should be retried until it succeeds.</div>
+      <div class="help-block" ng-switch-when="Abort">The deployment process will be considered a failure if the hook fails.</div>
+      <div class="help-block" ng-switch-when="Ignore">Any hook failure should be ignored and the deployment should proceed.</div>
     </div>
-  </div>
 
-  <div class="checkbox form-group">
-    <label>
-      <input type="checkbox" ng-model="options.tagImageHook">
-      Tag current image referenced under a container onto an image stream tag if the deployment succeeds.
-      <span class="help action-inline">
-        <a href="">
-          <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
-          </i>
-        </a>
+    <div class="gutter-top">
+      <span class="hook-actions">
+        <!-- <a href="" role="button" ng-if="!view.isDisabled" ng-click="view.isDisabled = true">Disable {{type | startCase}} Lifecycle Hook</a> -->
+        <a href="" role="button" ng-click="view.isDisabled = !view.isDisabled">{{view.isDisabled ? 'Enable' : 'Disable'}} {{type | startCase}} Lifecycle Hook</a>
       </span>
-    </label>
-  </div>
-
-  <div ng-if="options.tagImageHook">
-
-    <div class="form-group">
-      <label for="tagImageContainerName" class="required">Container Name</label>
-      <ui-select ng-model="hookParams.tagImages[0].containerName" ng-disabled="isDisabled" required>
-        <ui-select-match>{{$select.selected}}</ui-select-match>
-        <ui-select-choices repeat="container in (availableContainers | filter : $select.search)">
-          <div ng-bind-html="container | highlight : $select.search"></div>
-        </ui-select-choices>
-      </ui-select>
     </div>
 
-    <div class="form-group">
-      <label class="required">Tag as</label>
-      <istag-select model="istagHook" allow-custom-tag="true" select-disabled="true"></istag-select>
-    </div>
-
-  </div>
 
 
-</fieldset>
+  </fieldset>
+</div>

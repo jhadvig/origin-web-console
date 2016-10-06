@@ -14,7 +14,11 @@ angular.module("openshiftConsole")
       },
       templateUrl: 'views/directives/life-cycle-hook.html',
       controller: function($scope) {
-        $scope.isDisabled = _.isEmpty($scope.hookParams);
+        $scope.view = {
+          isDisabled: false
+        }
+        $scope.view.hookExistes = !_.isEmpty($scope.hookParams);
+
         $scope.lifecycleHookFailurePolicyTypes = [
           "Abort",
           "Retry",
@@ -41,6 +45,7 @@ angular.module("openshiftConsole")
           return istag;
         };
 
+        setHookParams(['failurePolicy'], "Abort");
 
         setHookParams(['execNewPod', 'command'], []);
         setHookParams(['execNewPod', 'env'], []);
@@ -60,11 +65,6 @@ angular.module("openshiftConsole")
           _.set($scope.hookParams, ['tagImages', '0', 'to', 'namespace'], $scope.istagHook.namespace);
           _.set($scope.hookParams, ['tagImages', '0', 'to', 'name'], $scope.istagHook.imageStream + ':' + $scope.istagHook.tagObject.tag);
         });
-
-        $scope.disableInputs = function(bool) {
-          $scope.isDisabled = bool;
-        };
-
       }
     };
   });

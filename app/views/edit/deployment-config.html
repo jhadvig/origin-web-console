@@ -25,7 +25,7 @@
                         {{strategyParamsName}}
                         <div class="form-group strategy-name">
                           <label class="picker-label">Strategy Type</label>
-                          <ui-select ng-model="strategyData.type" search-enabled="false">
+                          <ui-select ng-model="strategyData.type" search-enabled="false" ng-change="strategyChange(strategyData.type)">
                             <ui-select-match>{{$select.selected}}</ui-select-match>
                             <ui-select-choices repeat="strategyType in deploymentConfigStrategyTypes">
                               {{strategyType}}
@@ -34,29 +34,35 @@
                         </div>
 
                         <div ng-if="strategyData.type === 'Custom'" >
-<!--                           <label for="imageName" class="required">Image Name</label>
+                          <label for="imageName" class="required">Image Name</label>
                           <div>
                             <input class="form-control"
                               id="imageName"
                               name="imageName"
-                              ng-model="containerData.imageName"
+                              ng-model="strategyData.customParams.image"
                               type="text"
                               autocorrect="off"
                               autocapitalize="off"
                               spellcheck="false"
+                              aria-describedby="image-name-help"
                               required>
                           </div>
+                          <div class="help-block" id="image-name-help">Specifies a image which can carry out a deployment.</div>
 
+                          <div class="form-group gutter-top">
+                            <label class="required">Command</label>
+                            <edit-command args="strategyData.customParams.command" is-required="true"></edit-command>
+                          </div>
                           <div class="form-group">
                             <label>Environment Variables</label>
                             <key-value-editor
-                              entries="hookParams.execNewPod.env"
+                              entries="strategyData.customParams.environment"
                               key-validator="[a-zA-Z][a-zA-Z0-9_]*"
                               key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
                               add-row-link="Add environment variable"></key-value-editor>
-                          </div> -->
+                            <div class="help-block">Specifies environment which will be given to the container for Image.</div>
+                          </div>
                         </div>
-
                         <div ng-if="strategyData.type !== 'Custom'" >
                           <div class="form-group">
                             <label for="strategyTimeout">Timeout</label>
@@ -65,7 +71,7 @@
                               <input id="strategyTimeout"
                                   type="number"
                                   name="strategyTimeout"
-                                  ng-model="strategyData.params.timeoutSeconds"
+                                  ng-model="strategyData[displayedParams].timeoutSeconds"
                                   placeholder="600"
                                   ng-pattern="/^\d+$/"
                                   min="0"
@@ -75,7 +81,7 @@
                               <span class="input-group-addon">seconds</span>
                             </span>
                             <div class="help-block" ng-attr-id="strategyTimeout">
-                              How long to wait for updates before giving up.
+                              How long should deployment configuration retry to run the pod before times out.
                             </div>
                             <div ng-if="form.strategyTimeout.$invalid && form.strategyTimeout.$touched" class="has-error">
                               <div ng-if="form.strategyTimeout.$error.number" class="help-block">
@@ -99,7 +105,7 @@
                                     type="number"
                                     placeholder="1"
                                     name="updatePeriod"
-                                    ng-model="strategyData.params.updatePeriodSeconds"
+                                    ng-model="strategyData[displayedParams].updatePeriodSeconds"
                                     ng-pattern="/^\d+$/"
                                     min="0"
                                     select-on-focus
@@ -108,7 +114,7 @@
                                 <span class="input-group-addon">seconds</span>
                               </span>
                               <div class="help-block" ng-attr-id="updatePeriod">
-                                How long to wait for updates before giving up.
+                                Time to wait between retrying to run individual pod.
                               </div>
                               <div ng-if="form.updatePeriod.$invalid && form.updatePeriod.$touched" class="has-error">
                                 <div ng-if="form.updatePeriod.$error.number" class="help-block">
@@ -131,7 +137,7 @@
                                     type="number"
                                     placeholder="1"
                                     name="interval"
-                                    ng-model="strategyData.params.intervalSeconds"
+                                    ng-model="strategyData[displayedParams].intervalSeconds"
                                     ng-pattern="/^\d+$/"
                                     min="0"
                                     select-on-focus
@@ -140,7 +146,7 @@
                                 <span class="input-group-addon">seconds</span>
                               </span>
                               <div class="help-block" ng-attr-id="interval">
-                                How long to wait for updates before giving up.
+                                Time to wait between polling deployment status after running a pod.
                               </div>
                               <div ng-if="form.interval.$invalid && form.interval.$touched" class="has-error">
                                 <div ng-if="form.interval.$error.number" class="help-block">
@@ -160,9 +166,9 @@
                               <div ng-class="{ 'has-error': form.maxUnavailable.$invalid && form.maxUnavailable.$touched }">
                                 <input id="maxUnavailable"
                                     type="text"
-                                    placeholder="1"
+                                    placeholder="25%"
                                     name="maxUnavailable"
-                                    ng-model="strategyData.params.maxUnavailable"
+                                    ng-model="strategyData[displayedParams].maxUnavailable"
                                     ng-pattern="/^\d+[%]{0,1}$/"
                                     min="0"
                                     select-on-focus
@@ -170,7 +176,8 @@
                                     aria-describedby="maxUnavailable">
                               </div>
                               <div class="help-block" ng-attr-id="maxUnavailable">
-                                How long to wait for updates before giving up.
+                                Maximum number of pods that can be unavailable during the update. Can be set to either a percentage (e.g., 10%) or an absolute value (e.g., 2).
+                                <a href="{{'rolling_strategy' | helpLink}}" aria-hidden="true" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link"></i></span></a>
                               </div>
                               <div ng-if="form.maxUnavailable.$invalid && form.maxUnavailable.$touched" class="has-error">
                                 <span ng-if="form.maxUnavailable.$error.pattern && !form.maxUnavailable.$error.min" class="help-block">
@@ -184,9 +191,9 @@
                               <div ng-class="{ 'has-error': form.maxSurge.$invalid && form.maxSurge.$touched }">
                                 <input id="maxSurge"
                                     type="text"
-                                    placeholder="1"
+                                    placeholder="25%"
                                     name="maxSurge"
-                                    ng-model="strategyData.params.maxSurge"
+                                    ng-model="strategyData[displayedParams].maxSurge"
                                     ng-pattern="/^\d+[%]{0,1}$/"
                                     min="0"
                                     select-on-focus
@@ -194,7 +201,8 @@
                                     aria-describedby="maxSurge">
                               </div>
                               <div class="help-block" ng-attr-id="maxSurge">
-                                How long to wait for updates before giving up.
+                                Maximum number of pods that can be scheduled above the original number of pods. Can be set to either a percentage (e.g., 10%) or an absolute value (e.g., 2).
+                                <a href="{{'rolling_strategy' | helpLink}}" aria-hidden="true" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link"></i></span></a>
                               </div>
                               <div ng-if="form.maxSurge.$invalid && form.maxSurge.$touched" class="has-error">
                                 <span ng-if="form.maxSurge.$error.pattern" class="help-block">
@@ -207,22 +215,17 @@
 
                           <div class="checkbox form-group">
                             <label>
-                              <input type="checkbox" ng-model="hooksDefined">
-                              Define hooks that will be executed during different etaps of your deploymnet. 
-                              <span class="help action-inline">
-                                <a href="">
-                                  <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
-                                  </i>
-                                </a>
-                              </span>
+                              <input type="checkbox" ng-model="anyHooksDefined">
+                              Define hooks which allow behavior to be injected into the deployment process at predefined points of the deployment run. 
+                              <a href="{{'lifecycle_hooks' | helpLink}}" aria-hidden="true" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link"></i></span></a>
                             </label>
                           </div>
 
-                          <div ng-if="strategyData.params && hooksDefined">
+                          <div ng-if="strategyData[displayedParams] && anyHooksDefined">
                             <uib-tabset>
                               <uib-tab>
                                 <uib-tab-heading>Pre Lifecycle Hook</uib-tab-heading>
-                                <life-cycle-hook model='strategyData.params.pre'
+                                <life-cycle-hook model='strategyData[displayedParams].pre'
                                                   type='pre'
                                                   available-volumes='volumes'
                                                   available-containers='containersName'
@@ -231,7 +234,7 @@
                               </uib-tab>
                               <uib-tab ng-if="strategyData.type !== 'Rolling'" active="selectedTab.mid" >
                                 <uib-tab-heading>Mid Lifecycle Hook</uib-tab-heading>
-                                <life-cycle-hook model='strategyData.params.mid'
+                                <life-cycle-hook model='strategyData[displayedParams].mid'
                                                   type='mid'
                                                   available-volumes='volumes'
                                                   available-containers='containersName'
@@ -240,7 +243,7 @@
                               </uib-tab>
                               <uib-tab active="selectedTab.post">
                                 <uib-tab-heading>Post Lifecycle Hook</uib-tab-heading>
-                                <life-cycle-hook model='strategyData.params.post'
+                                <life-cycle-hook model='strategyData[displayedParams].post'
                                                   type='post'
                                                   available-volumes='volumes'
                                                   available-containers='containersName'

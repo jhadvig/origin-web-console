@@ -516,14 +516,6 @@ angular.module('openshiftConsole')
       return _.round(Number(value) * 100, precision) + "%";
     };
   })
-  .filter('stripPercentageChar', function() {
-    return function(value) {
-      if (_.isString(value) && _.last(value) === "%") {
-        return parseInt(value.slice(0, -1));
-      }
-      return value;
-    }
-  })
   // Wraps _.filter. Works with hashes, unlike ngFilter, which only works
   // with arrays.
   .filter('filterCollection', function() {
