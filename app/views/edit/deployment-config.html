@@ -277,21 +277,44 @@
                       <h3 class="with-divider">Image Configuration</h3>
                       <dl class="dl-horizontal left">
 
-                        <div ng-repeat="(containerName, containerData) in containersDataMap" class="">
-                          <div class="container-name">
-                            <h4>Container {{containerName}}</h4>
+                        <div class="checkbox form-group">
+                          <label>
+                            <input type="checkbox" ng-model="options.hasDeploymentTriggers">
+                            Automatically trigger new deployments when image is updated.
+                            <span class="help action-inline">
+                              <a href="">
+                                <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="">
+                                </i>
+                              </a>
+                            </span>
+                          </label>
+                        </div>
+
+                        <div class="form-group" ng-if="options.hasDeploymentTriggers">
+                          <label>Trigger image</label>
+                          <div ng-repeat="trigger in triggersDataMap">
+                            <istag-select model="trigger.istag" allow-custom-tag="true" select-disabled="disableInputs"></istag-select>
                           </div>
-                          <label for="imageName" class="required">Image Name</label>
-                          <div>
-                            <input class="form-control"
-                              id="imageName"
-                              name="imageName"
-                              ng-model="containerData.imageName"
-                              type="text"
-                              autocorrect="off"
-                              autocapitalize="off"
-                              spellcheck="false"
-                              required>
+                          <span class="help-block">New deployment will be automatically triggers once specified image is updated.</span>
+                        </div>
+
+                        <div class="form-group" ng-if="!options.hasDeploymentTriggers">
+                          <div ng-repeat="(containerName, containerData) in containersDataMap" >
+                            <div class="container-name">
+                              <h4>Container {{containerName}}</h4>
+                            </div>
+                            <label for="imageName" class="required">Image Name</label>
+                            <div>
+                              <input class="form-control"
+                                id="imageName"
+                                name="imageName"
+                                ng-model="containerData.imageName"
+                                type="text"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                required>
+                            </div>
                           </div>
                         </div>
 

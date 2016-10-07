@@ -10,10 +10,10 @@
     <div class="checkbox form-group">
       <label>
         <input type="checkbox" ng-model="options.execNewPod">
-        Run a command in a new pod, based on the specified container from the deployment template.
+        Run a specific command in a new pod as part of the hook.
         <span class="help action-inline">
           <a href="">
-            <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
+            <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="Runs a command in a new pod, based on the specified container from the deployment template. Additional environment variables and volumes can be added into the new pod.">
             </i>
           </a>
         </span>
@@ -30,7 +30,7 @@
           </ui-select-choices>
         </ui-select>
       </div>
-    
+
       <div class="form-group">
         <label class="required">Command</label>
         <edit-command args="hookParams.execNewPod.command" is-required="true"></edit-command>
@@ -65,10 +65,10 @@
     <div class="checkbox form-group">
       <label>
         <input type="checkbox" ng-model="options.tagImages">
-        Tag current image referenced under a container onto an image stream tag if the deployment succeeds.
+        Tag image if the deployment succeeds.
         <span class="help action-inline">
           <a href="">
-            <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="!!!!!!">
+            <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="Tags current image referenced under a container onto an image stream tag if the deployment succeeds.">
             </i>
           </a>
         </span>

@@ -7,7 +7,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('EditDeploymentConfigController', function ($scope, $routeParams, $uibModal, DataService, SecretsService, ProjectsService, $filter, ApplicationGenerator, Navigate, $location, AlertMessageService, SOURCE_URL_PATTERN, keyValueEditorUtils) {
+  .controller('EditDeploymentConfigController', function ($scope, $routeParams, $uibModal, DataService, BreadcrumbsService, SecretsService, ProjectsService, $filter, ApplicationGenerator, Navigate, $location, AlertMessageService, SOURCE_URL_PATTERN, keyValueEditorUtils) {
 
     $scope.projectName = $routeParams.project;
     $scope.deploymentConfig = null;
@@ -17,25 +17,14 @@ angular.module('openshiftConsole')
     $scope.view = {
       advancedOptions: false
     }
-    $scope.pullSecrets = [];
-
-    $scope.breadcrumbs = [
-      {
-        title: $routeParams.project,
-        link: "project/" + $routeParams.project
-      },
-      {
-        title: "Deployments",
-        link: "project/" + $routeParams.project + "/browse/deployments"
-      },
-      {
-        title: $routeParams.deploymentconfig,
-        link: "project/" + $routeParams.project + "/browse/deployments/" + $routeParams.deploymentconfig
-      },
-      {
-      title: "Edit"
-      }
-    ];
+    // $scope.pullSecrets = [];
+    $scope.breadcrumbs = BreadcrumbsService.getBreadcrumbs({
+      name: $routeParams.name,
+      kind: $routeParams.kind,
+      namespace: $routeParams.project,
+      subpage: 'Edit',
+      includeProject: true
+    });
 
     $scope.deploymentConfigStrategyTypes = [
       "Recreate",
@@ -54,20 +43,24 @@ angular.module('openshiftConsole')
       .then(_.spread(function(project, context) {
         $scope.project = project;
         $scope.context = context;
-
-        // Update project breadcrumb with display name.
-        $scope.breadcrumbs[0].title = $filter('displayName')(project);
-
         DataService.get("deploymentconfigs", $routeParams.deploymentconfig, context).then(
           // success
           function(deploymentConfig) {
             $scope.deploymentConfig = deploymentConfig;
+
+            $scope.breadcrumbs = BreadcrumbsService.getBreadcrumbs({
+              object: deploymentConfig,
+              project: project,
+              subpage: 'Edit',
+              includeProject: true
+            });
 
             $scope.updatedDeploymentConfig = angular.copy($scope.deploymentConfig);
             $scope.containersName = _.map($scope.deploymentConfig.spec.template.spec.containers, 'name');
             // $scope.containersName = [''].concat(_.map($scope.deploymentConfig.spec.template.spec.containers, 'name'));
 
             $scope.containersDataMap = associateContainerWithData($scope.deploymentConfig.spec.template.spec.containers);
+            $scope.triggersDataMap = associatetTriggersWithTag($scope.deploymentConfig.spec.triggers);
             $scope.pullSecrets = $scope.deploymentConfig.spec.template.spec.imagePullSecrets || [{name: ''}];
             $scope.volumes = _.map($scope.deploymentConfig.spec.template.spec.volumes, 'name');
 
@@ -117,6 +110,28 @@ angular.module('openshiftConsole')
       })
     );
 
+    var associatetTriggersWithTag = function(triggers) {
+      var triggersData = [];
+      var imageChangeTriggers = _.filter(triggers, {type: 'ImageChange'});
+      if (imageChangeTriggers) {
+        $scope.options.hasDeploymentTriggers = true;
+        _.each(imageChangeTriggers, function(trigger) {
+          var triggerFromData = trigger.imageChangeParams.from;
+          triggersData.push({
+            data: trigger,
+            istag: {namespace: triggerFromData.namespace || $scope.projectName, imageStream: triggerFromData.name.split(':')[0], tagObject: {tag: triggerFromData.name.split(':')[1]}}
+          });
+        })
+      } else {
+        $scope.options.hasDeploymentTriggers = false;
+        triggersData.push({
+          istag: {namespace: $scope.namespace, imageStream: "", tagObject: {tag: ""}}
+        });
+      }
+
+      return triggersData;
+    };
+
     var associateContainerWithData = function(containers) {
       var containersDataMap = {};
       _.each(containers, function(container) {
@@ -125,7 +140,7 @@ angular.module('openshiftConsole')
           envVars: container.env || [],
           imageName: container.image
         }
-      })
+      });
       return containersDataMap;
     };
 
