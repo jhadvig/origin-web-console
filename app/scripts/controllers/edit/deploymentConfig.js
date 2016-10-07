@@ -158,11 +158,11 @@ angular.module('openshiftConsole')
                 modalConfig: function() {
                   return {
                     alerts: $scope.alerts,
-                    message: "Move the existing " + $scope.originalStrategy + " strategy parameters into " + pickedStrategy + " strategy parameters?",
+                    message: "Some of your existing configuration can be reused in the picked " + pickedStrategy + " strategy configuration. Do you want reuse it?",
                     details: "Moving will remove " + $scope.originalStrategy + " strategy parameters after the you save your changes.",
-                    okButtonText: "Move",
+                    okButtonText: "Yes",
                     okButtonClass: "btn-primary",
-                    cancelButtonText: "Preserve"
+                    cancelButtonText: "No"
                   };
                 }
               }
