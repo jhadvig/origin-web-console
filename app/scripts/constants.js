@@ -27,6 +27,7 @@ window.OPENSHIFT_CONSTANTS = {
     "pull_secret":             "https://docs.openshift.org/latest/dev_guide/managing_images.html#using-image-pull-secrets",
     "managing_secrets":        "https://docs.openshift.org/latest/dev_guide/service_accounts.html#managing-allowed-secrets",
     "creating_secrets":        "https://docs.openshift.org/latest/dev_guide/secrets.html#creating-and-using-secrets",
+    "strategy":                "https://docs.openshift.org/latest/dev_guide/deployments.html#strategies",
     "rolling_strategy":        "https://docs.openshift.org/latest/dev_guide/deployments.html#rolling-strategy",
     "recreate_strategy":       "https://docs.openshift.org/latest/dev_guide/deployments.html#recreate-strategy",
     "custom_strategy":         "https://docs.openshift.org/latest/dev_guide/deployments.html#custom-strategy",

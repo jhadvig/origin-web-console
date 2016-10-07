@@ -14,6 +14,9 @@ angular.module('openshiftConsole')
     $scope.alerts = {};
     $scope.emptyMessage = "Loading...";
     $scope.options = {};
+    $scope.view = {
+      advancedOptions: false
+    }
     $scope.pullSecrets = [];
 
     $scope.breadcrumbs = [
@@ -69,9 +72,10 @@ angular.module('openshiftConsole')
             $scope.volumes = _.map($scope.deploymentConfig.spec.template.spec.volumes, 'name');
 
             $scope.strategyData = angular.copy($scope.deploymentConfig.spec.strategy);
+            $scope.strategyType = $scope.strategyData.type;
             $scope.originalStrategy = $scope.strategyData.type;
             $scope.displayedParams = getParamsString($scope.strategyData.type);
-            $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
+            // $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
             
             DataService.list("secrets", context, function(secrets) {
               var secretsByType = SecretsService.groupSecretsByType(secrets);
@@ -128,8 +132,7 @@ angular.module('openshiftConsole')
     $scope.strategyChange = function(pickedStrategy) {
       var pickedStrategyParams = getParamsString(pickedStrategy);
       switch (true) {
-        case $scope.originalStrategy === "Recreate" && pickedStrategy === "Rolling":
-        case $scope.originalStrategy === "Rolling" && pickedStrategy === "Recreate":
+        case isRollingRecreateSwitch(pickedStrategy):
 
           if (!_.has($scope.strategyData, pickedStrategyParams)) {
             var modalInstance = $uibModal.open({
@@ -141,10 +144,10 @@ angular.module('openshiftConsole')
                   return {
                     alerts: $scope.alerts,
                     message: "Move the existing " + $scope.originalStrategy + " strategy parameters into " + pickedStrategy + " strategy parameters?",
-                    details: "Moving will remove " + $scope.originalStrategy + " strategy parameters.",
+                    details: "Moving will remove " + $scope.originalStrategy + " strategy parameters after the you save your changes.",
                     okButtonText: "Move",
                     okButtonClass: "btn-primary",
-                    cancelButtonText: "Cancel"
+                    cancelButtonText: "Preserve"
                   };
                 }
               }
@@ -153,7 +156,7 @@ angular.module('openshiftConsole')
             modalInstance.result.then(function () {
               // Move parameters that belong to the origial strategy to the picked one.
               $scope.strategyData[pickedStrategyParams] = $scope.strategyData[getParamsString($scope.originalStrategy)];
-              $scope.paramsMoved = true;
+              $scope.paramsMoved = getParamsString($scope.originalStrategy);
               postStrategyChange(pickedStrategy);
             }, function() {
               // Create empty parameters for the newly picked strategy
@@ -184,14 +187,25 @@ angular.module('openshiftConsole')
 
     var postStrategyChange = function(pickedStrategy) {
       $scope.displayedParams = getParamsString(pickedStrategy);
-      $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
+      // $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
     };
 
     var getParamsString = function(strategyType) {
-      return strategyType.toLowerCase() + 'Params'
+      return strategyType.toLowerCase() + 'Params';
     }
 
+    var updateEnvVars = function(pathToEnvs) {
+      pathToEnvs = keyValueEditorUtils.compactEntries(pathToEnvs);
+    };
+
+    var isRollingRecreateSwitch = function(pickedStrategy) {
+      return (pickedStrategy !== 'Custom' && pickedStrategy !== $scope.originalStrategy);
+    };
+
     $scope.save = function() {
+      console.log($scope.strategyData);
+      console.log($scope.paramsMoved);
+      return;
       $scope.disableInputs = true;
 
       // Update envVars for each container
@@ -202,9 +216,15 @@ angular.module('openshiftConsole')
 
       $scope.updatedDeploymentConfig.spec.template.spec.imagePullSecrets
 
-      // if ($scope.paramsMoved) {
-        // remove $scope.strategyData[getParamsString($scope.originalStrategy)];
-      // }
+      // Remove parameters of previously set strategy, if user moved 
+      if ($scope.paramsMoved && isRollingRecreateSwitch($scope.strategyData.type)) {
+        delete $scope.strategyData[getParamsString($scope.originalStrategy)];
+      }
+      if (_.has($scope.strategyData), [$scope.displayedParams, 'pre', 'execNewPod', 'env']) {
+        updateEnvVars($scope.strategyData[$scope.displayedParams].pre.execNewPod.env);
+      }
+      $scope.updatedDeploymentConfig.spec.strategy = $scope.strategyData;
+
 
       DataService.update("deploymentconfigs", $scope.updatedDeploymentConfig.metadata.name, $scope.updatedDeploymentConfig, $scope.context).then(
         function() {
@@ -227,6 +247,7 @@ angular.module('openshiftConsole')
           };
         }
       );
+
     };
 
     $scope.$on('$destroy', function(){

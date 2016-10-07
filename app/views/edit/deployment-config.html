@@ -14,13 +14,17 @@
             <div ng-if="!loaded">Loading...</div>
             <h1>
               Edit Deployment Config {{deploymentConfig.metadata.name}}
+              <small>&mdash; {{strategyType | startCase}} Deployment Strategy</small>
             </h1>
             <fieldset ng-disabled="disableInputs">
               <form class="edit-form" name="form" novalidate ng-submit="save()">
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="section">
-                      <h3>Deployment Strategy Configuration</h3>
+                      <h3>
+                        Deployment Strategy Configuration
+                        <a href="{{'strategy' | helpLink}}" aria-hidden="true" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link"></i></span></a>
+                      </h3>
                       <dl class="dl-horizontal left">
                         {{strategyParamsName}}
                         <div class="form-group strategy-name">
@@ -31,6 +35,22 @@
                               {{strategyType}}
                             </ui-select-choices>
                           </ui-select>
+                          <div>
+                            <span ng-switch="strategyData.type">
+                              <span class="help-block" ng-switch-when="Recreate">
+                                Recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.
+                                <span ng-if="!view.advancedOptions">To set additional strategy parameters switch to <a href="" ng-click="view.advancedOptions = true">advanced options.</a></span>
+                              </span>
+                              <span class="help-block" ng-switch-when="Rolling">
+                                Rolling streategy will scale down old components and then scale up.
+                                <span ng-if="!view.advancedOptions">To set additional strategy parameters switch to <a href="" ng-click="view.advancedOptions = true">advanced options.</a></span>
+                              </span>
+                              <span class="help-block" ng-switch-when="Custom">
+                                Custom strategy allows you to specify container image that will provide your own deployment behavior.
+                              </span>
+                            </span>
+                            
+                          </div>
                         </div>
 
                         <div ng-if="strategyData.type === 'Custom'" >
@@ -97,67 +117,69 @@
                           </div>
 
                           <div ng-if="strategyData.type === 'Rolling'">
-                            <div class="form-group">
-                              <label for="updatePeriod">Update Period</label>
-                              <span class="input-group"
-                                 ng-class="{ 'has-error': form.updatePeriod.$invalid && form.updatePeriod.$touched }">
-                                <input id="updatePeriod"
-                                    type="number"
-                                    placeholder="1"
-                                    name="updatePeriod"
-                                    ng-model="strategyData[displayedParams].updatePeriodSeconds"
-                                    ng-pattern="/^\d+$/"
-                                    min="0"
-                                    select-on-focus
-                                    class="form-control"
-                                    aria-describedby="updatePeriod">
-                                <span class="input-group-addon">seconds</span>
-                              </span>
-                              <div class="help-block" ng-attr-id="updatePeriod">
-                                Time to wait between retrying to run individual pod.
-                              </div>
-                              <div ng-if="form.updatePeriod.$invalid && form.updatePeriod.$touched" class="has-error">
-                                <div ng-if="form.updatePeriod.$error.number" class="help-block">
-                                  Must be a number.
-                                </div>
-                                <div ng-if="form.updatePeriod.$error.min" class="help-block">
-                                  Delay can't be negative.
-                                </div>
-                                <span ng-if="form.updatePeriod.$error.pattern && !form.updatePeriod.$error.min" class="help-block">
-                                  Must be a whole number.
+                            <div ng-if="view.advancedOptions">
+                              <div class="form-group">
+                                <label for="updatePeriod">Update Period</label>
+                                <span class="input-group"
+                                   ng-class="{ 'has-error': form.updatePeriod.$invalid && form.updatePeriod.$touched }">
+                                  <input id="updatePeriod"
+                                      type="number"
+                                      placeholder="1"
+                                      name="updatePeriod"
+                                      ng-model="strategyData[displayedParams].updatePeriodSeconds"
+                                      ng-pattern="/^\d+$/"
+                                      min="0"
+                                      select-on-focus
+                                      class="form-control"
+                                      aria-describedby="updatePeriod">
+                                  <span class="input-group-addon">seconds</span>
                                 </span>
+                                <div class="help-block" ng-attr-id="updatePeriod">
+                                  Time to wait between retrying to run individual pod.
+                                </div>
+                                <div ng-if="form.updatePeriod.$invalid && form.updatePeriod.$touched" class="has-error">
+                                  <div ng-if="form.updatePeriod.$error.number" class="help-block">
+                                    Must be a number.
+                                  </div>
+                                  <div ng-if="form.updatePeriod.$error.min" class="help-block">
+                                    Delay can't be negative.
+                                  </div>
+                                  <span ng-if="form.updatePeriod.$error.pattern && !form.updatePeriod.$error.min" class="help-block">
+                                    Must be a whole number.
+                                  </span>
+                                </div>
                               </div>
-                            </div>
 
-                            <div class="form-group">
-                              <label for="interval">Interval</label>
-                              <span class="input-group"
-                                 ng-class="{ 'has-error': form.interval.$invalid && form.interval.$touched }">
-                                <input id="interval"
-                                    type="number"
-                                    placeholder="1"
-                                    name="interval"
-                                    ng-model="strategyData[displayedParams].intervalSeconds"
-                                    ng-pattern="/^\d+$/"
-                                    min="0"
-                                    select-on-focus
-                                    class="form-control"
-                                    aria-describedby="interval">
-                                <span class="input-group-addon">seconds</span>
-                              </span>
-                              <div class="help-block" ng-attr-id="interval">
-                                Time to wait between polling deployment status after running a pod.
-                              </div>
-                              <div ng-if="form.interval.$invalid && form.interval.$touched" class="has-error">
-                                <div ng-if="form.interval.$error.number" class="help-block">
-                                  Must be a number.
-                                </div>
-                                <div ng-if="form.interval.$error.min" class="help-block">
-                                  Delay can't be negative.
-                                </div>
-                                <span ng-if="form.interval.$error.pattern && !form.interval.$error.min" class="help-block">
-                                  Must be a whole number.
+                              <div class="form-group">
+                                <label for="interval">Interval</label>
+                                <span class="input-group"
+                                   ng-class="{ 'has-error': form.interval.$invalid && form.interval.$touched }">
+                                  <input id="interval"
+                                      type="number"
+                                      placeholder="1"
+                                      name="interval"
+                                      ng-model="strategyData[displayedParams].intervalSeconds"
+                                      ng-pattern="/^\d+$/"
+                                      min="0"
+                                      select-on-focus
+                                      class="form-control"
+                                      aria-describedby="interval">
+                                  <span class="input-group-addon">seconds</span>
                                 </span>
+                                <div class="help-block" ng-attr-id="interval">
+                                  Time to wait between polling deployment status after running a pod.
+                                </div>
+                                <div ng-if="form.interval.$invalid && form.interval.$touched" class="has-error">
+                                  <div ng-if="form.interval.$error.number" class="help-block">
+                                    Must be a number.
+                                  </div>
+                                  <div ng-if="form.interval.$error.min" class="help-block">
+                                    Delay can't be negative.
+                                  </div>
+                                  <span ng-if="form.interval.$error.pattern && !form.interval.$error.min" class="help-block">
+                                    Must be a whole number.
+                                  </span>
+                                </div>
                               </div>
                             </div>
 
@@ -212,45 +234,39 @@
                             </div>
                           </div>
 
+                          <div ng-if="view.advancedOptions">
+                            <div class="lifecycle-hooks">
+                              <div class="pre-lifecycle-hook">
 
-                          <div class="checkbox form-group">
-                            <label>
-                              <input type="checkbox" ng-model="anyHooksDefined">
-                              Define hooks which allow behavior to be injected into the deployment process at predefined points of the deployment run. 
-                              <a href="{{'lifecycle_hooks' | helpLink}}" aria-hidden="true" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link"></i></span></a>
-                            </label>
-                          </div>
-
-                          <div ng-if="strategyData[displayedParams] && anyHooksDefined">
-                            <uib-tabset>
-                              <uib-tab>
-                                <uib-tab-heading>Pre Lifecycle Hook</uib-tab-heading>
+                                <h4>Pre Lifecycle Hook</h4>
                                 <life-cycle-hook model='strategyData[displayedParams].pre'
                                                   type='pre'
                                                   available-volumes='volumes'
                                                   available-containers='containersName'
                                                   namespace="projectName">
                                 </life-cycle-hook>
-                              </uib-tab>
-                              <uib-tab ng-if="strategyData.type !== 'Rolling'" active="selectedTab.mid" >
-                                <uib-tab-heading>Mid Lifecycle Hook</uib-tab-heading>
+                              </div>
+
+                              <div ng-if="strategyData.type !== 'Rolling'" class="mid-lifecycle-hook">
+                                <h4>Mid Lifecycle Hook</h4>
                                 <life-cycle-hook model='strategyData[displayedParams].mid'
                                                   type='mid'
                                                   available-volumes='volumes'
                                                   available-containers='containersName'
                                                   namespace="projectName">
                                 </life-cycle-hook>
-                              </uib-tab>
-                              <uib-tab active="selectedTab.post">
-                                <uib-tab-heading>Post Lifecycle Hook</uib-tab-heading>
+                              </div>
+
+                              <div class="post-lifecycle-hook">
+                                <h4>Post Lifecycle Hook</h4>
                                 <life-cycle-hook model='strategyData[displayedParams].post'
                                                   type='post'
                                                   available-volumes='volumes'
                                                   available-containers='containersName'
                                                   namespace="projectName">
                                 </life-cycle-hook>
-                              </uib-tab>
-                            </uib-tabset>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </dl>
@@ -279,16 +295,20 @@
                           </div>
                         </div>
 
-                        <div class="gutter-top">
-                          <osc-secrets model="pullSecrets"
-                                      namespace="projectName"
-                                      display-type="pull"
-                                      type="image"
-                                      secrets-by-type="secretsByType"
-                                      service-account-to-link="builder"
-                                      alerts="alerts"
-                                      allow-multiple-secrets="true">
-                          </osc-secrets>
+                        <div class="gutter-top" ng-if="!view.advancedOptions">To set secrets for pulling your images from private image registries switch to <a href="" ng-click="view.advancedOptions = true">advanced options.</a></div>
+
+                        <div ng-if="view.advancedOptions">
+                          <div class="gutter-top">
+                            <osc-secrets model="pullSecrets"
+                                        namespace="projectName"
+                                        display-type="pull"
+                                        type="image"
+                                        secrets-by-type="secretsByType"
+                                        service-account-to-link="builder"
+                                        alerts="alerts"
+                                        allow-multiple-secrets="true">
+                            </osc-secrets>
+                          </div>
                         </div>
                       </dl>
                     </div>
@@ -316,9 +336,9 @@
 
                    
                   
-<!--                     <div class="gutter-top">
+                    <div class="gutter-top">
                       <a href="" ng-click="view.advancedOptions = !view.advancedOptions" role="button">{{view.advancedOptions ? 'Hide' : 'Show'}} advanced options</a>
-                    </div> -->
+                    </div>
 
                     <div class="buttons gutter-top-bottom">
                       <button
