@@ -18,36 +18,17 @@ angular.module("openshiftConsole")
           isDisabled: false
         };
         $scope.view.hookExistes = !_.isEmpty($scope.hookParams);
+        // $scope.removedHookParams = {};
 
         $scope.lifecycleHookFailurePolicyTypes = [
           "Abort",
           "Retry",
           "Ignore"
         ];
-        
-        $scope.options = {
-          tagImages: _.has($scope.hookParams, 'tagImages'),
-          // Preselect `execNewPod` checkbox in case `tagImages` is not defined
-          execNewPod: !_.has($scope.hookParams, 'tagImages') ? true : _.has($scope.hookParams, 'execNewPod')
-        };
+        $scope.istagHook = {};
+        $scope.removedHookParams = {};
 
-        var setHookParams = function() {
-          setParam(['failurePolicy'], "Abort");
-
-          setParam(['execNewPod', 'command'], []);
-          setParam(['execNewPod', 'env'], []);
-          setParam(['execNewPod', 'volumes'], []);
-          setParam(['execNewPod', 'containerName'], $scope.availableContainers[0] || "");
-
-          setParam(['tagImages', '0', 'containerName'], $scope.availableContainers[0] || "");
-          setParam(['tagImages', '0', 'to'], {});
-        };
-
-        var setParam = function(path, defaultValue) {
-          _.set($scope.hookParams, path, _.get($scope.hookParams, path, defaultValue));
-        };
-
-        setHookParams();
+        $scope.actionType = _.has($scope.hookParams, 'tagImages') ? "tagImages" : "execNewPod";
 
         var setImageOptions = function(imageData) {
           var istag = {};
@@ -58,54 +39,78 @@ angular.module("openshiftConsole")
           }
           return istag;
         };
+        
+        var setHookParams = function() {
+          setParam(['failurePolicy'], "Abort");
+          if ($scope.actionType === "execNewPod") {
+            if (_.has($scope.removedHookParams, 'execNewPod')) {
+              $scope.hookParams.execNewPod = $scope.removedHookParams.execNewPod;
+              return;
+            }
+            setParam(['execNewPod', 'command'], []);
+            setParam(['execNewPod', 'env'], []);
+            setParam(['execNewPod', 'volumes'], []);
+            setParam(['execNewPod', 'containerName'], $scope.availableContainers[0] || "");
+          } else {
+            if (_.has($scope.removedHookParams, 'tagImages')) {
+              $scope.hookParams.tagImages = $scope.removedHookParams.tagImages;
+              return;
+            }
+            setParam(['tagImages', '0', 'containerName'], $scope.availableContainers[0] || "");
+            setParam(['tagImages', '0', 'to'], {});
+            $scope.istagHook = setImageOptions(_.head($scope.hookParams.tagImages).to);
+          }
+        };
+
+        var setParam = function(path, defaultValue) {
+          _.set($scope.hookParams, path, _.get($scope.hookParams, path, defaultValue));
+        };
+
+        setHookParams();
+
+
 
         $scope.addHook = function() {
-          if ($scope.removedHookParams) {
+          if (!_.isEmpty($scope.removedHookParams)) {
             $scope.hookParams = $scope.removedHookParams;
             $scope.view.hookExistes = true;
             return;
           }
           $scope.hookParams = {};
-          $scope.removedHookParams = {};
-
           setHookParams();
-
-          $scope.istagHook = setImageOptions(_.head($scope.hookParams.tagImages).to);
           $scope.view.hookExistes = true;
-
-          $scope.$watch("istagHook.tagObject.tag", function() {
-            if (_.isEmpty($scope.istagHook.tagObject)) {
-              return;
-            }
-            // Assamble image name when tag changes
-            _.set($scope.hookParams, ['tagImages', '0', 'to', 'namespace'], $scope.istagHook.namespace);
-            _.set($scope.hookParams, ['tagImages', '0', 'to', 'name'], $scope.istagHook.imageStream + ':' + $scope.istagHook.tagObject.tag);
-          });
-
-          $scope.$watch("options.tagImages", function(value) {
-            if(value) {
-              $scope.hookParams.tagImages = $scope.hookParams.tagImages || $scope.removedHookParams.tagImages;
-            } else {
-              $scope.removedHookParams.tagImages = $scope.hookParams.tagImages;
-              delete $scope.hookParams.tagImages;
-            }
-          });
-
-          $scope.$watch("options.execNewPod", function(value) {
-            if(value) {
-              $scope.hookParams.execNewPod = $scope.hookParams.execNewPod || $scope.removedHookParams.execNewPod;
-            } else {
-              $scope.removedHookParams.execNewPod = $scope.hookParams.execNewPod;
-              delete $scope.hookParams.execNewPod;
-            }
-          });
         };
 
         $scope.removeHook = function() {
           $scope.removedHookParams = $scope.hookParams;
           delete $scope.hookParams;
           $scope.view.hookExistes = false;
+          $scope.editForm.$setDirty();
         };
+
+        $scope.actionTypeChange = function(actionType) {
+          $scope.actionType = actionType;
+          if (actionType === 'execNewPod') {
+
+            $scope.removedHookParams['tagImages'] = $scope.hookParams.tagImages;
+            delete $scope.hookParams.tagImages;
+          } else {
+            $scope.removedHookParams['execNewPod'] = $scope.hookParams.execNewPod;
+            delete $scope.hookParams.execNewPod;
+          }
+          setHookParams();
+          console.log($scope.hookParams);
+        };
+
+        $scope.$watch("istagHook.tagObject.tag", function() {
+          if (!_.has($scope.istagHook, ['tagObject', 'tag'])) {
+            return;
+          }
+          // Assamble image name when tag changes
+          _.set($scope.hookParams, ['tagImages', '0', 'to', 'kind'], 'ImageStreamTag');
+          _.set($scope.hookParams, ['tagImages', '0', 'to', 'namespace'], $scope.istagHook.namespace);
+          _.set($scope.hookParams, ['tagImages', '0', 'to', 'name'], $scope.istagHook.imageStream + ':' + $scope.istagHook.tagObject.tag);
+        });
       }
     };
   });

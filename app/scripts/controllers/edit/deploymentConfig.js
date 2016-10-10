@@ -15,7 +15,8 @@ angular.module('openshiftConsole')
     $scope.emptyMessage = "Loading...";
     $scope.options = {};
     $scope.view = {
-      advancedOptions: false
+      advancedStrategyOptions: false,
+      advancedImageOptions: false
     }
     // $scope.pullSecrets = [];
     $scope.breadcrumbs = BreadcrumbsService.getBreadcrumbs({
@@ -57,10 +58,8 @@ angular.module('openshiftConsole')
 
             $scope.updatedDeploymentConfig = angular.copy($scope.deploymentConfig);
             $scope.containersName = _.map($scope.deploymentConfig.spec.template.spec.containers, 'name');
-            // $scope.containersName = [''].concat(_.map($scope.deploymentConfig.spec.template.spec.containers, 'name'));
 
-            $scope.containersDataMap = associateContainerWithData($scope.deploymentConfig.spec.template.spec.containers);
-            $scope.triggersDataMap = associatetTriggersWithTag($scope.deploymentConfig.spec.triggers);
+            $scope.containersDataMap = associateContainerWithData($scope.updatedDeploymentConfig.spec.template.spec.containers, $scope.updatedDeploymentConfig.spec.triggers);
             $scope.pullSecrets = $scope.deploymentConfig.spec.template.spec.imagePullSecrets || [{name: ''}];
             $scope.volumes = _.map($scope.deploymentConfig.spec.template.spec.volumes, 'name');
 
@@ -68,7 +67,6 @@ angular.module('openshiftConsole')
             $scope.strategyType = $scope.strategyData.type;
             $scope.originalStrategy = $scope.strategyData.type;
             $scope.displayedParams = getParamsString($scope.strategyData.type);
-            // $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
             
             DataService.list("secrets", context, function(secrets) {
               var secretsByType = SecretsService.groupSecretsByType(secrets);
@@ -110,35 +108,30 @@ angular.module('openshiftConsole')
       })
     );
 
-    var associatetTriggersWithTag = function(triggers) {
-      var triggersData = [];
-      var imageChangeTriggers = _.filter(triggers, {type: 'ImageChange'});
-      if (imageChangeTriggers) {
-        $scope.options.hasDeploymentTriggers = true;
-        _.each(imageChangeTriggers, function(trigger) {
-          var triggerFromData = trigger.imageChangeParams.from;
-          triggersData.push({
-            data: trigger,
-            istag: {namespace: triggerFromData.namespace || $scope.projectName, imageStream: triggerFromData.name.split(':')[0], tagObject: {tag: triggerFromData.name.split(':')[1]}}
-          });
-        })
-      } else {
-        $scope.options.hasDeploymentTriggers = false;
-        triggersData.push({
-          istag: {namespace: $scope.namespace, imageStream: "", tagObject: {tag: ""}}
-        });
-      }
-      return triggersData;
-    };
-
-    var associateContainerWithData = function(containers) {
+    var associateContainerWithData = function(containers, triggers) {
       var containersDataMap = {};
+      var imageChangeTriggers = _.filter(triggers, {type: 'ImageChange'});
       _.each(containers, function(container) {
-        containersDataMap[container.name] = 
-        {
+        var containerTrigger = _.find(imageChangeTriggers, function(trigger) {return _.includes(trigger.imageChangeParams.containerNames, container.name)});
+        var triggerData = {};        
+        containersDataMap[container.name] = {
           envVars: container.env || [],
-          imageName: container.image
+          image: container.image,
+          hasDeploymentTrigger: !_.isEmpty(containerTrigger)
         }
+        if (containerTrigger) {
+          var triggerFromData = containerTrigger.imageChangeParams.from;
+          triggerData = {
+            data: containerTrigger,
+            istag: {namespace: triggerFromData.namespace || $scope.projectName, imageStream: triggerFromData.name.split(':')[0], tagObject: {tag: triggerFromData.name.split(':')[1]}}
+          };
+        } else {
+          var imageName = $filter('imageStreamName')(container.image).split('/');
+          triggerData = {
+            istag: {namespace: imageName[0], imageStream: imageName[1]}
+          };
+        }
+        _.set(containersDataMap[container.name], 'triggerData', triggerData);
       });
       return containersDataMap;
     };
@@ -157,7 +150,7 @@ angular.module('openshiftConsole')
                 modalConfig: function() {
                   return {
                     alerts: $scope.alerts,
-                    message: "Some of your existing configuration can be reused in the picked " + pickedStrategy + " strategy configuration. Do you want reuse Them?",
+                    message: "Some of your existing configuration can be reused in the picked " + pickedStrategy + " strategy configuration. Do you want reuse it?",
                     details: "Reusing configuration will remove " + $scope.originalStrategy + " strategy configuration after the changes are saved.",
                     okButtonText: "Yes",
                     okButtonClass: "btn-primary",
@@ -171,14 +164,11 @@ angular.module('openshiftConsole')
               // Move parameters that belong to the origial strategy to the picked one.
               $scope.strategyData[pickedStrategyParams] = $scope.strategyData[getParamsString($scope.originalStrategy)];
               $scope.paramsMoved = getParamsString($scope.originalStrategy);
-              postStrategyChange(pickedStrategy);
             }, function() {
               // Create empty parameters for the newly picked strategy
               $scope.strategyData[pickedStrategyParams] = {};
-              postStrategyChange(pickedStrategy);
             });
           } else {
-            postStrategyChange(pickedStrategy);
           }
           break;
         default:
@@ -191,35 +181,55 @@ angular.module('openshiftConsole')
                 command: [],
                 environment: []
               }
-            }
-            
+            } 
           }
-          postStrategyChange(pickedStrategy);
           break;
       }
-    };
-
-    var postStrategyChange = function(pickedStrategy) {
       $scope.displayedParams = getParamsString(pickedStrategy);
-      // $scope.anyHooksDefined = _.has($scope.strategyData[$scope.displayedParams], 'pre') || _.has($scope.strategyData[$scope.displayedParams], 'mid') || _.has($scope.strategyData[$scope.displayedParams], 'post');
     };
 
     var getParamsString = function(strategyType) {
       return strategyType.toLowerCase() + 'Params';
     }
 
-    var updateEnvVars = function(pathToEnvs) {
-      pathToEnvs = keyValueEditorUtils.compactEntries(pathToEnvs);
+    var isRollingRecreateSwitch = function(pickedStrategy) {
+      return (pickedStrategy !== 'Custom' && $scope.originalStrategy !== 'Custom' && pickedStrategy !== $scope.originalStrategy);
     };
 
-    var isRollingRecreateSwitch = function(pickedStrategy) {
-      return (pickedStrategy !== 'Custom' && pickedStrategy !== $scope.originalStrategy);
+    var assembleImageChangeTrigger = function(containerName, ist, trigger) {
+      var istagObject = {
+        kind: "ImageStreamTag",
+        namespace: ist.namespace,
+        name: ist.imageStream + ':' + ist.tagObject.tag
+      }
+      if (trigger) {
+        trigger.imageChangeParams.from = istagObject;
+      } else {
+        trigger = {
+          type: "ImageChange",
+          imageChangeParams: {
+            automatic: true,
+            containerNames: [containerName],
+            from: istagObject
+          }
+        };
+      }
+      return trigger;
+    };
+
+    var updateTriggers = function() {
+      var updatedTriggers = _.remove($scope.updatedDeploymentConfig.spec.triggers, function(trigger) {return trigger.type !== "ImageChange"});
+      _.each($scope.containersDataMap, function(containerData, containerName) {
+        if (containerData.hasDeploymentTrigger) {
+          updatedTriggers.push(assembleImageChangeTrigger(containerName, containerData.triggerData.istag, containerData.triggerData.data));
+        } else {
+          _.find($scope.updatedDeploymentConfig.spec.template.spec.containers, function(container) {return container.name === containerName}).image = containerData.image;
+        }
+      });
+      return updatedTriggers
     };
 
     $scope.save = function() {
-      console.log($scope.strategyData);
-      console.log($scope.paramsMoved);
-      return;
       $scope.disableInputs = true;
 
       // Update envVars for each container
@@ -228,17 +238,22 @@ angular.module('openshiftConsole')
         matchingContainer.env = keyValueEditorUtils.compactEntries(containerData.envVars);
       });
 
-      $scope.updatedDeploymentConfig.spec.template.spec.imagePullSecrets
-
       // Remove parameters of previously set strategy, if user moved 
       if ($scope.paramsMoved && isRollingRecreateSwitch($scope.strategyData.type)) {
         delete $scope.strategyData[getParamsString($scope.originalStrategy)];
       }
-      if (_.has($scope.strategyData), [$scope.displayedParams, 'pre', 'execNewPod', 'env']) {
-        updateEnvVars($scope.strategyData[$scope.displayedParams].pre.execNewPod.env);
-      }
-      $scope.updatedDeploymentConfig.spec.strategy = $scope.strategyData;
 
+      if ($scope.strategyType !== 'Custom') {
+        _.each(['pre', 'mid', 'post'], function(hookType) {
+          if (_.has($scope.strategyData, [$scope.displayedParams, hookType, 'execNewPod', 'env'])) {
+            ($scope.strategyData[$scope.displayedParams][hookType].execNewPod.env) = keyValueEditorUtils.compactEntries($scope.strategyData[$scope.displayedParams][hookType].execNewPod.env);
+          }
+        });
+      }
+      // Update image pull secrets 
+      $scope.updatedDeploymentConfig.spec.template.spec.imagePullSecrets = $scope.pullSecrets
+      $scope.updatedDeploymentConfig.spec.strategy = $scope.strategyData;
+      $scope.updatedDeploymentConfig.spec.triggers = updateTriggers();
 
       DataService.update("deploymentconfigs", $scope.updatedDeploymentConfig.metadata.name, $scope.updatedDeploymentConfig, $scope.context).then(
         function() {
@@ -249,19 +264,18 @@ angular.module('openshiftConsole')
               message: "Deployment Config " + $scope.updatedDeploymentConfig.metadata.name + " was successfully updated."
             }
           });
-          $location.path(Navigate.resourceURL($scope.updatedDeploymentConfig, "Deployment Config", $scope.updatedDeploymentConfig.metadata.namespace));
+          $location.path(Navigate.resourceURL($scope.updatedDeploymentConfig, "DeploymentConfig", $scope.updatedDeploymentConfig.metadata.namespace));
         },
         function(result) {
           $scope.disableInputs = false;
 
           $scope.alerts["save"] = {
             type: "error",
-            message: "An error occurred updating the " + $scope.updatedDeploymentConfig.metadata.name + "Deployment Config",
+            message: "An error occurred updating the " + $scope.updatedDeploymentConfig.metadata.name + " Deployment Config",
             details: $filter('getErrorDetails')(result)
           };
         }
       );
-
     };
 
     $scope.$on('$destroy', function(){

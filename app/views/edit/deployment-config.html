@@ -266,7 +266,10 @@
                             </div>
                           </div>
                         </div>
-                        <div class="gutter-top" ng-if="!view.advancedStrategyOptions">To set additional parameters or edit lifecycle hooks, switch to <a href="" ng-click="view.advancedStrategyOptions = true">advanced strategy configuration options.</a></div>      
+                        <div class="gutter-top">
+                          <div ng-if="!view.advancedStrategyOptions">To set additional parameters or edit lifecycle hooks, switch to <a href="" ng-click="view.advancedStrategyOptions = true">advanced strategy configuration options.</a></div>
+                          <a ng-if="view.advancedStrategyOptions" href="" ng-click="view.advancedStrategyOptions = false">Hide advanced strategy configuration options.</a>
+                        </div>
                       </dl>
                     </div>
 
@@ -275,48 +278,47 @@
                       <h3 class="with-divider">Image Configuration</h3>
                       <dl class="dl-horizontal left">
 
-                        <div class="checkbox form-group">
-                          <label>
-                            <input type="checkbox" ng-model="options.hasDeploymentTriggers">
-                            Automatically trigger new deployments when image is updated.
-                            <span class="help action-inline">
-                              <a href="">
-                                <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="">
-                                </i>
-                              </a>
-                            </span>
-                          </label>
-                        </div>
+                        <div ng-repeat="(containerName, containerData) in containersDataMap">
 
-                        <div class="form-group" ng-if="options.hasDeploymentTriggers">
-                          <label>Trigger image</label>
-                          <div ng-repeat="trigger in triggersDataMap">
-                            <istag-select model="trigger.istag" allow-custom-tag="true" select-disabled="disableInputs"></istag-select>
+                          <div class="container-name">
+                            <h4>Container {{containerName}}</h4>
                           </div>
-                          <span class="help-block">New deployment will be automatically triggers once specified image is updated.</span>
-                        </div>
+                          <div class="form-group" ng-if="containerData.hasDeploymentTrigger">
+                            <label class="required">Trigger image</label>
+                            <istag-select model="containerData.triggerData.istag" select-disabled="disableInputs" include-shared-namespace="true"></istag-select>
+                            <span class="help-block">New deployment will be automatically triggers once specified image is updated.</span>
+                          </div>
 
-                        <div class="form-group" ng-if="!options.hasDeploymentTriggers">
-                          <div ng-repeat="(containerName, containerData) in containersDataMap" >
-                            <div class="container-name">
-                              <h4>Container {{containerName}}</h4>
-                            </div>
+                          <div ng-if="!containerData.hasDeploymentTrigger">
                             <label for="imageName" class="required">Image Name</label>
                             <div>
                               <input class="form-control"
                                 id="imageName"
                                 name="imageName"
-                                ng-model="containerData.imageName"
+                                ng-model="containerData.image"
                                 type="text"
                                 autocorrect="off"
                                 autocapitalize="off"
                                 spellcheck="false"
                                 required>
                             </div>
+                            <span class="help-block">New deployment can be triggered only manually.</span>
                           </div>
-                        </div>
 
-                        <div class="gutter-top" ng-if="!view.advancedImageOptions">To set secrets for pulling your images from private image registries, switch to <a href="" ng-click="view.advancedImageOptions = true">advanced image configuration options.</a></div>
+                          <div class="checkbox form-group">
+                            <label>
+                              <input type="checkbox" ng-model="containerData.hasDeploymentTrigger">
+                              Automatically trigger new deployments when image is updated.
+                              <span class="help action-inline">
+                                <a href="">
+                                  <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="">
+                                  </i>
+                                </a>
+                              </span>
+                            </label>
+                          </div>
+
+                        </div>
 
                         <div ng-if="view.advancedImageOptions">
                           <div class="gutter-top">
@@ -330,6 +332,11 @@
                                         allow-multiple-secrets="true">
                             </osc-secrets>
                           </div>
+                        </div>
+
+                        <div class="gutter-top">
+                          <div ng-if="!view.advancedImageOptions">To set secrets for pulling your images from private image registries, switch to <a href="" ng-click="view.advancedImageOptions = true">advanced image configuration options.</a></div>
+                          <a ng-if="view.advancedImageOptions" href="" ng-click="view.advancedImageOptions = false">Hide advanced image configuration options.</a>
                         </div>
                       </dl>
                     </div>
@@ -363,7 +370,7 @@
                           Save
                       </button>
                       <a class="btn btn-default btn-lg"
-                        href="{{updatedBuildConfig | navigateResourceURL}}">
+                        href="{{updatedDeploymentConfig | navigateResourceURL}}">
                         Cancel
                       </a>
                     </div>
