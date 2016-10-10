@@ -39,12 +39,9 @@
                             <span ng-switch="strategyData.type">
                               <span class="help-block" ng-switch-when="Recreate">
                                 Recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.
-                                <span ng-if="!view.advancedOptions">To set additional strategy parameters switch to <a href="" ng-click="view.advancedOptions = true">advanced options.</a></span>
                               </span>
                               <span class="help-block" ng-switch-when="Rolling">
                                 Rolling streategy will scale down old components and then scale up.
-                                <span ng-if="!view.advancedOptions">To set additional strategy parameters switch to <a href="" ng-click="view.advancedOptions = true">advanced options.</a></span>
-                              </span>
                               <span class="help-block" ng-switch-when="Custom">
                                 Custom strategy allows you to specify container image that will provide your own deployment behavior.
                               </span>
@@ -117,7 +114,7 @@
                           </div>
 
                           <div ng-if="strategyData.type === 'Rolling'">
-                            <div ng-if="view.advancedOptions">
+                            <div ng-if="view.advancedStrategyOptions">
                               <div class="form-group">
                                 <label for="updatePeriod">Update Period</label>
                                 <span class="input-group"
@@ -234,7 +231,7 @@
                             </div>
                           </div>
 
-                          <div ng-if="view.advancedOptions">
+                          <div ng-if="view.advancedStrategyOptions">
                             <div class="lifecycle-hooks">
                               <div class="pre-lifecycle-hook">
 
@@ -269,6 +266,7 @@
                             </div>
                           </div>
                         </div>
+                        <div class="gutter-top" ng-if="!view.advancedStrategyOptions">To set additional parameters or edit lifecycle hooks, switch to <a href="" ng-click="view.advancedStrategyOptions = true">advanced strategy configuration options.</a></div>      
                       </dl>
                     </div>
 
@@ -318,9 +316,9 @@
                           </div>
                         </div>
 
-                        <div class="gutter-top" ng-if="!view.advancedOptions">To set secrets for pulling your images from private image registries switch to <a href="" ng-click="view.advancedOptions = true">advanced options.</a></div>
+                        <div class="gutter-top" ng-if="!view.advancedImageOptions">To set secrets for pulling your images from private image registries, switch to <a href="" ng-click="view.advancedImageOptions = true">advanced image configuration options.</a></div>
 
-                        <div ng-if="view.advancedOptions">
+                        <div ng-if="view.advancedImageOptions">
                           <div class="gutter-top">
                             <osc-secrets model="pullSecrets"
                                         namespace="projectName"
@@ -355,12 +353,6 @@
                           key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
                           add-row-link="Add environment variable"></key-value-editor>
                       </div>
-                    </div>
-
-                   
-                  
-                    <div class="gutter-top">
-                      <a href="" ng-click="view.advancedOptions = !view.advancedOptions" role="button">{{view.advancedOptions ? 'Hide' : 'Show'}} advanced options</a>
                     </div>
 
                     <div class="buttons gutter-top-bottom">

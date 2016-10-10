@@ -128,7 +128,6 @@ angular.module('openshiftConsole')
           istag: {namespace: $scope.namespace, imageStream: "", tagObject: {tag: ""}}
         });
       }
-
       return triggersData;
     };
 
@@ -158,8 +157,8 @@ angular.module('openshiftConsole')
                 modalConfig: function() {
                   return {
                     alerts: $scope.alerts,
-                    message: "Some of your existing configuration can be reused in the picked " + pickedStrategy + " strategy configuration. Do you want reuse it?",
-                    details: "Moving will remove " + $scope.originalStrategy + " strategy parameters after the you save your changes.",
+                    message: "Some of your existing configuration can be reused in the picked " + pickedStrategy + " strategy configuration. Do you want reuse Them?",
+                    details: "Reusing configuration will remove " + $scope.originalStrategy + " strategy configuration after the changes are saved.",
                     okButtonText: "Yes",
                     okButtonClass: "btn-primary",
                     cancelButtonText: "No"

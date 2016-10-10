@@ -24,16 +24,30 @@ angular.module("openshiftConsole")
           "Retry",
           "Ignore"
         ];
-        $scope.hookParams = $scope.hookParams;
-
+        
         $scope.options = {
           tagImages: _.has($scope.hookParams, 'tagImages'),
-          execNewPod: _.has($scope.hookParams, 'execNewPod')
+          // Preselect `execNewPod` checkbox in case `tagImages` is not defined
+          execNewPod: !_.has($scope.hookParams, 'tagImages') ? true : _.has($scope.hookParams, 'execNewPod')
         };
 
-        var setHookParams = function(path, defaultValue) {
+        var setHookParams = function() {
+          setParam(['failurePolicy'], "Abort");
+
+          setParam(['execNewPod', 'command'], []);
+          setParam(['execNewPod', 'env'], []);
+          setParam(['execNewPod', 'volumes'], []);
+          setParam(['execNewPod', 'containerName'], $scope.availableContainers[0] || "");
+
+          setParam(['tagImages', '0', 'containerName'], $scope.availableContainers[0] || "");
+          setParam(['tagImages', '0', 'to'], {});
+        };
+
+        var setParam = function(path, defaultValue) {
           _.set($scope.hookParams, path, _.get($scope.hookParams, path, defaultValue));
         };
+
+        setHookParams();
 
         var setImageOptions = function(imageData) {
           var istag = {};
@@ -54,15 +68,7 @@ angular.module("openshiftConsole")
           $scope.hookParams = {};
           $scope.removedHookParams = {};
 
-          setHookParams(['failurePolicy'], "Abort");
-
-          setHookParams(['execNewPod', 'command'], []);
-          setHookParams(['execNewPod', 'env'], []);
-          setHookParams(['execNewPod', 'volumes'], []);
-          setHookParams(['execNewPod', 'containerName'], $scope.availableContainers[0] || "");
-
-          setHookParams(['tagImages', '0', 'containerName'], $scope.availableContainers[0] || "");
-          setHookParams(['tagImages', '0', 'to'], {});
+          setHookParams();
 
           $scope.istagHook = setImageOptions(_.head($scope.hookParams.tagImages).to);
           $scope.view.hookExistes = true;
