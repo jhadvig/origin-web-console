@@ -14,7 +14,7 @@
             <div ng-if="!loaded">Loading...</div>
             <h1>
               Edit Deployment Config {{deploymentConfig.metadata.name}}
-              <small>&mdash; {{strategyType | startCase}} Deployment Strategy</small>
+              <small>&mdash; {{strategyData.type | startCase}} Deployment Strategy</small>
             </h1>
             <fieldset ng-disabled="disableInputs">
               <form class="edit-form" name="form" novalidate ng-submit="save()">
@@ -26,7 +26,7 @@
                         {{strategyParamsName}}
                         <div class="form-group strategy-name">
                           <label class="picker-label">Strategy Type</label>
-                          <ui-select ng-model="strategyData.type" search-enabled="false" ng-change="strategyChange(strategyData.type)">
+                          <ui-select ng-model="strategyData.type" search-enabled="false" ng-change="strategyChanged(strategyData.type)">
                             <ui-select-match>{{$select.selected}}</ui-select-match>
                             <ui-select-choices repeat="strategyType in deploymentConfigStrategyTypes">
                               {{strategyType}}
@@ -88,7 +88,7 @@
                               <input id="strategyTimeout"
                                   type="number"
                                   name="strategyTimeout"
-                                  ng-model="strategyData[displayedParams].timeoutSeconds"
+                                  ng-model="strategyData[strategyParamsPropertyName].timeoutSeconds"
                                   placeholder="600"
                                   ng-pattern="/^\d+$/"
                                   min="0"
@@ -123,7 +123,7 @@
                                       type="number"
                                       placeholder="1"
                                       name="updatePeriod"
-                                      ng-model="strategyData[displayedParams].updatePeriodSeconds"
+                                      ng-model="strategyData[strategyParamsPropertyName].updatePeriodSeconds"
                                       ng-pattern="/^\d+$/"
                                       min="0"
                                       select-on-focus
@@ -155,7 +155,7 @@
                                       type="number"
                                       placeholder="1"
                                       name="interval"
-                                      ng-model="strategyData[displayedParams].intervalSeconds"
+                                      ng-model="strategyData[strategyParamsPropertyName].intervalSeconds"
                                       ng-pattern="/^\d+$/"
                                       min="0"
                                       select-on-focus
@@ -187,7 +187,7 @@
                                     type="text"
                                     placeholder="25%"
                                     name="maxUnavailable"
-                                    ng-model="strategyData[displayedParams].maxUnavailable"
+                                    ng-model="strategyData[strategyParamsPropertyName].maxUnavailable"
                                     ng-pattern="/^\d+[%]{0,1}$/"
                                     min="0"
                                     select-on-focus
@@ -212,7 +212,7 @@
                                     type="text"
                                     placeholder="25%"
                                     name="maxSurge"
-                                    ng-model="strategyData[displayedParams].maxSurge"
+                                    ng-model="strategyData[strategyParamsPropertyName].maxSurge"
                                     ng-pattern="/^\d+[%]{0,1}$/"
                                     min="0"
                                     select-on-focus
@@ -236,32 +236,32 @@
                               <div class="pre-lifecycle-hook">
 
                                 <h4>Pre Lifecycle Hook</h4>
-                                <life-cycle-hook model='strategyData[displayedParams].pre'
+                                <lifecycle-hook model='strategyData[strategyParamsPropertyName].pre'
                                                   type='pre'
-                                                  available-volumes='volumes'
-                                                  available-containers='containersName'
+                                                  available-volumes='volumeNames'
+                                                  available-containers='containerNames'
                                                   namespace="projectName">
-                                </life-cycle-hook>
+                                </lifecycle-hook>
                               </div>
 
                               <div ng-if="strategyData.type !== 'Rolling'" class="mid-lifecycle-hook">
                                 <h4>Mid Lifecycle Hook</h4>
-                                <life-cycle-hook model='strategyData[displayedParams].mid'
+                                <lifecycle-hook model='strategyData[strategyParamsPropertyName].mid'
                                                   type='mid'
-                                                  available-volumes='volumes'
-                                                  available-containers='containersName'
+                                                  available-volumes='volumeNames'
+                                                  available-containers='containerNames'
                                                   namespace="projectName">
-                                </life-cycle-hook>
+                                </lifecycle-hook>
                               </div>
 
                               <div class="post-lifecycle-hook">
                                 <h4>Post Lifecycle Hook</h4>
-                                <life-cycle-hook model='strategyData[displayedParams].post'
+                                <lifecycle-hook model='strategyData[strategyParamsPropertyName].post'
                                                   type='post'
-                                                  available-volumes='volumes'
-                                                  available-containers='containersName'
+                                                  available-volumes='volumeNames'
+                                                  available-containers='containerNames'
                                                   namespace="projectName">
-                                </life-cycle-hook>
+                                </lifecycle-hook>
                               </div>
                             </div>
                           </div>
@@ -278,7 +278,7 @@
                       <h3 class="with-divider">Image Configuration</h3>
                       <dl class="dl-horizontal left">
 
-                        <div ng-repeat="(containerName, containerData) in containersDataMap">
+                        <div ng-repeat="(containerName, containerData) in containerConfigByName">
 
                           <div class="container-name">
                             <h4>Container {{containerName}}</h4>
@@ -343,13 +343,13 @@
                         </a>
                       </span></h3>
 
-                      <div ng-repeat="(containerName, containerData) in containersDataMap" class="">
+                      <div ng-repeat="(containerName, containerData) in containerConfigByName" class="">
                         <div class="container-name">
                           <h4>Container {{containerName}}</h4>
                         </div>
                         <key-value-editor
                           ng-if="containerData"
-                          entries="containerData.envVars"
+                          entries="containerData.env"
                           key-validator="[a-zA-Z][a-zA-Z0-9_]*"
                           key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
                           add-row-link="Add environment variable"></key-value-editor>

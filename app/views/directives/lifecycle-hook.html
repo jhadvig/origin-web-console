@@ -5,7 +5,7 @@
     <div class="help-block" ng-switch-when="post">Post is a lifecycle hook action is executed after the strategy has finished all deployment logic.</div>
   </div>
 
-  <div ng-if="view.hookExistes">
+  <div ng-if="view.hookExists">
     <fieldset class="life-cycle-hook" ng-disabled="view.isDisabled">
 
       <div class="form-group" >
@@ -122,7 +122,7 @@
   </div>
 
   <span>
-    <a href="" role="button" ng-if="!view.hookExistes" ng-click="addHook()">Add {{type | startCase}} Lifecycle Hook</a>
-    <a href="" role="button" ng-if="view.hookExistes" ng-click="removeHook()">Remove {{type | startCase}} Lifecycle Hook</a>
+    <a href="" role="button" ng-if="!view.hookExists" ng-click="addHook()">Add {{type | startCase}} Lifecycle Hook</a>
+    <a href="" role="button" ng-if="view.hookExists" ng-click="removeHook()">Remove {{type | startCase}} Lifecycle Hook</a>
   </span>
 </ng-form>
