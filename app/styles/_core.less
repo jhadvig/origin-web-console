@@ -555,11 +555,14 @@ label.checkbox {
   }
 }
 
-.life-cycle-hook {
-  .hook-actions {
-    display: inline-block;
-    font-size: 13px;
-    margin-bottom: 10px;
+.lifecycle-hook {
+  .read-only-tag-image {
+    .container-name:after {
+      content: "\00a0 ";
+    }
+    .image-tag:before {
+      content: "\00a0 ";
+    }
   }
 }
 

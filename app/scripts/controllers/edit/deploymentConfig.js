@@ -157,8 +157,8 @@ angular.module('openshiftConsole')
       return ($scope.strategyData.type !== 'Custom' && $scope.originalStrategy !== 'Custom' && $scope.strategyData.type !== $scope.originalStrategy);
     };
 
-    $scope.strategyChanged = function(pickedStrategy) {
-      var pickedStrategyParams = getParamsPropertyName(pickedStrategy);
+    $scope.strategyChanged = function() {
+      var pickedStrategyParams = getParamsPropertyName($scope.strategyData.type);
       if (isRollingRecreateSwitch()) {
 
         if (!_.has($scope.strategyData, pickedStrategyParams)) {
@@ -179,7 +179,7 @@ angular.module('openshiftConsole')
               modalConfig: function() {
                 return {
                   alerts: $scope.alerts,
-                  message: "Some of your existing " + $scope.originalStrategy + " strategy parameters can be used for the " + pickedStrategy + " strategy. Keep parameters?",
+                  message: "Some of your existing " + $scope.originalStrategy + " strategy parameters can be used for the " + $scope.strategyData.type + " strategy. Keep parameters?",
                   details: paramsMsg,
                   okButtonText: "Yes",
                   okButtonClass: "btn-primary",
@@ -200,7 +200,7 @@ angular.module('openshiftConsole')
         }
       } else {
         if (!_.has($scope.strategyData, pickedStrategyParams)) {
-          if (pickedStrategy !== 'Custom') {
+          if ($scope.strategyData.type !== 'Custom') {
             $scope.strategyData[pickedStrategyParams] = {};
           } else {
             $scope.strategyData[pickedStrategyParams] = {
@@ -211,7 +211,7 @@ angular.module('openshiftConsole')
           }
         }
       }
-      $scope.strategyParamsPropertyName = getParamsPropertyName(pickedStrategy);
+      $scope.strategyParamsPropertyName = pickedStrategyParams;
     };
 
     var assembleImageChangeTrigger = function(containerName, ist, trigger) {

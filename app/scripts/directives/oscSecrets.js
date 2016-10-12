@@ -27,7 +27,7 @@ angular.module("openshiftConsole")
         };
 
         $scope.setLastSecretsName = function(secretName) {
-        var lastSecret = _.last($scope.pickedSecrets);
+          var lastSecret = _.last($scope.pickedSecrets);
           lastSecret.name = secretName;
         };
 
