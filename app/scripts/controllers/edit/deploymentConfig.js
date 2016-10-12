@@ -162,6 +162,15 @@ angular.module('openshiftConsole')
       if (isRollingRecreateSwitch()) {
 
         if (!_.has($scope.strategyData, pickedStrategyParams)) {
+          var paramsMsg = "Following " + $scope.originalStrategy + " strategy parameters will be reused: Timeout";
+          var originalStrategySpecificParams = $scope.strategyData[getParamsPropertyName($scope.originalStrategy)];
+          if (_.has(originalStrategySpecificParams, 'pre') ) {
+            paramsMsg = paramsMsg + ", Pre Lifecycle Hook";
+          }
+          if (_.has(originalStrategySpecificParams, 'post') ) {
+            paramsMsg = paramsMsg + ", Post Lifecycle Hook.";
+          }
+
           var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'views/modals/confirm.html',
@@ -171,7 +180,7 @@ angular.module('openshiftConsole')
                 return {
                   alerts: $scope.alerts,
                   message: "Some of your existing " + $scope.originalStrategy + " strategy parameters can be used for the " + pickedStrategy + " strategy. Keep parameters?",
-                  details: "Reusing configuration will remove " + $scope.originalStrategy + " strategy configuration after the changes are saved.",
+                  details: paramsMsg,
                   okButtonText: "Yes",
                   okButtonClass: "btn-primary",
                   cancelButtonText: "No"
