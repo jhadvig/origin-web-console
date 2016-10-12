@@ -2,7 +2,7 @@
 
 angular.module("openshiftConsole")
 
-  .directive("lifeCycleHook", function() {
+  .directive("lifecycleHook", function() {
     return {
       restrict: 'E',
       scope: {
@@ -12,12 +12,12 @@ angular.module("openshiftConsole")
         availableContainers: "=",
         namespace: "="
       },
-      templateUrl: 'views/directives/life-cycle-hook.html',
+      templateUrl: 'views/directives/lifecycle-hook.html',
       controller: function($scope) {
         $scope.view = {
           isDisabled: false
         };
-        $scope.view.hookExistes = !_.isEmpty($scope.hookParams);
+        $scope.view.hookExists = !_.isEmpty($scope.hookParams);
 
         $scope.lifecycleHookFailurePolicyTypes = [
           "Abort",
@@ -32,9 +32,22 @@ angular.module("openshiftConsole")
         var setImageOptions = function(imageData) {
           var istag = {};
           if (!_.isEmpty(imageData)) {
-            istag = {namespace: imageData.namespace || $scope.namespace, imageStream: imageData.name.split(':')[0], tagObject: {tag: imageData.name.split(':')[1]}};
+            var imageNameParts = imageData.name.split(':');
+            istag = {
+              namespace: imageData.namespace || $scope.namespace,
+              imageStream: imageNameParts[0],
+              tagObject: {
+                tag: imageNameParts[1]
+              }
+            };
           } else {
-            istag = {namespace: $scope.namespace, imageStream: "", tagObject: {tag: ""}};
+            istag = {
+              namespace: $scope.namespace,
+              imageStream: "",
+              tagObject: {
+                tag: ""
+              }
+            };
           }
           return istag;
         };
@@ -70,18 +83,18 @@ angular.module("openshiftConsole")
         $scope.addHook = function() {
           if (!_.isEmpty($scope.removedHookParams)) {
             $scope.hookParams = $scope.removedHookParams;
-            $scope.view.hookExistes = true;
+            $scope.view.hookExists = true;
             return;
           }
           $scope.hookParams = {};
           setHookParams();
-          $scope.view.hookExistes = true;
+          $scope.view.hookExists = true;
         };
 
         $scope.removeHook = function() {
           $scope.removedHookParams = $scope.hookParams;
           delete $scope.hookParams;
-          $scope.view.hookExistes = false;
+          $scope.view.hookExists = false;
           $scope.editForm.$setDirty();
         };
 
