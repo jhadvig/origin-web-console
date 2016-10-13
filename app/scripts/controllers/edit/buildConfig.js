@@ -72,7 +72,7 @@ angular.module('openshiftConsole')
     }
 
     $scope.breadcrumbs.push({
-      title: "Edit"
+      title: $routeParams.isPipeline ? "Edit Pipelines" : "Edit Builds"
     });
 
     $scope.imageOptions = {

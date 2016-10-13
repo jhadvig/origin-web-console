@@ -503,10 +503,10 @@ label.checkbox {
 }
 
 .osc-secrets-form {
-  .remove-secret(@width: 10%) {
-    width: @width;
+  .remove-secret {
+    display: inline-block;
     margin-left: 7px;
-    display: inline;
+    vertical-align: 0px;
   }
   .secret-name(@width: 90%) {
     width: @width;
@@ -516,17 +516,11 @@ label.checkbox {
     .secret-name {
       .secret-name(95%);
     }
-    .remove-secret {
-      .remove-secret(5%);
-    }
   }
   @media (max-width: @screen-xs-max) {
     .basic-secrets {
       .secret-name {
         .secret-name();
-      }
-      .remove-secret {
-        .remove-secret();
       }
     }
   }
@@ -534,9 +528,6 @@ label.checkbox {
     margin-bottom: 5px;
     .directory {
       .secret-name();
-    }
-    .remove-secret {
-      .remove-secret();
     }
   }
 
@@ -556,6 +547,10 @@ label.checkbox {
 }
 
 .lifecycle-hook {
+  padding-bottom: 20px;
+  &:first-of-type {
+    padding-top: 20px;
+  }
   .read-only-tag-image {
     .container-name:after {
       content: "\00a0 ";

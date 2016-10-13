@@ -19,7 +19,7 @@ angular.module('openshiftConsole')
       name: $routeParams.name,
       kind: $routeParams.kind,
       namespace: $routeParams.project,
-      subpage: 'Edit',
+      subpage: 'Edit Deployment Config',
       includeProject: true
     });
 
@@ -47,7 +47,7 @@ angular.module('openshiftConsole')
         Logger.error('Unknown deployment strategy type: ' + strategyType);
         return;
       }
-    }
+    };
 
     ProjectsService
       .get($routeParams.project)
@@ -108,7 +108,7 @@ angular.module('openshiftConsole')
             $scope.strategyParamsPropertyName = getParamsPropertyName($scope.strategyData.type);
 
             // If strategy is 'Custom' and no environment variables are present, initiliaze them.
-            if ($scope.strategyData.type === 'Custom' && !_.has($scope.strategyData, ['customParams', 'environment'])) {
+            if ($scope.strategyData.type === 'Custom' && !_.has($scope.strategyData, 'customParams.environment')) {
               $scope.strategyData.customParams.environment = [];
             }
             
@@ -162,14 +162,6 @@ angular.module('openshiftConsole')
       if (isRollingRecreateSwitch()) {
 
         if (!_.has($scope.strategyData, pickedStrategyParams)) {
-          var paramsMsg = "Following " + $scope.originalStrategy + " strategy parameters will be reused: Timeout";
-          var originalStrategySpecificParams = $scope.strategyData[getParamsPropertyName($scope.originalStrategy)];
-          if (_.has(originalStrategySpecificParams, 'pre') ) {
-            paramsMsg = paramsMsg + ", Pre Lifecycle Hook";
-          }
-          if (_.has(originalStrategySpecificParams, 'post') ) {
-            paramsMsg = paramsMsg + ", Post Lifecycle Hook.";
-          }
 
           var modalInstance = $uibModal.open({
             animation: true,
@@ -179,8 +171,8 @@ angular.module('openshiftConsole')
               modalConfig: function() {
                 return {
                   alerts: $scope.alerts,
-                  message: "Some of your existing " + $scope.originalStrategy + " strategy parameters can be used for the " + $scope.strategyData.type + " strategy. Keep parameters?",
-                  details: paramsMsg,
+                  message: "Some of your existing " + $scope.originalStrategy.toLowerCase() + " strategy parameters can be used for the " + $scope.strategyData.type.toLowerCase() + " strategy. Keep parameters?",
+                  details: "The timeout parameter and any pre or post lifecycle hooks will be copied from " + $scope.originalStrategy.toLowerCase() + " strategy to " + $scope.strategyData.type.toLowerCase() + " strategy. After saving the changes, " + $scope.originalStrategy.toLowerCase() + " strategy parameters will be removed .",
                   okButtonText: "Yes",
                   okButtonClass: "btn-primary",
                   cancelButtonText: "No"
@@ -241,11 +233,11 @@ angular.module('openshiftConsole')
         if (containerData.hasDeploymentTrigger) {
           updatedTriggers.push(assembleImageChangeTrigger(containerName, containerData.triggerData.istag, containerData.triggerData.data));
         } else {
-          var imageSpec = _.find($scope.updatedDeploymentConfig.spec.template.spec.containers, function(container) {return container.name === containerName});
+          var imageSpec = _.find($scope.updatedDeploymentConfig.spec.template.spec.containers, { name: containerName });
           imageSpec.image = containerData.image;
         }
       });
-      return updatedTriggers
+      return updatedTriggers;
     };
 
     $scope.save = function() {

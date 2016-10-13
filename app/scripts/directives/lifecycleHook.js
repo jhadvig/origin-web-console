@@ -29,19 +29,19 @@ angular.module("openshiftConsole")
 
         $scope.action = {
           type: _.has($scope.hookParams, 'tagImages') ? "tagImages" : "execNewPod"
-        }
+        };
 
         var defaultExecNewPodObject = {
           command: [],
           env: [],
           volumes: [],
           containerName: $scope.availableContainers[0] || ""
-        }
+        };
 
         var defaultTagImageObject = {
           to: {},
           containerName: $scope.availableContainers[0] || ""
-        }
+        };
 
         var setImageOptions = function(imageData) {
           var istag = {};

@@ -40,7 +40,7 @@
                                   <a href="{{'recreate_strategy' | helpLink}}" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></span></a>
                                 </span>
                                 <span class="help-block" ng-switch-when="Rolling">
-                                  Rolling streategy will wait for pods to pass their readiness check, scale down old components and then scale up.
+                                  Rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.
                                   <a href="{{'rolling_strategy' | helpLink}}"target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></span></a>
                                 </span>
                                 <span class="help-block" ng-switch-when="Custom">
@@ -196,10 +196,6 @@
                                       class="form-control"
                                       aria-describedby="max-unavailable-help">
                                 </div>
-                                <div class="help-block" id="max-unavailable-help">
-                                  Maximum number of pods that can be unavailable during the update. Can be set to either a percentage (e.g., 10%) or an absolute value (e.g., 2).
-                                  <a href="{{'rolling_strategy' | helpLink}}" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></span></a>
-                                </div>
                                 <div ng-if="form.maxUnavailable.$invalid && form.maxUnavailable.$touched && form.maxUnavailable.$error.pattern" class="has-error">
                                   <span class="help-block">
                                     Must be a non negative whole number or percentage.
@@ -220,10 +216,6 @@
                                       class="form-control"
                                       aria-describedby="maxSurge">
                                 </div>
-                                <div class="help-block" ng-attr-id="maxSurge">
-                                  Maximum number of pods that can be scheduled above the original number of pods. Can be set to either a percentage (e.g., 10%) or an absolute value (e.g., 2).
-                                  <a href="{{'rolling_strategy' | helpLink}}" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></span></a>
-                                </div>
                                 <div ng-if="form.maxSurge.$invalid && form.maxSurge.$touched && form.maxSurge.$error.pattern" class="has-error">
                                   <span class="help-block">
                                     Must be a non negative whole number or percentage.
@@ -234,9 +226,9 @@
 
                             <div ng-if="view.advancedStrategyOptions">
                               <div class="lifecycle-hooks">
-                                <div class="pre-lifecycle-hook">
+                                <div class="lifecycle-hook" id="pre-lifecycle-hook">
 
-                                  <h4>Pre Lifecycle Hook</h4>
+                                  <h3>Pre Lifecycle Hook</h3>
                                   <lifecycle-hook model='strategyData[strategyParamsPropertyName].pre'
                                                     type='pre'
                                                     available-volumes='volumeNames'
@@ -245,8 +237,8 @@
                                   </lifecycle-hook>
                                 </div>
 
-                                <div ng-if="strategyData.type !== 'Rolling'" class="mid-lifecycle-hook">
-                                  <h4>Mid Lifecycle Hook</h4>
+                                <div ng-if="strategyData.type !== 'Rolling'" class="lifecycle-hook" id="mid-lifecycle-hook">
+                                  <h3>Mid Lifecycle Hook</h3>
                                   <lifecycle-hook model='strategyData[strategyParamsPropertyName].mid'
                                                     type='mid'
                                                     available-volumes='volumeNames'
@@ -255,8 +247,8 @@
                                   </lifecycle-hook>
                                 </div>
 
-                                <div class="post-lifecycle-hook">
-                                  <h4>Post Lifecycle Hook</h4>
+                                <div class="lifecycle-hook" id="post-lifecycle-hook">
+                                  <h3>Post Lifecycle Hook</h3>
                                   <lifecycle-hook model='strategyData[strategyParamsPropertyName].post'
                                                     type='post'
                                                     available-volumes='volumeNames'
@@ -268,8 +260,8 @@
                             </div>
                           </div>
                           <div class="gutter-top">
-                            <div ng-if="!view.advancedStrategyOptions">To set additional parameters or edit lifecycle hooks, view <a href="" ng-click="view.advancedStrategyOptions = true">advanced options.</a></div>
-                            <a ng-if="view.advancedStrategyOptions" href="" ng-click="view.advancedStrategyOptions = false">Hide advanced options.</a>
+                            <div ng-if="!view.advancedStrategyOptions">To set additional parameters or edit lifecycle hooks, view <a href="" ng-click="view.advancedStrategyOptions = true">advanced strategy options</a></div>
+                            <a ng-if="view.advancedStrategyOptions" href="" ng-click="view.advancedStrategyOptions = false">Hide strategy advanced options</a>
                           </div>
                         </dl>
                       </div>
@@ -287,7 +279,7 @@
                             <div class="form-group" ng-if="containerData.hasDeploymentTrigger">
                               <label class="required">Image Change Trigger</label>
                               <istag-select model="containerData.triggerData.istag" select-disabled="disableInputs" include-shared-namespace="true"></istag-select>
-                              <span class="help-block">"New deployments will automatically start when the image stream tag is updated.</span>
+                              <span class="help-block">New deployments will automatically start when the image stream tag is updated.</span>
                             </div>
 
                             <div ng-if="!containerData.hasDeploymentTrigger">
@@ -330,17 +322,18 @@
                           </div>
 
                           <div class="gutter-top">
-                            <div ng-if="!view.advancedImageOptions">To set secrets for pulling your images from private image registries, view <a href="" ng-click="view.advancedImageOptions = true">advanced options.</a></div>
-                            <a ng-if="view.advancedImageOptions" href="" ng-click="view.advancedImageOptions = false">Hide advanced options.</a>
+                            <div ng-if="!view.advancedImageOptions">To set secrets for pulling your images from private image registries, view <a href="" ng-click="view.advancedImageOptions = true">advanced image options</a></div>
+                            <a ng-if="view.advancedImageOptions" href="" ng-click="view.advancedImageOptions = false">Hide advanced image options</a>
                           </div>
                         </dl>
                       </div>
 
 
                       <div class="section">
-                        <h3 class="with-divider">Environment Variables<span class="help action-inline">
-                          <i class="pficon pficon-help" data-toggle="tooltip" aria-hidden="true" data-original-title="Environment variables are used to configure and pass information to running containers.  These environment variables will be available during your container's runtime."></i>
-                        </span></h3>
+                        <h3 class="with-divider">
+                          Environment Variables
+                          <span class="help action-inline"></span>
+                        </h3>
 
                         <div ng-repeat="(containerName, containerData) in containerConfigByName">
                           <div class="container-name">
