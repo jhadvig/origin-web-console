@@ -58,17 +58,31 @@ angular.module("openshiftConsole")
         //   - linkAs                      user specifies how he wants to link the secret with SA
         //                                  - as a 'secrets'
         //                                  - as a 'imagePullSecret'
-        $scope.newSecret = {
-          type: $scope.type,
-          authType: $scope.secretAuthTypeMap[$scope.type].authTypes[0].id,
-          data: {},
-          linkSecret: false,
-          pickedServiceAccountToLink: $scope.serviceAccountToLink || "",
-          linkAs: {
-            secrets: $scope.type === 'source',
-            imagePullSecrets: $scope.type === 'image'
-          }
-        };
+        if ($scope.type) {
+          $scope.newSecret = {
+            type: $scope.type,
+            authType: $scope.secretAuthTypeMap[$scope.type].authTypes[0].id,
+            data: {},
+            linkSecret: false,
+            pickedServiceAccountToLink: $scope.serviceAccountToLink || "",
+            linkAs: {
+              secrets: $scope.type === 'source',
+              imagePullSecrets: $scope.type === 'image'
+            }
+          };
+        } else {
+          $scope.newSecret = {
+            type: "",
+            authType: "",
+            data: {},
+            linkSecret: false,
+            pickedServiceAccountToLink: $scope.serviceAccountToLink || "",
+            linkAs: {
+              secrets: false,
+              imagePullSecrets: false
+            }
+          };
+        }
         $scope.addGitconfig = false;
 
         DataService.list("serviceaccounts", $scope, function(result) {
@@ -89,7 +103,7 @@ angular.module("openshiftConsole")
 
           switch (authType) {
             case "kubernetes.io/basic-auth":
-              secret.data = {password: window.btoa(data.password)};
+              secret.data = {password: window.btoa(data.passwordToken)};
               if (data.username) {
                 secret.data.username = window.btoa(data.username);
               }
@@ -160,7 +174,8 @@ angular.module("openshiftConsole")
               linkSecretToServiceAccount(secret);
             } else {
               var alert = {
-                create: {
+                name: newSecret.metadata.name,
+                data: {
                   type: "success",
                   message: "Secret " + newSecret.metadata.name + " was created."
                 }

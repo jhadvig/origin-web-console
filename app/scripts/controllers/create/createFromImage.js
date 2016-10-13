@@ -14,6 +14,7 @@ angular.module("openshiftConsole")
       MetricsService,
       HPAService,
       QuotaService,
+      SecretsService,
       TaskList,
       failureObjectNameFilter,
       $filter,
@@ -42,6 +43,14 @@ angular.module("openshiftConsole")
         title: imageName
       }
     ];
+    $scope.buildConfigSecrets = {
+      gitSecret: {name: ""},
+      pullSecret: {name: ""},
+      pushSecret: {name: ""},
+    };
+    deploymentConfigSecrets: {
+      pullSecrets: [{name: ""}]
+    }
 
     var appLabel = {name: 'app', value: ''};
 
@@ -122,6 +131,14 @@ angular.module("openshiftConsole")
           // Warn if metrics aren't configured when setting autoscaling options.
           MetricsService.isAvailable().then(function(available) {
             $scope.metricsWarning = !available;
+          });
+
+          DataService.list("secrets", context, function(secrets) {
+            var secretsByType = SecretsService.groupSecretsByType(secrets);
+            // Add empty option to the image/source secrets
+            $scope.secretsByType = _.each(secretsByType, function(secretsArray) {
+              secretsArray.unshift("");
+            });
           });
 
           DataService.get("imagestreams", scope.imageName, {namespace: (scope.namespace || $routeParams.project)}).then(function(imageStream){
@@ -309,7 +326,9 @@ angular.module("openshiftConsole")
         $scope.createApp = function(){
           $scope.disableInputs = true;
           $scope.alerts = {};
+          $scope.buildConfig.secrets = $scope.buildConfigSecrets;
           $scope.buildConfig.envVars = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.buildConfigEnvVars));
+          $scepe.deploymentConfig.secrets = $scope.deploymentConfigSecrets;
           $scope.deploymentConfig.envVars = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.DCEnvVarsFromUser));
           var userLabels = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.userDefinedLabels));
           var systemLabels = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.systemLabels));
