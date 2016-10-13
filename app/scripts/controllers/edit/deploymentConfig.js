@@ -157,39 +157,40 @@ angular.module('openshiftConsole')
       return ($scope.strategyData.type !== 'Custom' && $scope.originalStrategy !== 'Custom' && $scope.strategyData.type !== $scope.originalStrategy);
     };
 
+    var promptToMoveParams = function(pickedStrategyParams) {
+      if (!_.has($scope.strategyData, pickedStrategyParams)) {
+        var modalInstance = $uibModal.open({
+          animation: true,
+          templateUrl: 'views/modals/confirm.html',
+          controller: 'ConfirmModalController',
+          resolve: {
+            modalConfig: function() {
+              return {
+                alerts: $scope.alerts,
+                message: "Some of your existing " + $scope.originalStrategy.toLowerCase() + " strategy parameters can be used for the " + $scope.strategyData.type.toLowerCase() + " strategy. Keep parameters?",
+                details: "The timeout parameter and any pre or post lifecycle hooks will be copied from " + $scope.originalStrategy.toLowerCase() + " strategy to " + $scope.strategyData.type.toLowerCase() + " strategy. After saving the changes, " + $scope.originalStrategy.toLowerCase() + " strategy parameters will be removed .",
+                okButtonText: "Yes",
+                okButtonClass: "btn-primary",
+                cancelButtonText: "No"
+              };
+            }
+          }
+        });
+        modalInstance.result.then(function () {
+          // Move parameters that belong to the origial strategy to the picked one.
+          $scope.strategyData[pickedStrategyParams] = $scope.strategyData[getParamsPropertyName($scope.originalStrategy)];
+          $scope.paramsMoved = getParamsPropertyName($scope.originalStrategy);
+        }, function() {
+          // Create empty parameters for the newly picked strategy
+          $scope.strategyData[pickedStrategyParams] = {};
+        });
+      }
+    };
+
     $scope.strategyChanged = function() {
       var pickedStrategyParams = getParamsPropertyName($scope.strategyData.type);
       if (isRollingRecreateSwitch()) {
-
-        if (!_.has($scope.strategyData, pickedStrategyParams)) {
-
-          var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'views/modals/confirm.html',
-            controller: 'ConfirmModalController',
-            resolve: {
-              modalConfig: function() {
-                return {
-                  alerts: $scope.alerts,
-                  message: "Some of your existing " + $scope.originalStrategy.toLowerCase() + " strategy parameters can be used for the " + $scope.strategyData.type.toLowerCase() + " strategy. Keep parameters?",
-                  details: "The timeout parameter and any pre or post lifecycle hooks will be copied from " + $scope.originalStrategy.toLowerCase() + " strategy to " + $scope.strategyData.type.toLowerCase() + " strategy. After saving the changes, " + $scope.originalStrategy.toLowerCase() + " strategy parameters will be removed .",
-                  okButtonText: "Yes",
-                  okButtonClass: "btn-primary",
-                  cancelButtonText: "No"
-                };
-              }
-            }
-          });
-
-          modalInstance.result.then(function () {
-            // Move parameters that belong to the origial strategy to the picked one.
-            $scope.strategyData[pickedStrategyParams] = $scope.strategyData[getParamsPropertyName($scope.originalStrategy)];
-            $scope.paramsMoved = getParamsPropertyName($scope.originalStrategy);
-          }, function() {
-            // Create empty parameters for the newly picked strategy
-            $scope.strategyData[pickedStrategyParams] = {};
-          });
-        }
+        promptToMoveParams(pickedStrategyParams);
       } else {
         if (!_.has($scope.strategyData, pickedStrategyParams)) {
           if ($scope.strategyData.type !== 'Custom') {

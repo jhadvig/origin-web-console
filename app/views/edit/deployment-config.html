@@ -36,15 +36,15 @@
                             <div>
                               <span ng-switch="strategyData.type">
                                 <span class="help-block" ng-switch-when="Recreate">
-                                  Recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.
+                                  The recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.
                                   <a href="{{'recreate_strategy' | helpLink}}" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></span></a>
                                 </span>
                                 <span class="help-block" ng-switch-when="Rolling">
-                                  Rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.
+                                  The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.
                                   <a href="{{'rolling_strategy' | helpLink}}"target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></span></a>
                                 </span>
                                 <span class="help-block" ng-switch-when="Custom">
-                                  Custom strategy allows you to specify container image that will provide your own deployment behavior.
+                                  The custom strategy allows you to specify container image that will provide your own deployment behavior.
                                   <a href="{{'custom_strategy' | helpLink}}" target="_blank"><span class="learn-more-inline">Learn more&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i></span></a>
                                 </span>
                               </span>
@@ -67,7 +67,7 @@
                                   aria-describedby="image-name-help"
                                   required>
                               </div>
-                              <div class="help-block" id="image-name-help">Specifies a image which can carry out a deployment.</div>
+                              <div class="help-block" id="image-name-help">"An image that can carry out the deployment.</div>
                             </div>
 
                             <div class="form-group">
@@ -198,7 +198,7 @@
                                 </div>
                                 <div ng-if="form.maxUnavailable.$invalid && form.maxUnavailable.$touched && form.maxUnavailable.$error.pattern" class="has-error">
                                   <span class="help-block">
-                                    Must be a non negative whole number or percentage.
+                                    Must be a non-negative whole number or percentage.
                                   </span>
                                 </div>
                               </div>
@@ -218,7 +218,7 @@
                                 </div>
                                 <div ng-if="form.maxSurge.$invalid && form.maxSurge.$touched && form.maxSurge.$error.pattern" class="has-error">
                                   <span class="help-block">
-                                    Must be a non negative whole number or percentage.
+                                    Must be a non-negative whole number or percentage.
                                   </span>
                                 </div>
                               </div>
@@ -260,7 +260,7 @@
                             </div>
                           </div>
                           <div class="gutter-top">
-                            <div ng-if="!view.advancedStrategyOptions">To set additional parameters or edit lifecycle hooks, view <a href="" ng-click="view.advancedStrategyOptions = true">advanced strategy options</a></div>
+                            <div ng-if="!view.advancedStrategyOptions">To set additional parameters or edit lifecycle hooks, view <a href="" ng-click="view.advancedStrategyOptions = true">advanced strategy options.</a></div>
                             <a ng-if="view.advancedStrategyOptions" href="" ng-click="view.advancedStrategyOptions = false">Hide strategy advanced options</a>
                           </div>
                         </dl>
@@ -271,24 +271,24 @@
                         <h3 class="with-divider">Images</h3>
                         <dl class="dl-horizontal left">
 
-                          <div ng-repeat="(containerName, containerData) in containerConfigByName">
+                          <div ng-repeat="(containerName, containerConfig) in containerConfigByName">
 
                             <div class="container-name">
                               <h4>Container {{containerName}}</h4>
                             </div>
-                            <div class="form-group" ng-if="containerData.hasDeploymentTrigger">
+                            <div class="form-group" ng-if="containerConfig.hasDeploymentTrigger">
                               <label class="required">Image Change Trigger</label>
-                              <istag-select model="containerData.triggerData.istag" select-disabled="disableInputs" include-shared-namespace="true"></istag-select>
+                              <istag-select model="containerConfig.triggerData.istag" select-disabled="disableInputs" include-shared-namespace="true"></istag-select>
                               <span class="help-block">New deployments will automatically start when the image stream tag is updated.</span>
                             </div>
 
-                            <div ng-if="!containerData.hasDeploymentTrigger">
+                            <div ng-if="!containerConfig.hasDeploymentTrigger">
                               <label for="imageName" class="required">Image Name</label>
                               <div>
                                 <input class="form-control"
                                   id="imageName"
                                   name="imageName"
-                                  ng-model="containerData.image"
+                                  ng-model="containerConfig.image"
                                   type="text"
                                   autocorrect="off"
                                   autocapitalize="off"
@@ -300,7 +300,7 @@
 
                             <div class="checkbox form-group">
                               <label>
-                                <input type="checkbox" ng-model="containerData.hasDeploymentTrigger">
+                                <input type="checkbox" ng-model="containerConfig.hasDeploymentTrigger">
                                 Automatically start new deployments when the image stream tag is updated.
                               </label>
                             </div>
@@ -322,7 +322,7 @@
                           </div>
 
                           <div class="gutter-top">
-                            <div ng-if="!view.advancedImageOptions">To set secrets for pulling your images from private image registries, view <a href="" ng-click="view.advancedImageOptions = true">advanced image options</a></div>
+                            <div ng-if="!view.advancedImageOptions">To set secrets for pulling your images from private image registries, view <a href="" ng-click="view.advancedImageOptions = true">advanced image options.</a></div>
                             <a ng-if="view.advancedImageOptions" href="" ng-click="view.advancedImageOptions = false">Hide advanced image options</a>
                           </div>
                         </dl>
@@ -330,18 +330,15 @@
 
 
                       <div class="section">
-                        <h3 class="with-divider">
-                          Environment Variables
-                          <span class="help action-inline"></span>
-                        </h3>
+                        <h3 class="with-divider">Environment Variables</h3>
 
-                        <div ng-repeat="(containerName, containerData) in containerConfigByName">
+                        <div ng-repeat="(containerName, containerConfig) in containerConfigByName">
                           <div class="container-name">
                             <h4>Container {{containerName}}</h4>
                           </div>
                           <key-value-editor
-                            ng-if="containerData"
-                            entries="containerData.env"
+                            ng-if="containerConfig"
+                            entries="containerConfig.env"
                             key-validator="[a-zA-Z][a-zA-Z0-9_]*"
                             key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
                             add-row-link="Add environment variable"></key-value-editor>
@@ -349,14 +346,10 @@
                       </div>
 
                       <div class="buttons gutter-top-bottom">
-                        <button
-                          type="submit"
-                          class="btn btn-primary btn-lg"
-                            ng-disabled="form.$invalid || form.$pristine || disableInputs">
-                            Save
+                        <button type="submit" class="btn btn-primary btn-lg" ng-disabled="form.$invalid || form.$pristine || disableInputs">
+                          Save
                         </button>
-                        <a class="btn btn-default btn-lg"
-                          href="{{updatedDeploymentConfig | navigateResourceURL}}">
+                        <a class="btn btn-default btn-lg" href="{{updatedDeploymentConfig | navigateResourceURL}}">
                           Cancel
                         </a>
                       </div>
