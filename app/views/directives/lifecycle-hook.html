@@ -101,9 +101,9 @@
           <div class="read-only-tag-image" ng-if="hookParams.tagImages.length > 1">
             <p class="read-only-info" ng-if="$first">
               <span class="pficon pficon-info" aria-hidden="true"></span>
-              More then one image tags are defined in this deployment configuration. To edit them, use deployment config YAML editor.
+              More than one image tag is defined. To change image tags, use the YAML editor.
             </p>
-            <span class="container-name">{{tagImage.containerName}}</span>&rarr;<span class="image-tag">{{tagImage.to.namespace || namespace}}/{{tagImage.to.name}}</span>
+            {{tagImage.containerName}}&nbsp;&rarr;&nbsp;{{tagImage.to.namespace || namespace}}/{{tagImage.to.name}}
           </div>
         </div>
       </div>
