@@ -84,6 +84,7 @@ angular.module("openshiftConsole")
           };
         }
         $scope.addGitconfig = false;
+        $scope.addCaCert = false;
 
         DataService.list("serviceaccounts", $scope, function(result) {
           $scope.serviceAccounts = result.by('metadata.name');
@@ -103,12 +104,20 @@ angular.module("openshiftConsole")
 
           switch (authType) {
             case "kubernetes.io/basic-auth":
-              secret.data = {password: window.btoa(data.passwordToken)};
+              // If the password/token is not entered either .gitconfig or ca.cert has to be provided
+              if (data.passwordToken) {
+                secret.data = {password: window.btoa(data.passwordToken)};
+              } else {
+                secret.type = "Opaque";
+              }
               if (data.username) {
                 secret.data.username = window.btoa(data.username);
               }
               if (data.gitconfig) {
                 secret.data[".gitconfig"] = window.btoa(data.gitconfig);
+              }
+              if (data.cacert) {
+                secret.data["ca.cert"] = window.btoa(data.cacert);
               }
               break;
             case "kubernetes.io/ssh-auth":
@@ -164,6 +173,13 @@ angular.module("openshiftConsole")
               details: $filter('getErrorDetails')(result)
             };
           });
+        };
+
+        $scope.isPasswordTokenRequired = function() {
+          if ($scope.newSecret.data.cacert || $scope.newSecret.data.gitconfig) {
+            return false;
+          }
+          return true;
         };
 
         $scope.create = function() {
