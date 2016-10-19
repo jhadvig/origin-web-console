@@ -49,7 +49,6 @@ angular.module('openshiftConsole')
             });
             break;
           case ".dockerconfigjson":
-
             decodedData = JSON.parse(decodedData);
             _.each(decodedData.auths, function(data, serverName) {
               var usernamePassword = window.atob(data.auth).split(":");

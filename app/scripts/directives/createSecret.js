@@ -55,20 +55,13 @@ angular.module("openshiftConsole")
         //                                  - if in BC the 'builder' SA if picked automatically
         //                                  - if in DC the 'deployer' SA if picked automatically
         //                                  - else the user will have to pick the SA and type of linking
-        //   - linkAs                      user specifies how he wants to link the secret with SA
-        //                                  - as a 'secrets'
-        //                                  - as a 'imagePullSecret'
         if ($scope.type) {
           $scope.newSecret = {
             type: $scope.type,
             authType: $scope.secretAuthTypeMap[$scope.type].authTypes[0].id,
             data: {},
-            linkSecret: false,
+            linkSecret: !_.isEmpty($scope.serviceAccountToLink),
             pickedServiceAccountToLink: $scope.serviceAccountToLink || "",
-            linkAs: {
-              secrets: $scope.type === 'source',
-              imagePullSecrets: $scope.type === 'image'
-            }
           };
         } else {
           $scope.newSecret = {
@@ -77,14 +70,11 @@ angular.module("openshiftConsole")
             data: {},
             linkSecret: false,
             pickedServiceAccountToLink: $scope.serviceAccountToLink || "",
-            linkAs: {
-              secrets: false,
-              imagePullSecrets: false
-            }
           };
         }
         $scope.addGitconfig = false;
         $scope.addCaCert = false;
+
 
         DataService.list("serviceaccounts", $scope, function(result) {
           $scope.serviceAccounts = result.by('metadata.name');
@@ -152,34 +142,33 @@ angular.module("openshiftConsole")
 
         var linkSecretToServiceAccount = function(secret) {
           var updatedSA = angular.copy($scope.serviceAccounts[$scope.newSecret.pickedServiceAccountToLink]);
-          if ($scope.newSecret.linkAs.secrets) {
+          if ($scope.newSecret.type === 'source') {
             updatedSA.secrets.push({name: secret.metadata.name});
           }
-          if ($scope.newSecret.linkAs.imagePullSecrets) {
+          if ($scope.newSecret.type === 'image') {
             updatedSA.imagePullSecrets.push({name: secret.metadata.name});
           }
-          DataService.update('serviceaccounts', $scope.newSecret.pickedServiceAccountToLink, updatedSA, $scope).then(function(sa) {
+          // Don't show any error related to linking to SA when linking is done automatically 
+          var options = $scope.serviceAccountToLink ? {errorNotification: false} : {};
+          DataService.update('serviceaccounts', $scope.newSecret.pickedServiceAccountToLink, updatedSA, $scope, options).then(function(sa) {
             var alert = {
-              createAndLink: {
+              name: 'createAndLink',
+              data: {
                 type: "success",
-                message: "Secret " + secret.metadata.name + " was created and linked with service account " + sa.metadata.name + "."
+                message: "Secret " + secret.metadata.name + " was created and linked with service account " + sa.metadata.name + "."                  
               }
             };
             $scope.postCreateAction({newSecret: secret, creationAlert: alert});
           }, function(result){
-            $scope.alerts["createAndLink"] = {
-              type: "error",
-              message: "An error occurred while linking the secret with service account.",
-              details: $filter('getErrorDetails')(result)
+            $scope.alerts = {
+              name: 'createAndLink',
+              data: {
+                type: "error",
+                message: "An error occurred while linking the secret with service account.",
+                details: $filter('getErrorDetails')(result)
+              }
             };
           });
-        };
-
-        $scope.isPasswordTokenRequired = function() {
-          if ($scope.newSecret.data.cacert || $scope.newSecret.data.gitconfig) {
-            return false;
-          }
-          return true;
         };
 
         $scope.create = function() {
@@ -190,7 +179,7 @@ angular.module("openshiftConsole")
               linkSecretToServiceAccount(secret);
             } else {
               var alert = {
-                name: newSecret.metadata.name,
+                name: 'create',
                 data: {
                   type: "success",
                   message: "Secret " + newSecret.metadata.name + " was created."
