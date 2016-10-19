@@ -44,13 +44,14 @@ angular.module("openshiftConsole")
       }
     ];
     $scope.buildConfigSecrets = {
-      gitSecret: {name: ""},
-      pullSecret: {name: ""},
-      pushSecret: {name: ""},
+      gitSecret: [{name: ""}],
+      pullSecret: [{name: ""}],
+      pushSecret: [{name: ""}],
     };
-    deploymentConfigSecrets: {
+    $scope.deploymentConfigSecrets = {
       pullSecrets: [{name: ""}]
-    }
+    };
+    $scope.alerts = {};
 
     var appLabel = {name: 'app', value: ''};
 
@@ -328,7 +329,7 @@ angular.module("openshiftConsole")
           $scope.alerts = {};
           $scope.buildConfig.secrets = $scope.buildConfigSecrets;
           $scope.buildConfig.envVars = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.buildConfigEnvVars));
-          $scepe.deploymentConfig.secrets = $scope.deploymentConfigSecrets;
+          $scope.deploymentConfig.secrets = $scope.deploymentConfigSecrets;
           $scope.deploymentConfig.envVars = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.DCEnvVarsFromUser));
           var userLabels = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.userDefinedLabels));
           var systemLabels = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.systemLabels));

@@ -128,7 +128,8 @@
                                           type="source"
                                           service-account-to-link="builder"
                                           secrets-by-type="secretsByType"
-                                          alerts="alerts">
+                                          alerts="alerts"
+                                          allow-multiple-secrets="false">
                               </osc-secrets>
                             </div>
 
@@ -221,14 +222,14 @@
                                 key-validator-error-tooltip="A valid environment variable name is an alphanumeric (a-z and 0-9) string beginning with a letter that may contain underscores."
                                 add-row-link="Add environment variable"></key-value-editor>
                               <div class="form-group">
-                                {{secrets.buildConfig}}
                                 <osc-secrets model="buildConfigSecrets.pullSecret"
                                             namespace="projectName"
                                             display-type="pull"
                                             type="image"
                                             secrets-by-type="secretsByType"
                                             service-account-to-link="builder"
-                                            alerts="alerts">
+                                            alerts="alerts"
+                                            allow-multiple-secrets="false">
                                 </osc-secrets>
                               </div>
                               <div class="form-group">
@@ -238,7 +239,8 @@
                                             type="image"
                                             service-account-to-link="builder"
                                             secrets-by-type="secretsByType"
-                                            alerts="alerts">
+                                            alerts="alerts"
+                                            allow-multiple-secrets="false">
                                 </osc-secrets>
                               </div>
                             </osc-form-section>
@@ -266,6 +268,15 @@
                                   Deployment configuration changes
                                 </label>
                                 </div>
+                                <osc-secrets model="deploymentConfigSecrets.pullSecrets"
+                                            namespace="projectName"
+                                            display-type="pull"
+                                            type="image"
+                                            secrets-by-type="secretsByType"
+                                            service-account-to-link="default"
+                                            alerts="alerts"
+                                            allow-multiple-secrets="true">
+                                </osc-secrets>
                                 <div>
                                   <h3>Environment Variables (Runtime only) <span class="help action-inline">
                                     <a href="" data-toggle="tooltip"

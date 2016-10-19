@@ -34,7 +34,6 @@ angular.module('openshiftConsole')
 
     var decodeSecretData = function() {
       var decodedSecretData = {};
-      var serverName;
 
       _.each($scope.secret.data, function(encodedData, paramName) {
         var decodedData = window.atob(encodedData);
@@ -46,7 +45,7 @@ angular.module('openshiftConsole')
                 username: data.username,
                 password: data.password,
                 email: data.email
-              }
+              };
             });
             break;
           case ".dockerconfigjson":

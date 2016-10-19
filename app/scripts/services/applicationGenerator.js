@@ -353,14 +353,14 @@ angular.module("openshiftConsole")
         }
       };
 
-      if (input.buildConfig.secrets.gitSecret.name) {
-        bc.spec.source.sourceSecret = input.buildConfig.secrets.gitSecret;
+      if (_.first(input.buildConfig.secrets.gitSecret).name) {
+        bc.spec.source.sourceSecret = _.first(input.buildConfig.secrets.gitSecret);
       }
-      if (input.buildConfig.secrets.pullSecret.name) {
-        bc.spec.strategy.sourceStrategy.pullSecret = input.buildConfig.secrets.pullSecret;
+      if (_.first(input.buildConfig.secrets.pullSecret).name) {
+        bc.spec.strategy.sourceStrategy.pullSecret = _.first(input.buildConfig.secrets.pullSecret);
       }
-      if (input.buildConfig.secrets.pushSecret.name) {
-        bc.spec.output.pushSecret = input.buildConfig.secrets.pushSecret;
+      if (_.first(input.buildConfig.secrets.pushSecret).name) {
+        bc.spec.output.pushSecret = _.first(input.buildConfig.secrets.pushSecret);
       }
 
       // Add contextDir only if specified.

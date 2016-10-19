@@ -15,6 +15,7 @@ angular.module('openshiftConsole')
       advancedStrategyOptions: false,
       advancedImageOptions: false
     };
+    $scope.triggers = {};
     $scope.breadcrumbs = BreadcrumbsService.getBreadcrumbs({
       name: $routeParams.name,
       kind: $routeParams.kind,
@@ -105,6 +106,7 @@ angular.module('openshiftConsole')
             $scope.strategyData = angular.copy($scope.deploymentConfig.spec.strategy);
             $scope.originalStrategy = $scope.strategyData.type;
             $scope.strategyParamsPropertyName = getParamsPropertyName($scope.strategyData.type);
+            $scope.triggers.hasConfigTrigger = !_.isEmpty(_.filter($scope.updatedDeploymentConfig.spec.triggers, {type: 'ConfigChange'}));
 
             // If strategy is 'Custom' and no environment variables are present, initiliaze them.
             if ($scope.strategyData.type === 'Custom' && !_.has($scope.strategyData, 'customParams.environment')) {
@@ -229,7 +231,7 @@ angular.module('openshiftConsole')
     };
 
     var updateTriggers = function() {
-      var updatedTriggers = _.filter($scope.updatedDeploymentConfig.spec.triggers, function(trigger) {return trigger.type !== 'ImageChange'});
+      var updatedTriggers = _.filter($scope.updatedDeploymentConfig.spec.triggers, function(trigger) {return trigger.type !== 'ImageChange' && trigger.type !== 'ConfigChange'});
       _.each($scope.containerConfigByName, function(containerData, containerName) {
         if (containerData.hasDeploymentTrigger) {
           updatedTriggers.push(assembleImageChangeTrigger(containerName, containerData.triggerData.istag, containerData.triggerData.data));
@@ -238,6 +240,11 @@ angular.module('openshiftConsole')
           imageSpec.image = containerData.image;
         }
       });
+      if ($scope.triggers.hasConfigTrigger) {
+        updatedTriggers.push({
+          type: "ConfigChange"
+        });
+      }
       return updatedTriggers;
     };
 

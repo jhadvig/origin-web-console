@@ -19,6 +19,9 @@ angular.module("openshiftConsole")
       link: function($scope) {
 
         $scope.canAddSourceSecret = function() {
+          if (!$scope.allowMultipleSecrets) {
+            return false;
+          }
           var lastSecret = _.last($scope.pickedSecrets);
           if (!lastSecret) {
             return false;
