@@ -65,8 +65,8 @@ angular.module("openshiftConsole")
           };
         } else {
           $scope.newSecret = {
-            type: "",
-            authType: "",
+            type: "source",
+            authType: "kubernetes.io/basic-auth",
             data: {},
             linkSecret: false,
             pickedServiceAccountToLink: "",
@@ -76,7 +76,7 @@ angular.module("openshiftConsole")
         $scope.addCaCert = false;
 
         // List SA only if $scope.serviceAccountToLink is not defined so user has to pick one.
-        if (!$scope.serviceAccountToLink && AuthorizationService.canI('serviceaccounts', 'list')) {
+        if (!$scope.serviceAccountToLink && AuthorizationService.canI('serviceaccounts', 'list') && AuthorizationService.canI('serviceaccounts', 'update')) {
           DataService.list("serviceaccounts", $scope, function(result) {
             $scope.serviceAccounts = result.by('metadata.name');
             $scope.serviceAccountsNames = _.keys($scope.serviceAccounts);

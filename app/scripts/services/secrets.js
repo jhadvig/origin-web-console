@@ -58,10 +58,10 @@ angular.module("openshiftConsole")
         var decodedData = window.atob(encodedData);
         switch (paramName) {
           case ".dockercfg":
-              decodedSecretData = decodeDockercfg(decodedData);
+            decodedSecretData = decodeDockercfg(decodedData);
             break;
           case ".dockerconfigjson":
-              decodedSecretData = decodeDockerconfigjson(decodedData);
+            decodedSecretData = decodeDockerconfigjson(decodedData);
             break;
           default:
             decodedSecretData[paramName] = window.atob(encodedData);
