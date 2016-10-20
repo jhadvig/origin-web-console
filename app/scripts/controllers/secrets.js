@@ -12,7 +12,6 @@ angular.module('openshiftConsole')
     $scope.projectName = $routeParams.project;
     $scope.secretsByType = {};
     $scope.alerts = $scope.alerts || {};
-    $scope.emptyMessage = "Loading...";
 
     AlertMessageService.getAlerts().forEach(function(alert) {
       $scope.alerts[alert.name] = alert.data;
@@ -27,7 +26,8 @@ angular.module('openshiftConsole')
         $scope.context = context;
 
         DataService.list("secrets", context, function(secrets) {
-          $scope.secretsByType = SecretsService.groupSecretObjectsByType(secrets);
+          $scope.secretsByType = SecretsService.groupSecretsByType(secrets);
+          $scope.loaded = true;
         });
     }));
   });

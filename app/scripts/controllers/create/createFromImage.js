@@ -43,14 +43,6 @@ angular.module("openshiftConsole")
         title: imageName
       }
     ];
-    $scope.buildConfigSecrets = {
-      gitSecret: [{name: ""}],
-      pullSecret: [{name: ""}],
-      pushSecret: [{name: ""}],
-    };
-    $scope.deploymentConfigSecrets = {
-      pullSecrets: [{name: ""}]
-    };
     $scope.alerts = {};
 
     var appLabel = {name: 'app', value: ''};
@@ -77,12 +69,20 @@ angular.module("openshiftConsole")
           scope.buildConfig = {
             buildOnSourceChange: true,
             buildOnImageChange: true,
-            buildOnConfigChange: true
+            buildOnConfigChange: true,
+            secrets: {
+              gitSecret: [{name: ""}],
+              pullSecret: [{name: ""}],
+              pushSecret: [{name: ""}]
+            }
           };
           scope.buildConfigEnvVars = [];
           scope.deploymentConfig = {
             deployOnNewImage: true,
-            deployOnConfigChange: true
+            deployOnConfigChange: true,
+            secrets: {
+              pullSecrets: [{name: ""}]
+            }
           };
           scope.DCEnvVarsFromImage;
           scope.DCEnvVarsFromUser = [];
@@ -136,8 +136,9 @@ angular.module("openshiftConsole")
 
           DataService.list("secrets", context, function(secrets) {
             var secretsByType = SecretsService.groupSecretsByType(secrets);
+            var secretNamesByType =_.mapValues(secretsByType, function(secrets) {return _.map(secrets, 'metadata.name')});
             // Add empty option to the image/source secrets
-            $scope.secretsByType = _.each(secretsByType, function(secretsArray) {
+            $scope.secretsByType = _.each(secretNamesByType, function(secretsArray) {
               secretsArray.unshift("");
             });
           });
@@ -327,9 +328,7 @@ angular.module("openshiftConsole")
         $scope.createApp = function(){
           $scope.disableInputs = true;
           $scope.alerts = {};
-          $scope.buildConfig.secrets = $scope.buildConfigSecrets;
           $scope.buildConfig.envVars = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.buildConfigEnvVars));
-          $scope.deploymentConfig.secrets = $scope.deploymentConfigSecrets;
           $scope.deploymentConfig.envVars = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.DCEnvVarsFromUser));
           var userLabels = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.userDefinedLabels));
           var systemLabels = keyValueEditorUtils.mapEntries(keyValueEditorUtils.compactEntries($scope.systemLabels));

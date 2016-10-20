@@ -14,28 +14,6 @@ angular.module("openshiftConsole")
           case 'kubernetes.io/basic-auth':
           case 'kubernetes.io/ssh-auth':
           case 'Opaque':
-            secretsByType.source.push(secret.metadata.name);
-            break;
-          case 'kubernetes.io/dockercfg':
-          case 'kubernetes.io/dockerconfigjson':
-            secretsByType.image.push(secret.metadata.name);
-            break;
-        }
-      });      
-      return secretsByType;
-    };
-
-    var groupSecretObjectsByType = function(secrets) {
-      var secretsByType = {
-        source: [],
-        image: []
-      };
-
-      _.each(secrets.by('metadata.name'), function(secret) {
-        switch (secret.type) {
-          case 'kubernetes.io/basic-auth':
-          case 'kubernetes.io/ssh-auth':
-          case 'Opaque':
             secretsByType.source.push(secret);
             break;
           case 'kubernetes.io/dockercfg':
@@ -47,8 +25,54 @@ angular.module("openshiftConsole")
       return secretsByType;
     };
 
+    var decodeDockercfg = function(decodedData) {
+      var decodedSecretData = {};
+      decodedData = JSON.parse(decodedData);
+      _.each(decodedData, function(data, serverName) {
+        decodedSecretData[serverName] = {
+          username: data.username,
+          password: data.password,
+          email: data.email
+        };
+      });
+      return decodedSecretData;
+    };
+
+    var decodeDockerconfigjson = function(decodedData) {
+      var decodedSecretData = {};
+      decodedData = JSON.parse(decodedData);
+      _.each(decodedData.auths, function(data, serverName) {
+        var usernamePassword = window.atob(data.auth).split(":");
+        decodedSecretData[serverName] = {
+          username: usernamePassword[0],
+          password: usernamePassword[1],
+          email: data.email
+        };
+      });
+      return decodedSecretData;
+    };
+
+    var decodeSecretData = function(secretData) {
+      var decodedSecretData = {};
+      _.each(secretData, function(encodedData, paramName) {
+        var decodedData = window.atob(encodedData);
+        switch (paramName) {
+          case ".dockercfg":
+              decodedSecretData = decodeDockercfg(decodedData);
+            break;
+          case ".dockerconfigjson":
+              decodedSecretData = decodeDockerconfigjson(decodedData);
+            break;
+          default:
+            decodedSecretData[paramName] = window.atob(encodedData);
+            break;
+        }
+      });
+      return decodedSecretData;
+    };
+
     return {
       groupSecretsByType: groupSecretsByType,
-      groupSecretObjectsByType: groupSecretObjectsByType
+      decodeSecretData: decodeSecretData
     };
   });

@@ -19,7 +19,7 @@ angular.module('openshiftConsole')
       },
       {
          title: "Secrets",
-         link: "project/" + $scope.projectName + "/browse/routes"
+         link: "project/" + $scope.projectName + "/browse/secrets"
       },
       {
         title: "Create Secret"
@@ -35,6 +35,9 @@ angular.module('openshiftConsole')
 
         $scope.postCreateAction = function(newSecret, creationAlert) {
           AlertMessageService.addAlert(creationAlert);
+          Navigate.toResourceList('secrets', $scope.projectName);
+        };
+        $scope.cancel = function() {
           Navigate.toResourceList('secrets', $scope.projectName);
         };
     }));

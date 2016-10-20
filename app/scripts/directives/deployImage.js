@@ -40,8 +40,9 @@ angular.module("openshiftConsole")
 
         DataService.list("secrets", {namespace: $scope.project}, function(secrets) {
           var secretsByType = SecretsService.groupSecretsByType(secrets);
+          var secretNamesByType =_.mapValues(secretsByType, function(secrets) {return _.map(secrets, 'metadata.name')});
           // Add empty option to the image/source secrets
-          $scope.secretsByType = _.each(secretsByType, function(secretsArray) {
+          $scope.secretsByType = _.each(secretNamesByType, function(secretsArray) {
             secretsArray.unshift("");
           });
         });

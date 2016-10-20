@@ -4,14 +4,16 @@
  * @ngdoc function
  * @name openshiftConsole.controller:SecretController
  * @description
- * # ProjectController
+ * # SecretController
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('SecretController', function ($routeParams, $scope, AlertMessageService, DataService, ProjectsService, Navigate) {
+  .controller('SecretController', function ($routeParams, $filter, $scope, AlertMessageService, DataService, ProjectsService, SecretsService) {
     $scope.projectName = $routeParams.project;
     $scope.secretName = $routeParams.secret;
-    $scope.showSecret = false;
+    $scope.view = {
+      showSecret: false
+    };
 
     $scope.alerts = $scope.alerts || {};
     $scope.emptyMessage = "Loading...";
@@ -32,41 +34,6 @@ angular.module('openshiftConsole')
 
     AlertMessageService.clearAlerts();
 
-    var decodeSecretData = function() {
-      var decodedSecretData = {};
-
-      _.each($scope.secret.data, function(encodedData, paramName) {
-        var decodedData = window.atob(encodedData);
-        switch (paramName) {
-          case ".dockercfg":
-            decodedData = JSON.parse(decodedData);
-            _.each(decodedData, function(data, serverName) {
-              decodedSecretData[serverName] = {
-                username: data.username,
-                password: data.password,
-                email: data.email
-              };
-            });
-            break;
-          case ".dockerconfigjson":
-            decodedData = JSON.parse(decodedData);
-            _.each(decodedData.auths, function(data, serverName) {
-              var usernamePassword = window.atob(data.auth).split(":");
-              decodedSecretData[serverName] = {
-                username: usernamePassword[0],
-                password: usernamePassword[1],
-                email: data.email
-              };
-            });
-            break;
-          default:
-            decodedSecretData[paramName] = window.atob(encodedData);
-            break;
-        }
-      });
-      return decodedSecretData;
-    };
-
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
@@ -76,11 +43,16 @@ angular.module('openshiftConsole')
         DataService.get("secrets", $scope.secretName, context).then(
           function(secret) {
             $scope.secret = secret;
-            $scope.decodedSecretData = decodeSecretData();
+            $scope.decodedSecretData = SecretsService.decodeSecretData($scope.secret.data);
             $scope.loaded = true;
           },
-          function() {
-            Navigate.toErrorPage("Cannot create from template: the specified template could not be retrieved.");
+          function(e) {
+            $scope.loaded = true;
+            $scope.alerts["load"] = {
+              type: "error",
+              message: "The secret details could not be loaded.",
+              details: "Reason: " + $filter('getErrorDetails')(e)
+            };
           });
     }));
   });

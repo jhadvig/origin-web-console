@@ -106,7 +106,7 @@ angular.module('openshiftConsole')
             $scope.strategyData = angular.copy($scope.deploymentConfig.spec.strategy);
             $scope.originalStrategy = $scope.strategyData.type;
             $scope.strategyParamsPropertyName = getParamsPropertyName($scope.strategyData.type);
-            $scope.triggers.hasConfigTrigger = !_.isEmpty(_.filter($scope.updatedDeploymentConfig.spec.triggers, {type: 'ConfigChange'}));
+            $scope.triggers.hasConfigTrigger = _.some($scope.updatedDeploymentConfig.spec.triggers, {type: 'ConfigChange'});
 
             // If strategy is 'Custom' and no environment variables are present, initiliaze them.
             if ($scope.strategyData.type === 'Custom' && !_.has($scope.strategyData, 'customParams.environment')) {
@@ -115,8 +115,9 @@ angular.module('openshiftConsole')
             
             DataService.list("secrets", context, function(secrets) {
               var secretsByType = SecretsService.groupSecretsByType(secrets);
+              var secretNamesByType =_.mapValues(secretsByType, function(secrets) {return _.map(secrets, 'metadata.name')});
               // Add empty option to the image/source secrets
-              $scope.secretsByType = _.each(secretsByType, function(secretsArray) {
+              $scope.secretsByType = _.each(secretNamesByType, function(secretsArray) {
                 secretsArray.unshift("");
               });
             });
@@ -231,7 +232,11 @@ angular.module('openshiftConsole')
     };
 
     var updateTriggers = function() {
-      var updatedTriggers = _.filter($scope.updatedDeploymentConfig.spec.triggers, function(trigger) {return trigger.type !== 'ImageChange' && trigger.type !== 'ConfigChange'});
+      // Preserve any triggers we don't handle in the editor.
+      var updatedTriggers = _.reject($scope.updatedDeploymentConfig.spec.triggers, function(trigger) {
+        return trigger.type === 'ImageChange' || trigger.type === 'ConfigChange';
+      });
+
       _.each($scope.containerConfigByName, function(containerData, containerName) {
         if (containerData.hasDeploymentTrigger) {
           updatedTriggers.push(assembleImageChangeTrigger(containerName, containerData.triggerData.istag, containerData.triggerData.data));
