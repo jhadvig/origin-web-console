@@ -53,22 +53,25 @@ angular.module("openshiftConsole")
     };
 
     var decodeSecretData = function(secretData) {
-      var decodedSecretData = {};
-      _.each(secretData, function(encodedData, paramName) {
-        var decodedData = window.atob(encodedData);
+      return _.mapValues(secretData, function(data, paramName) {
+        var decodedData = window.atob(data);
         switch (paramName) {
           case ".dockercfg":
-            decodedSecretData[paramName] = decodeDockercfg(decodedData);
+            data = decodeDockercfg(decodedData);
             break;
           case ".dockerconfigjson":
-            decodedSecretData[paramName] = decodeDockerconfigjson(decodedData);
+            data = decodeDockerconfigjson(decodedData);
             break;
-          default:
-            decodedSecretData[paramName] = window.atob(encodedData);
+          case "username":
+          case "password":
+          case ".gitconfig":
+          case "ssh-privatekey":
+          case "ca.crt":
+            data = decodedData;
             break;
         }
+        return data;
       });
-      return decodedSecretData;
     };
 
     return {
