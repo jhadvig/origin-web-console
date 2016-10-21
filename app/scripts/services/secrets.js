@@ -25,9 +25,9 @@ angular.module("openshiftConsole")
       return secretsByType;
     };
 
-    var decodeDockercfg = function(decodedData) {
+    var decodeDockercfg = function(encodedData) {
       var decodedSecretData = {};
-      decodedData = JSON.parse(decodedData);
+      var decodedData = JSON.parse(window.atob(encodedData));
       _.each(decodedData, function(data, serverName) {
         decodedSecretData[serverName] = {
           username: data.username,
@@ -38,9 +38,9 @@ angular.module("openshiftConsole")
       return decodedSecretData;
     };
 
-    var decodeDockerconfigjson = function(decodedData) {
+    var decodeDockerconfigjson = function(encodedData) {
       var decodedSecretData = {};
-      decodedData = JSON.parse(decodedData);
+      var decodedData = JSON.parse(window.atob(encodedData));
       _.each(decodedData.auths, function(data, serverName) {
         var usernamePassword = window.atob(data.auth).split(":");
         decodedSecretData[serverName] = {
@@ -54,23 +54,20 @@ angular.module("openshiftConsole")
 
     var decodeSecretData = function(secretData) {
       return _.mapValues(secretData, function(data, paramName) {
-        var decodedData = window.atob(data);
         switch (paramName) {
           case ".dockercfg":
-            data = decodeDockercfg(decodedData);
-            break;
+            return decodeDockercfg(data);
           case ".dockerconfigjson":
-            data = decodeDockerconfigjson(decodedData);
-            break;
+            return decodeDockerconfigjson(data);
           case "username":
           case "password":
           case ".gitconfig":
           case "ssh-privatekey":
           case "ca.crt":
-            data = decodedData;
-            break;
+            return window.atob(data);
+          default:
+            return data;
         }
-        return data;
       });
     };
 
