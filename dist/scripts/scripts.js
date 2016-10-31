@@ -8527,10 +8527,8 @@ errorNotification:!1
 var c = angular.copy(a), d = angular.copy(b.metadata);
 d.annotations = a.metadata.annotations, d.labels = a.metadata.labels, c.metadata = d, l.updateResources.push(c);
 }, function(b) {
-404 === b.status ? l.createResources.push(a) :(l.alerts.check = {
-type:"error",
-message:"An error occurred checking if the " + w(a.kind) + " " + a.metadata.name + " already exists.",
-details:"Reason: " + d("getErrorDetails")(b)
+404 === b.status ? l.createResources.push(a) :(l.error = {
+message:d("getErrorDetails")(b) || "An error occurred checking if the " + w(a.kind) + " " + a.metadata.name + " already exists."
 }, l.errorOccured = !0);
 }) :(l.errorOccured = !0, void (l.error = {
 message:j.unsupportedObjectKindOrVersion(a)

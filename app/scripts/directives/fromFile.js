@@ -289,10 +289,8 @@ angular.module("openshiftConsole")
               if (response.status === 404) {
                 $scope.createResources.push(item);
               } else {
-                $scope.alerts["check"] = {
-                  type: "error",
-                  message: "An error occurred checking if the " + humanizeKind(item.kind) + " " + item.metadata.name + " already exists.",
-                  details: "Reason: " + $filter('getErrorDetails')(response)
+                $scope.error = {
+                  message: $filter('getErrorDetails')(response) || "An error occurred checking if the " + humanizeKind(item.kind) + " " + item.metadata.name + " already exists."
                 };
                 $scope.errorOccured = true;
               }
