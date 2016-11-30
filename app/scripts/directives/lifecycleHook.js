@@ -2,7 +2,7 @@
 
 angular.module("openshiftConsole")
 
-  .directive("lifecycleHook", function() {
+  .directive("editLifecycleHook", function() {
     return {
       restrict: 'E',
       scope: {
@@ -12,7 +12,7 @@ angular.module("openshiftConsole")
         availableContainers: "=",
         namespace: "="
       },
-      templateUrl: 'views/directives/lifecycle-hook.html',
+      templateUrl: 'views/directives/edit-lifecycle-hook.html',
       controller: function($scope) {
         $scope.view = {
           isDisabled: false
@@ -129,5 +129,16 @@ angular.module("openshiftConsole")
           _.set($scope.hookParams, 'tagImages[0].to.name', $scope.istagHook.imageStream + ':' + $scope.istagHook.tagObject.tag);         
         });
       }
+    };
+  })
+  .directive("lifecycleHook", function() {
+    return {
+      restrict: 'E',
+      scope: {
+        hookParams: "=",
+        namespace: "=",
+        type: "@"
+      },
+      templateUrl: 'views/directives/lifecycle-hook.html'
     };
   });

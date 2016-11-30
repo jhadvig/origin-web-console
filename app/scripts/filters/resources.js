@@ -1012,6 +1012,14 @@ angular.module('openshiftConsole')
       return 'PAUSED_PENDING_INPUT' === stage.status;
     };
   })
+  .filter('strategyNameToParams', function () {
+    return function(strategyName) {
+      if (!strategyName) {
+        return null;
+      }
+      return strategyName.toLowerCase() + 'Params';
+    };
+  })
   .filter('humanizeKind', function (startCaseFilter) {
     // Changes "ReplicationController" to "replication controller".
     // If useTitleCase, returns "Replication Controller".
