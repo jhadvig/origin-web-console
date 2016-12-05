@@ -157,7 +157,13 @@ angular.module("openshiftConsole")
               openTemplateProcessModal();
             // Else if any resources already exist
             } else if (!_.isEmpty($scope.updateResources)) {
-              confirmReplace();
+              // If the updated resource is a Template, set the process option to false
+              $scope.updateTemplate = $scope.updateResources.length === 1 && $scope.updateResources[0].kind === "Template";
+              if ($scope.updateTemplate) {
+                openTemplateProcessModal();
+              } else {
+                confirmReplace();
+              }
             } else {
               QuotaService.getLatestQuotaAlerts($scope.createResources, $scope.context).then(showWarningsOrCreate);
             }
@@ -248,7 +254,7 @@ angular.module("openshiftConsole")
           var path;
           if ($scope.resourceKind === "Template" && $scope.templateOptions.process && !$scope.errorOccured) {
             var namespace = ($scope.templateOptions.add || $scope.updateResources.length > 0) ? $scope.projectName : "";
-            path = Navigate.createFromTemplateURL($scope.resourceName, $scope.projectName, {namespace: namespace});
+            path = Navigate.createFromTemplateURL($scope.resourceList[0], $scope.projectName, {namespace: namespace});
           } else {
             path = Navigate.projectOverviewURL($scope.projectName);
           }

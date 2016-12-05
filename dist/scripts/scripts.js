@@ -9226,7 +9226,7 @@ function q() {
 var a;
 if ("Template" === l.resourceKind && l.templateOptions.process && !l.errorOccured) {
 var b = l.templateOptions.add || l.updateResources.length > 0 ? l.projectName :"";
-a = g.createFromTemplateURL(l.resourceName, l.projectName, {
+a = g.createFromTemplateURL(l.resourceList[0], l.projectName, {
 namespace:b
 });
 } else a = g.projectOverviewURL(l.projectName);
@@ -9427,7 +9427,7 @@ var d = [];
 l.errorOccured = !1, _.forEach(l.resourceList, function(a) {
 return m(a) ? void d.push(r(a)) :(l.errorOccured = !0, !1);
 }), a.all(d).then(function() {
-l.errorOccured || (1 === l.createResources.length && "Template" === l.resourceList[0].kind ? n() :_.isEmpty(l.updateResources) ? k.getLatestQuotaAlerts(l.createResources, l.context).then(A) :o());
+l.errorOccured || (1 === l.createResources.length && "Template" === l.resourceList[0].kind ? n() :_.isEmpty(l.updateResources) ? k.getLatestQuotaAlerts(l.createResources, l.context).then(A) :(l.updateTemplate = 1 === l.updateResources.length && "Template" === l.updateResources[0].kind, l.updateTemplate ? n() :o()));
 });
 }
 };
