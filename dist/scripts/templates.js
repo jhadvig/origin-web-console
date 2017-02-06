@@ -5100,7 +5100,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"col-md-12\">\n" +
     "<breadcrumbs breadcrumbs=\"breadcrumbs\"></breadcrumbs>\n" +
     "<div ng-hide=\"imageStream\">\n" +
-    "{{ emptyMessage }}\n" +
+    "Loading...\n" +
     "</div>\n" +
     "<div class=\"osc-form\" ng-show=\"imageStream\">\n" +
     "<alerts alerts=\"alerts\"></alerts>\n" +
@@ -11115,7 +11115,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"col-md-12\">\n" +
     "<breadcrumbs breadcrumbs=\"breadcrumbs\"></breadcrumbs>\n" +
     "<div ng-hide=\"template\">\n" +
-    "{{ emptyMessage }}\n" +
+    "Loading...\n" +
     "</div>\n" +
     "<div class=\"osc-form\" ng-show=\"template\">\n" +
     "<alerts alerts=\"alerts\"></alerts>\n" +

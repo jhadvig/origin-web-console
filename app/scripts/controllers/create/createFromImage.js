@@ -75,7 +75,6 @@ angular.module("openshiftConsole")
         }
         function initAndValidate(scope){
 
-          scope.emptyMessage = "Loading...";
           scope.name = $routeParams.name;
           scope.imageName = imageName;
           scope.imageTag = $routeParams.imageTag;
