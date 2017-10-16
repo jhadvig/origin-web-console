@@ -25,6 +25,21 @@
   function AddConfigToApplication($filter, $scope, APIService, ApplicationsService, DataService, Navigate, NotificationsService, StorageService) {
     var ctrl = this;
     var humanizeKind = $filter('humanizeKind');
+    ctrl.canAddRefToApplication = true;
+
+    var conatinerHasRef = function(container) {
+      var addRefName = ctrl.apiObject.metadata.name;
+      if (ctrl.apiObject.kind === "ConfigMap") {
+        return _.some(container.envFrom, {configMapRef: {name: addRefName}});
+      } else {
+        return _.some(container.envFrom, {secretRef: {name: addRefName}});
+      }
+    };
+
+    ctrl.checkApplicationContainersRefs = function(application) {
+      var containers = _.get(application, 'spec.template.spec.containers');
+      ctrl.canAddRefToApplication = !_.every(containers, conatinerHasRef);
+    };
 
     var getApplications = function() {
       var context = {
@@ -91,7 +106,7 @@
 
         // For each container, add the new volume mount.
         _.each(podTemplate.spec.containers, function(container) {
-          if (isContainerSelected(container)) {
+          if (isContainerSelected(container) && !conatinerHasRef(container)) {
             container.envFrom = container.envFrom || [];
             container.envFrom.push(newEnvFrom);
           }
