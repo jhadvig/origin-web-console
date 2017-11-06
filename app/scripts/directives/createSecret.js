@@ -26,11 +26,11 @@ angular.module("openshiftConsole")
             label: "Image Secret",
             authTypes: [
               {
-                id: "kubernetes.io/dockercfg",
+                id: "kubernetes.io/dockerconfigjson",
                 label: "Image Registry Credentials"
               },
               {
-                id: "kubernetes.io/dockerconfigjson",
+                id: "kubernetes.io/dockercfg",
                 label: "Configuration File"
               }
             ]
@@ -127,24 +127,24 @@ angular.module("openshiftConsole")
               }
               break;
             case "kubernetes.io/dockerconfigjson":
-              var encodedConfig = window.btoa(data.dockerConfig);
-              if (JSON.parse(data.dockerConfig).auths) {
-                secret.data[".dockerconfigjson"] = encodedConfig;
-              } else {
-                secret.type = "kubernetes.io/dockercfg";
-                secret.data[".dockercfg"] = encodedConfig;
-              }
-              break;
-            case "kubernetes.io/dockercfg":
               var auth = window.btoa(data.dockerUsername + ":" + data.dockerPassword);
-              var configData = {};
-              configData[data.dockerServer] = {
+              var configData = {auths: {}};
+              configData.auths[data.dockerServer] = {
                 username: data.dockerUsername,
                 password: data.dockerPassword,
                 email: data.dockerMail,
                 auth: auth
               };
-              secret.data[".dockercfg"] = window.btoa(JSON.stringify(configData));
+              secret.data[".dockerconfigjson"] = window.btoa(JSON.stringify(configData));
+              break;
+            case "kubernetes.io/dockercfg":
+              var encodedConfig = window.btoa(data.dockerConfig);
+              if (JSON.parse(data.dockerConfig).auths) {
+                secret.type = "kubernetes.io/dockerconfigjson";
+                secret.data[".dockerconfigjson"] = encodedConfig;
+              } else {
+                secret.data[".dockercfg"] = encodedConfig;
+              }
               break;
           }
           return secret;

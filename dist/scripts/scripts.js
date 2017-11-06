@@ -8904,10 +8904,10 @@ o.nameValidation = r, o.secretAuthTypeMap = {
 image: {
 label: "Image Secret",
 authTypes: [ {
-id: "kubernetes.io/dockercfg",
+id: "kubernetes.io/dockerconfigjson",
 label: "Image Registry Credentials"
 }, {
-id: "kubernetes.io/dockerconfigjson",
+id: "kubernetes.io/dockercfg",
 label: "Configuration File"
 } ]
 },
@@ -8963,18 +8963,20 @@ n.data = {
 break;
 
 case "kubernetes.io/dockerconfigjson":
-var a = window.btoa(e.dockerConfig);
-JSON.parse(e.dockerConfig).auths ? n.data[".dockerconfigjson"] = a : (n.type = "kubernetes.io/dockercfg", n.data[".dockercfg"] = a);
-break;
-
-case "kubernetes.io/dockercfg":
-var r = window.btoa(e.dockerUsername + ":" + e.dockerPassword), i = {};
-i[e.dockerServer] = {
+var a = window.btoa(e.dockerUsername + ":" + e.dockerPassword), r = {
+auths: {}
+};
+r.auths[e.dockerServer] = {
 username: e.dockerUsername,
 password: e.dockerPassword,
 email: e.dockerMail,
-auth: r
-}, n.data[".dockercfg"] = window.btoa(JSON.stringify(i));
+auth: a
+}, n.data[".dockerconfigjson"] = window.btoa(JSON.stringify(r));
+break;
+
+case "kubernetes.io/dockercfg":
+var i = window.btoa(e.dockerConfig);
+JSON.parse(e.dockerConfig).auths ? (n.type = "kubernetes.io/dockerconfigjson", n.data[".dockerconfigjson"] = i) : n.data[".dockercfg"] = i;
 }
 return n;
 }, s = function() {
