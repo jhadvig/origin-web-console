@@ -26,10 +26,24 @@
     var uniqueId = _.uniqueId();
 
     ctrl.setFocusClass = 'edit-environment-from-set-focus-' + uniqueId;
+    ctrl.alerts = {};
+
+    ctrl.isImageSecret = function(secret) {
+      if (_.has(secret, ".dockerconfigjson") || _.has(secret, ".dockercfg")) {
+        return true;
+      }
+      return false;
+    };
 
     ctrl.viewOverlayPanel = function(entry) {
       ctrl.decodedData = entry.data;
       ctrl.overlayPaneEntryDetails = entry;
+      if (ctrl.isImageSecret(ctrl.decodedData)) {
+        ctrl.alerts["cantInjectSecret"] = {
+          type: "warning",
+          message: "This secret keys won't be infected into the deployment pod."
+        };
+      }
 
       if (entry.kind === 'Secret') {
         ctrl.decodedData = SecretsService.decodeSecretData(entry.data);

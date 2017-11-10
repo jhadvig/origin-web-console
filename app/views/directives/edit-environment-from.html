@@ -61,6 +61,9 @@
               </ui-select-choices>
             </ui-select>
           </div>
+          <div class="has-warning" ng-show="$ctrl.isImageSecret(entry.selectedEnvFrom.data)">
+              <div class="help-block">This secret keys won't be infected into the deployment pod.</div>
+          </div>
         </div>
       </div>
 
@@ -134,6 +137,7 @@
       <h3>{{$ctrl.overlayPaneEntryDetails.kind | humanizeKind : true}} Details</h3>
     </div>
     <div class="modal-body">
+      <alerts ng-if="$ctrl.alerts" alerts="$ctrl.alerts" hide-close-button="true"></alerts>
       <h4>{{$ctrl.overlayPaneEntryDetails.metadata.name}}
         <small ng-if="$ctrl.overlayPaneEntryDetails.kind === 'Secret'" class="mar-left-sm">
           <a href=""
