@@ -30,13 +30,9 @@
     ctrl.viewOverlayPanel = function(entry) {
       ctrl.decodedData = entry.data;
       ctrl.overlayPaneEntryDetails = entry;
-      ctrl.isImageSecret = _.has(ctrl.decodedData, ".dockerconfigjson") || _.has(ctrl.decodedData, ".dockercfg");
 
       if (entry.kind === 'Secret') {
         ctrl.decodedData = SecretsService.decodeSecretData(entry.data);
-        if (ctrl.isImageSecret) {
-          ctrl.decodedData = ctrl.decodedData[".dockerconfigjson"] ? _.get(ctrl.decodedData, ".dockerconfigjson") : _.get(ctrl.decodedData, ".dockercfg");
-        }
       }
 
       ctrl.overlayPanelVisible = true;

@@ -6777,32 +6777,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"!($ctrl.overlayPaneEntryDetails.data | size)\" class=\"empty-state-message text-center\">\n" +
     "The {{$ctrl.overlayPaneEntryDetails.kind | humanizeKind}} has no properties.\n" +
     "</div>\n" +
-    "<div ng-if=\"$ctrl.overlayPaneEntryDetails.data | size\">\n" +
-    "<div ng-if=\"$ctrl.isImageSecret\">\n" +
-    "<div ng-repeat=\"(serverName, serverData) in $ctrl.decodedData.auths\">\n" +
-    "<h2>{{serverName}}</h2>\n" +
-    "<div class=\"table-responsive scroll-shadows-horizontal\">\n" +
-    "<table class=\"table table-bordered table-bordered-columns config-map-table key-value-table\">\n" +
-    "<tbody>\n" +
-    "<tr ng-repeat=\"(prop, value) in serverData\">\n" +
-    "<td class=\"key\">{{prop}}</td>\n" +
-    "<td class=\"value\">\n" +
-    "<span ng-if=\"!$ctrl.showSecret\">&#42;&#42;&#42;&#42;&#42;</span>\n" +
-    "<div ng-if=\"$ctrl.showSecret\">\n" +
-    "<truncate-long-text content=\"value\" limit=\"50\" newline-limit=\"2\" expandable=\"true\">\n" +
-    "</truncate-long-text>\n" +
-    "<div ng-if=\"decodedData.$$nonprintable[prop]\" class=\"help-block\">\n" +
-    "This secret value contains non-printable characters and is displayed as a Base64-encoded string.\n" +
-    "</div>\n" +
-    "</div>\n" +
-    "</td>\n" +
-    "</tr>\n" +
-    "</tbody>\n" +
-    "</table>\n" +
-    "</div>\n" +
-    "</div>\n" +
-    "</div>\n" +
-    "<div ng-if=\"!$ctrl.isImageSecret\" class=\"table-responsive scroll-shadows-horizontal\">\n" +
+    "<div ng-if=\"$ctrl.overlayPaneEntryDetails.data | size\" class=\"table-responsive scroll-shadows-horizontal\">\n" +
     "<table class=\"table table-bordered table-bordered-columns config-map-table key-value-table\">\n" +
     "<tbody>\n" +
     "<tr ng-repeat=\"(prop, value) in $ctrl.decodedData\">\n" +
@@ -6822,7 +6797,6 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</tr>\n" +
     "</tbody>\n" +
     "</table>\n" +
-    "</div>\n" +
     "</div>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +

@@ -146,65 +146,36 @@
         The {{$ctrl.overlayPaneEntryDetails.kind | humanizeKind}} has no properties.
       </div>
 
-      <div ng-if="$ctrl.overlayPaneEntryDetails.data | size">
-        <div ng-if="$ctrl.isImageSecret">
-          <div ng-repeat="(serverName, serverData) in $ctrl.decodedData.auths">
-            <h2>{{serverName}}</h2>
-            <div class="table-responsive scroll-shadows-horizontal">
-              <table class="table table-bordered table-bordered-columns config-map-table key-value-table">
-                <tbody>
-                  <tr ng-repeat="(prop, value) in serverData">
-                    <td class="key">{{prop}}</td>
-                    <td class="value">
-                      <span ng-if="!$ctrl.showSecret">&#42;&#42;&#42;&#42;&#42;</span>
-                      <div ng-if="$ctrl.showSecret">
-                        <truncate-long-text
-                          content="value"
-                          limit="50"
-                          newline-limit="2"
-                          expandable="true">
-                        </truncate-long-text>
-                        <div ng-if="decodedData.$$nonprintable[prop]" class="help-block">
-                          This secret value contains non-printable characters and is displayed as a Base64-encoded string.
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div ng-if="!$ctrl.isImageSecret" class="table-responsive scroll-shadows-horizontal">
-          <table class="table table-bordered table-bordered-columns config-map-table key-value-table">
-            <tbody>
-              <tr ng-repeat="(prop, value) in $ctrl.decodedData">
-                <td class="key">{{prop}}</td>
-                <td class="value">
+      <div ng-if="$ctrl.overlayPaneEntryDetails.data | size" class="table-responsive scroll-shadows-horizontal">
+        <table class="table table-bordered table-bordered-columns config-map-table key-value-table">
+          <tbody>
+            <tr ng-repeat="(prop, value) in $ctrl.decodedData">
+              <td class="key">{{prop}}</td>
+              <td class="value">
+                <truncate-long-text
+                  ng-if="$ctrl.overlayPaneEntryDetails.kind === 'ConfigMap'"
+                  content="value"
+                  limit="50"
+                  newline-limit="2"
+                  expandable="true">
+                </truncate-long-text>
+
+                <span ng-if="!$ctrl.showSecret && $ctrl.overlayPaneEntryDetails.kind === 'Secret'">&#42;&#42;&#42;&#42;&#42;</span>
+                <div ng-if="$ctrl.showSecret && $ctrl.overlayPaneEntryDetails.kind === 'Secret'">
                   <truncate-long-text
-                    ng-if="$ctrl.overlayPaneEntryDetails.kind === 'ConfigMap'"
                     content="value"
                     limit="50"
                     newline-limit="2"
                     expandable="true">
                   </truncate-long-text>
-                  <span ng-if="!$ctrl.showSecret && $ctrl.overlayPaneEntryDetails.kind === 'Secret'">&#42;&#42;&#42;&#42;&#42;</span>
-                  <div ng-if="$ctrl.showSecret && $ctrl.overlayPaneEntryDetails.kind === 'Secret'">
-                    <truncate-long-text
-                      content="value"
-                      limit="50"
-                      newline-limit="2"
-                      expandable="true">
-                    </truncate-long-text>
-                    <div ng-if="decodedData.$$nonprintable[prop]" class="help-block">
-                      This secret value contains non-printable characters and is displayed as a Base64-encoded string.
-                    </div>
+                  <div ng-if="decodedData.$$nonprintable[prop]" class="help-block">
+                    This secret value contains non-printable characters and is displayed as a Base64-encoded string.
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <div class="modal-footer">

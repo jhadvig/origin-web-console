@@ -9211,7 +9211,7 @@ angular.module("openshiftConsole").component("editEnvironmentFrom", {
 controller: [ "$attrs", "$filter", "keyValueEditorUtils", "SecretsService", function(e, t, n, a) {
 var r = this, o = t("canI"), i = t("humanizeKind"), s = _.uniqueId();
 r.setFocusClass = "edit-environment-from-set-focus-" + s, r.viewOverlayPanel = function(e) {
-r.decodedData = e.data, r.overlayPaneEntryDetails = e, r.isImageSecret = _.has(r.decodedData, ".dockerconfigjson") || _.has(r.decodedData, ".dockercfg"), "Secret" === e.kind && (r.decodedData = a.decodeSecretData(e.data), r.isImageSecret && (r.decodedData = r.decodedData[".dockerconfigjson"] ? _.get(r.decodedData, ".dockerconfigjson") : _.get(r.decodedData, ".dockercfg"))), r.overlayPanelVisible = !0;
+r.decodedData = e.data, r.overlayPaneEntryDetails = e, "Secret" === e.kind && (r.decodedData = a.decodeSecretData(e.data)), r.overlayPanelVisible = !0;
 }, r.closeOverlayPanel = function() {
 r.showSecret = !1, r.overlayPanelVisible = !1;
 };
