@@ -16,6 +16,7 @@ angular.module("openshiftConsole")
     APIService,
     DataService,
     Logger,
+    NotificationsService,
     ProjectsService) {
     var displayNameFilter = $filter('displayName');
     var watches = [];
@@ -29,6 +30,7 @@ angular.module("openshiftConsole")
     $scope.name = $routeParams.name;
 
     var buildConfigsVersion = APIService.getPreferredVersion('buildconfigs');
+    var secretsVersion = APIService.getPreferredVersion('secrets');
     
     ProjectsService
       .get($routeParams.project)

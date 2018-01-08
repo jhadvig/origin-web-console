@@ -57,6 +57,28 @@ angular.module('openshiftConsole')
       }
     };
   })
+  .directive('copyWebhookUrl', function() {
+    return {
+      restrict: 'E',
+      transclude: true,
+      scope: {
+        buildConfigName: "=",
+        triggerType: "=",
+        projectName: "=",
+        secret: "=",
+        webhookSecrets: "="
+      },
+      templateUrl: 'views/directives/_copy-webhook-url.html',
+      controller: function($scope) {
+        // Warn user that he doesnt have permissions to list secrets, so the URL can't properly assambled.
+        // If webhook is using secretRef and no webhookSecrets are available means that users doesnt have
+        // permissions to list secrets.
+        $scope.showSecretsWarning = function() {
+          return _.get($scope.secret, 'secretReference.name') && !$scope.webhookSecrets;
+        };
+      }
+    };
+  })
   .directive('copyToClipboard', function() {
     return {
       restrict: 'E',

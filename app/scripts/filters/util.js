@@ -322,6 +322,11 @@ angular.module('openshiftConsole')
       return limitToFilter(input, limit);
     };
   })
+  .filter("getWebhookSecretData", function() {
+    return function(webhookTrigger) {
+      return webhookTrigger.data[_.toLower(webhookTrigger.data.type)];
+    };
+  })
   .filter("getErrorDetails", function() {
     return function(result) {
       var error = result.data || {};

@@ -8,6 +8,7 @@ angular.module("openshiftConsole")
                       APIService,
                       DataService,
                       NotificationsService,
+                      ApplicationGenerator,
                       DNS1123_SUBDOMAIN_VALIDATION) {
 
     var serviceAccountsVersion = APIService.getPreferredVersion('serviceaccounts');
@@ -50,6 +51,15 @@ angular.module("openshiftConsole")
               {
                 id: "kubernetes.io/ssh-auth",
                 label: "SSH Key"
+              }
+            ]
+          },
+          webhook: {
+            label: "Webhook Secret",
+            authTypes: [
+              {
+                id: "Opaque",
+                label: "Webhook Secret"
               }
             ]
           }
@@ -96,7 +106,7 @@ angular.module("openshiftConsole")
           });
         }
 
-        var constructSecretObject = function(data, authType) {
+        var constructSecretObject = function(data, type, authType) {
           var secret = {
             apiVersion: "v1",
             kind: "Secret",
@@ -150,6 +160,11 @@ angular.module("openshiftConsole")
                 auth: auth
               };
               secret.data[".dockercfg"] = window.btoa(JSON.stringify(configData));
+              break;
+            case "Opaque":
+              if (data.webhookSecretKey) {
+                secret.data.WebHookSecretKey = window.btoa(data.webhookSecretKey);
+              }
               break;
           }
           return secret;
@@ -215,9 +230,13 @@ angular.module("openshiftConsole")
           $scope.nameTaken = false;
         };
 
+        $scope.generateWebhookSecretKey = function() {
+          $scope.newSecret.data.webhookSecretKey = ApplicationGenerator._generateSecret();
+        };
+
         $scope.create = function() {
           hideErrorNotifications();
-          var newSecret = constructSecretObject($scope.newSecret.data, $scope.newSecret.authType);
+          var newSecret = constructSecretObject($scope.newSecret.data, $scope.newSecret.type, $scope.newSecret.authType);
           DataService.create(secretsVersion, null, newSecret, $scope).then(function(secret) { // Success
             // In order to link:
             // - the SA has to be defined
