@@ -5,6 +5,7 @@
       '$scope',
       '$uibModal',
       '$filter',
+      '$timeout',
       'APIService',
       OscWebhookTriggers
     ],
@@ -20,7 +21,7 @@
   });
 
 
-  function OscWebhookTriggers($scope, $uibModal, $filter, APIService) {
+  function OscWebhookTriggers($scope, $uibModal, $filter, $timeout, APIService) {
     var ctrl = this;
 
     ctrl.$onInit = function() {
@@ -95,28 +96,34 @@
       checkDuplicates(trigger);
     };
 
-    var addEmptyWebhookTrigger = function() {
+    ctrl.addEmptyWebhookTrigger = function() {
       ctrl.webhookTriggers.push({
         lastTriggerType: "",
         data: {
           type: ""
         }
       });
+      var numberOfTriggers = ctrl.webhookTriggers.length - 1;
+      $timeout(function() {$scope.$broadcast('triggerTypeFocus' + numberOfTriggers);});
     };
 
-    // Check last trigger if it's type and secret are selected.
-    ctrl.checkLastAndAddNew = function() {
-      var lastTrigger = _.last(ctrl.webhookTriggers);
-      var lastTriggerSecretData = $filter('getWebhookSecretData')(lastTrigger);
-      if (lastTrigger.data.type && (_.has(lastTriggerSecretData, 'secret') || _.has(lastTriggerSecretData, 'secretReference.name'))) {
-        addEmptyWebhookTrigger();
+    ctrl.missingInputError = function(selectBoxName, rowIndex, type, secretReferenceName) {
+      var fullSelectBoxName = selectBoxName + rowIndex;
+      if (!_.has(ctrl.secretsForm, fullSelectBoxName)) {
+        return false;
       }
+      if (selectBoxName === 'triggerType') {
+        return ctrl.secretsForm[fullSelectBoxName].$touched && !type && secretReferenceName;
+      } else if (selectBoxName === 'triggerSecretRef') {
+        return ctrl.secretsForm[fullSelectBoxName].$touched && type && !secretReferenceName;
+      }
+      return false;
     };
 
     // If there are no webhook triggers create empty one, otherwise check for duplicates.
     // In case of deprecated secret format add a `secretInputType` field to the object so we can toggle secret visibility.
     if (_.isEmpty(ctrl.webhookTriggers)) {
-      addEmptyWebhookTrigger();
+      ctrl.addEmptyWebhookTrigger();
     } else {
       // Uncomment in case we want to notify user that he has deprecated embedded secrets in his BC
       // ctrl.hasWebhookWithDeprecatedSecret = _.some(ctrl.webhookTriggers, function(trigger) {return ctrl.isDeprecated(trigger)});
