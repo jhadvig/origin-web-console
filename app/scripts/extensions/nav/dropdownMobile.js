@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .run(function(extensionRegistry, Constants) {
+  .run(['extensionRegistry', 'Constants', function(extensionRegistry, Constants) {
     extensionRegistry
       .add('nav-dropdown-mobile', _.spread(function(user) {
         var dropdownItems = [];
@@ -66,4 +66,4 @@ angular.module('openshiftConsole')
         return dropdownItems;
 
       }));
-  });
+  }]);

@@ -85,7 +85,7 @@ angular.module('openshiftConsole')
       return moment.duration(duration, unit).humanize();
     };
   })
-  .filter('timeOnlyDurationFromTimestamps', function(timeOnlyDurationFilter) {
+  .filter('timeOnlyDurationFromTimestamps', ['timeOnlyDurationFilter', function(timeOnlyDurationFilter) {
     return function(timestampLhs, timestampRhs) {
       if (!timestampLhs) {
         return timestampLhs;
@@ -94,7 +94,7 @@ angular.module('openshiftConsole')
 
       return timeOnlyDurationFilter(moment(timestampRhs).diff(timestampLhs));
     };
-  })
+  }])
   .filter('countdownToTimestamp', function() {
     return function(endTimestamp) {
       var timeRemaining = moment(new Date(endTimestamp)).diff(moment(), 'seconds');

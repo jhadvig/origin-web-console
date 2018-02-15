@@ -35,7 +35,7 @@ angular
     'openshiftCommonUI',
     'webCatalog'
   ])
-  .config(function ($routeProvider, $uibModalProvider, HomePagePreferenceServiceProvider) {
+  .config(["$routeProvider", "$uibModalProvider", "HomePagePreferenceServiceProvider", function ($routeProvider, $uibModalProvider, HomePagePreferenceServiceProvider) {
     var landingPageRoute;
     var projectsPageRoute = {
       templateUrl: 'views/projects.html',
@@ -458,7 +458,7 @@ angular
       animation: true,
       backdrop: 'static' // do not allow close of modal by clicking backdrop
     };
-  })
+  }])
   .constant("LOGGING_URL", _.get(window.OPENSHIFT_CONFIG, "loggingURL"))
   .constant("METRICS_URL", _.get(window.OPENSHIFT_CONFIG, "metricsURL"))
   // A (very) basic regex to determine if a URL is an absolute URL, enough to
@@ -481,21 +481,21 @@ angular
     // See http://momentjs.com/docs/#/displaying/format/
     titleFormat: 'LLL'
   })
-  .config(function(kubernetesContainerSocketProvider) {
+  .config(['kubernetesContainerSocketProvider', function(kubernetesContainerSocketProvider) {
     // Configure the container terminal
     kubernetesContainerSocketProvider.WebSocketFactory = "ContainerWebSocket";
-  })
-  .config(function($compileProvider){
+  }])
+  .config(['$compileProvider', function($compileProvider){
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto|git):/i);
-  })
-  .run(function($rootScope, LabelFilter){
+  }])
+  .run(['$rootScope', 'LabelFilter', function($rootScope, LabelFilter){
     // assume we always want filterState persisted, pages that dont can turn it off
     LabelFilter.persistFilterState(true);
     $rootScope.$on('$routeChangeSuccess', function() {
       LabelFilter.readPersistedState();
     });
-  })
-  .run(function($location, $uibModal, AuthService) {
+  }])
+  .run(['$location', '$uibModal', 'AuthService', function($location, $uibModal, AuthService) {
     var INACTIVITY_TIMEOUT_MINUTES = window.OPENSHIFT_CONFIG.inactivityTimeoutMinutes;
     if (!INACTIVITY_TIMEOUT_MINUTES) {
       return;
@@ -601,8 +601,8 @@ angular
     updateLastInteraction();
     // Bind to click and keydown events so the in last interaction timestamp is updated.
     $(document).bind("click keydown", _.throttle(updateLastInteraction, 500));
-  })
-  .run(function(durationFilter, timeOnlyDurationFromTimestampsFilter, countdownToTimestampFilter) {
+  }])
+  .run(['durationFilter', 'timeOnlyDurationFromTimestampsFilter', 'countdownToTimestampFilter', function(durationFilter, timeOnlyDurationFromTimestampsFilter, countdownToTimestampFilter) {
     // Use setInterval instead of $interval because we're directly manipulating the DOM and don't want scope.$apply overhead
     setInterval(function() {
       // Set by duration-until-now directive.
@@ -623,14 +623,14 @@ angular
         return countdownToTimestampFilter(endTimestamp);
       });
     }, 1000);
-  })
-  .run(function(IS_IOS) {
+  }])
+  .run(['IS_IOS', function(IS_IOS) {
     if (IS_IOS) {
       // Add a class for iOS devices. This lets us disable some hover effects
       // since iOS will treat the first tap as a hover if it changes the DOM
       // content (e.g. using :before pseudo-elements).
       $('body').addClass('ios');
     }
-  });
+  }]);
 
 hawtioPluginLoader.addModule('openshiftConsole');
