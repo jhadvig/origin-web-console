@@ -1,0 +1,60 @@
+{
+  "name": "origin-web-common",
+  "version": "3.9.0-alpha.12",
+  "main": [
+    "dist/origin-web-common.js",
+    "dist/origin-web-common.css"
+  ],
+  "authors": [
+    "Red Hat"
+  ],
+  "description": "Library of common services and components for OpenShift Web Console.",
+  "license": "Apache-2.0",
+  "ignore": [
+    "Gruntfile.js",
+    ".bowerrc",
+    ".editorconfig",
+    ".gitignore",
+    ".jshintrc",
+    ".travis.yml",
+    "Makefile",
+    "hack",
+    "src",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/openshift/origin-web-common.git"
+  },
+  "dependencies": {
+    "angular": "~1.5.11",
+    "angular-sanitize": "~1.5.11",
+    "angular-utf8-base64": "~0.0.5",
+    "hawtio-core": "~2.0.37",
+    "hawtio-extension-service": "~2.0.2",
+    "hopscotch": "~0.2.7",
+    "jquery": "~3.2.1",
+    "kubernetes-label-selector": "~2.1.1",
+    "lodash": "~4.17.4",
+    "patternfly": ">=3.27.2 <4.0",
+    "uri.js": "~1.18.12",
+    "compare-versions": "^3.1.0"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.5.11",
+    "angular-scenario": "~1.5.11"
+  },
+  "resolutions": {
+    "jquery": "3.2.1"
+  },
+  "homepage": "https://github.com/openshift/origin-web-common",
+  "_release": "3.9.0-alpha.12",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.9.0-alpha.12",
+    "commit": "8b91a0ea42b35d208569803402bda4ca6ab36884"
+  },
+  "_source": "https://github.com/openshift/origin-web-common.git",
+  "_target": "3.9.0-alpha.12",
+  "_originalSource": "origin-web-common"
+}

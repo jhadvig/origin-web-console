@@ -1,0 +1,260 @@
+@import "../bower_components/selectize/dist/less/plugins/drag_drop";
+@import "../bower_components/selectize/dist/less/plugins/dropdown_header";
+@import "../bower_components/selectize/dist/less/plugins/optgroup_columns";
+@import "../bower_components/selectize/dist/less/plugins/remove_button";
+
+@import "../bower_components/selectize/dist/less/selectize.default.less";
+
+// variables
+@btn-default-border: #bbb;
+@color-top: transparent;
+@color-bottom: transparent;
+@brand-primary: #39a5dc;
+@dropdown-link-focus-bg: #def3ff;
+@dropdown-link-hover-border-color: #bee1f4;
+@dropdown-link-hover-color: #4d5258;
+@dark-blue: #006e9c;
+@font-size-base: 12px;
+@input-border-focus:             #0088ce;
+@input-border-hover:             #7dc3e8;
+@input-color-placeholder:        #999;
+@navbar-label-filter-bg: #fff;
+@navbar-menu-border: 1px solid @btn-default-border;
+@screen-xs:                  480px;
+@screen-xs-min:              @screen-xs;
+@screen-xs-max:              (@screen-sm-min - 1);
+@screen-sm:                  768px;
+@screen-sm-min:              @screen-sm;
+@screen-sm-max:              (@screen-md-min - 1);
+@screen-tablet:              @screen-sm-min;
+@screen-md:                  992px;
+@screen-md-min:              @screen-md;
+@screen-desktop:             @screen-md-min;
+@screen-lg:                  1200px;
+@screen-lg-min:              @screen-lg;
+@screen-md-max:              (@screen-lg-min - 1);
+@screen-xlg:                  1400px;
+@screen-xlg-min:              @screen-xlg;
+@screen-lg-max:              (@screen-xlg-min - 1);
+@selectize-active-label-bg: #006e9c;
+@selectize-arrow-size: 0;
+@selectize-border-radius: 1px;
+@selectize-color-border: @btn-default-border;
+@selectize-color-dropdown-border-top: transparent;
+@selectize-color-item: @dark-blue;
+@selectize-color-item-border: @btn-default-border;
+@selectize-highlight: transparent;
+@selectize-min-width: 40%;
+@selectize-padding-x: 10px;
+@selectize-padding-y: 7px;
+@selectize-padding-dropdown-item-y: @selectize-padding-y;
+@selectize-padding-dropdown-item-x: @selectize-padding-y;
+@selectize-text-shadow: 0 1px 0 rgba(0,0,0,0.2);
+@selectize-vertical-gradient-color-end: #1da7ee;
+@selectize-vertical-gradient-color-start: #178ee9;
+@selectize-width-item-border: 0;
+
+// mixins
+.filter-active-focus(@color: @input-border-focus) {
+  @color-rgba: rgba(red(@color), green(@color), blue(@color), .6);
+  border-color: @color;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px @color-rgba;
+}
+.placeholder(@color: @input-color-placeholder) {
+  &::placeholder            { color: @color; font-style: italic; }
+}
+.placeholder(@color: @input-color-placeholder) {
+  // Firefox
+  &::-moz-placeholder {
+    color: @color;
+    opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
+  }
+  &:-ms-input-placeholder { color: @color; } // Internet Explorer 10+
+  &::-webkit-input-placeholder  { color: @color; } // Safari and Chrome
+}
+
+// Clearfix
+// Source: http://nicolasgallagher.com/micro-clearfix-hack/
+//
+// For modern browsers
+// 1. The space content is one way to avoid an Opera bug when the
+//    contenteditable attribute is included anywhere else in the document.
+//    Otherwise it causes space to appear at the top and bottom of elements
+//    that are clearfixed.
+// 2. The use of `table` rather than `block` is only necessary if using
+//    `:before` to contain the top-margins of child elements.
+.clearfix() {
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.word-break-all() {
+   word-break: break-all;  // firefox, IE
+   word-break: break-word; // non-standard for webkit
+overflow-wrap: break-word; // new name as per the CSS3 spec
+}
+
+// Override original selectize code
+.selectize-control {
+  &.multi .selectize-input [data-value] {
+    box-shadow: none;
+    line-height: 18px;
+    margin: 2px 4px 2px 0;
+    padding: 0 6px; // prevent text jump when
+    text-shadow: @selectize-text-shadow;
+    .selectize-border-radius(2px);
+    .selectize-vertical-gradient(@selectize-color-item, @selectize-color-item) !important;
+  }
+  &.plugin-remove_button .selectize-input .remove {
+    border-left: 0;
+    padding: 1px 0 0 0;
+  }
+}
+.selectize-control.single .selectize-input, .selectize-dropdown.single {
+  border-color: @btn-default-border;
+}
+.selectize-dropdown [data-selectable], .selectize-dropdown .optgroup-header {
+  padding: 5px 20px 5px 7px;
+  .word-break-all();
+}
+
+// Custom code for label filter
+.filter {
+  display: table;
+  width: 100%;
+  .navbar-filter-widget {
+    display: table-row; // for mobile Safari height bug
+    .label-filter {
+      background: @navbar-label-filter-bg;
+      border: @navbar-menu-border;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+      border-radius: @selectize-border-radius;
+      display: table-cell;
+      transition: "border-color ease-in-out .15s, box-shadow ease-in-out .15s";
+      width: 100%;
+      &.filter-active {
+        .filter-active-focus();
+      }
+      &:hover {
+        border-color: @input-border-hover;
+      }
+      .selectize-control {
+        display: inline-block;
+        .item {
+          max-width: 100%;
+          .word-break-all();
+        }
+        .selectize-input {
+          background: transparent;
+          border: 0;
+          box-shadow: none;
+          flex: 0 1 auto;
+          font-size: @font-size-base;
+          line-height: 22px; // 2px shorter for Safari
+          padding: 0 6px;
+          vertical-align: middle;
+          width: 100%;
+          &.full {
+            min-width: 0; // allow value to control width
+            &:after {
+              border: 0;
+            }
+          }
+          input {
+            font-size: @font-size-base;
+            height: 22px; // so IE doesn't clip placeholder decenders
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            .placeholder();
+          }
+        }
+      }
+    }
+    .label-filter-add.btn {
+      border-left: 0;
+      border-radius: 1px;
+      display: table-cell;
+    }
+  }
+}
+
+.selectize-dropdown {
+  border: @navbar-menu-border;
+  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  font-size: @font-size-base;
+  margin: 1px 0 0 -1px;
+  min-width: @selectize-min-width;
+  padding: 5px 0;
+  z-index: 9999;
+  @media (min-width: @screen-sm-min) {
+    min-width: 0;
+    width: auto !important; // overwrite inline selectize attribute
+    white-space: nowrap;
+  }
+  [data-selectable] {
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+    line-height: 1.66666667;
+    padding: 1px 10px;
+    &.active {
+      background: @dropdown-link-focus-bg;
+      border-color: @dropdown-link-hover-border-color;
+      color: @dropdown-link-hover-color;
+    }
+    .highlight {
+      background: @selectize-highlight;
+      font-weight: bold;
+    }
+  }
+}
+
+.active-filters {
+  line-height: 0;
+  display:flex;
+  flex-direction: column;
+  .label-filter-active-filters {
+    display: inline-flex;
+    flex-wrap: wrap;
+    .label {
+      align-items: center;
+      background: @selectize-active-label-bg;
+      border-radius: 2px;
+      display: inline-flex;
+      flex: 0 1 auto;
+      font-size: @font-size-base;
+      font-weight: normal;
+      line-height: 13px;
+      padding: .3em 6px;
+      margin: 3px 3px 0 0;
+      text-shadow: @selectize-text-shadow;
+      .word-break-all();
+      white-space: normal;
+      &:hover {
+        background: @selectize-active-label-bg;
+      }
+      i.fa-times {
+        font-size: 10px;
+        padding-left: 10px;
+      }
+    }
+    .label-filter-clear {
+      display: inline-flex;
+      margin: 3px 3px 0 0;
+      align-items: center;
+      .label-filtering-remove-all {
+        background: @brand-primary;
+        margin: 0;
+        i.fa.fa-filter {
+          padding-right: 5px;
+        }
+      }
+    }
+  }
+}

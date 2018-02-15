@@ -1,0 +1,49 @@
+.dialog-btn {
+  float: right !important;
+  margin-right: 10px;
+
+  &:first-of-type {
+    margin-right: 0;
+  }
+}
+
+// Mark is used for highlighting terms like search terms. See http://getbootstrap.com/css/#type-inline-text
+mark {
+  // Remove the default padding as it makes letters jump for as-you-type updates.
+  padding: 0;
+  background-color: rgba(252, 248, 160, 0.5);
+  .ui-select-choices-row.active > span & {
+    background-color: rgba(252, 248, 160, 0.75);
+  }
+}
+
+.pretty-json {
+  font-family: @font-family-monospace;
+  white-space: pre-wrap;
+}
+
+// Within truncation directive controls spacing between content and toggle link
+.truncation-block {
+  margin-right: 10px;
+}
+
+.truncation-collapse-link {
+  float: right;
+  margin-left: 10px;
+  white-space: nowrap;
+  .table-responsive & {
+    display: block;
+    float: none;
+    margin-left: 0;
+  }
+  .well & {
+    margin-top: -10px;
+  }
+}
+
+.truncation-expand-link {
+  white-space: nowrap;
+  .table-responsive & {
+    display: block;
+  }
+}

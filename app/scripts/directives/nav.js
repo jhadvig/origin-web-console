@@ -180,7 +180,24 @@ angular.module('openshiftConsole')
       }
     };
   })
-  .directive('oscHeader',
+  .directive('oscHeader',[
+      '$filter',
+      '$location',
+      '$q',
+      '$rootScope',
+      '$routeParams',
+      '$timeout',
+      'APIService',
+      'AuthorizationService',
+      'Catalog',
+      'CatalogService',
+      'Constants',
+      'DataService',
+      'Navigate',
+      'NotificationsService',
+      'ProjectsService',
+      'projectOverviewURLFilter',
+      'RecentlyViewedServiceItems',
     function(
       $filter,
       $location,
@@ -484,7 +501,7 @@ angular.module('openshiftConsole')
         });
       }
     };
-  })
+  }])
   .directive('projectFilter', function(LabelFilter) {
     return {
       restrict: 'E',

@@ -1,0 +1,41 @@
+@import 'variables';
+
+/* self, for overriding the parent settings (below)
+    - experimental, 2 possible ways to do syntax:
+        div self-center
+        or:
+        self="center"
+----------------------------------------------- */
+@each $key, $val in $align-items-map {
+    [self-#{$key}],
+    [self="#{$key}"] {
+        align-self: #{$val};
+    }
+}
+
+/* main axis only
+----------------------------------------------- */
+@each $key, $val in $justify-content-map {
+    [main-axis="#{$key}"] {
+        justify-content: #{$val};
+    }
+}
+
+/* cross axis only
+----------------------------------------------- */
+@each $key, $val in $align-items-map {
+    [cross-axis="#{$key}"] {
+        align-items: #{$val};
+    }
+}
+
+/*  cross axis align only
+    TODO: dislike the name.
+    - this does nothing if there is a
+    single line of content in the container (spec)
+----------------------------------------------- */
+@each $key, $val in $align-content-map {
+    [cross-axis-align="#{$key}"] {
+        align-content: #{$val};
+    }
+}

@@ -1,0 +1,207 @@
+.catalog-search {
+  background: @landing-bg;
+  background-position: @landing-bg-position;
+  background-size: @landing-bg-size;
+  border-bottom: solid 1px @search-area-border;
+  padding: (@grid-gutter-width / 4) (@grid-gutter-width / 2);
+  width: 100%;
+  @media (max-width: @screen-xs-max) {
+    .ios & {
+      background-size: @landing-bg-size-ios-phone;
+    }
+  }
+  @media (min-width: @screen-sm-min) {
+    position: fixed;
+    top: @navbar-height;
+    width: calc(100% ~"-" @landing-side-bar-width-sm);
+  }
+  @media(min-width: @screen-lg-min) {
+    width: calc(100% ~"-" @landing-side-bar-width-lg);
+  }
+  @media(min-width: @screen-xl-min) {
+    width: calc(100% ~"-" @landing-side-bar-width-xl);
+  }
+  .catalog-search-icon {
+    color: @color-pf-blue-300;
+    font-size: 16px;
+    left: 12px;
+    position: absolute;
+    top: 7px;
+  }
+  .catalog-search-input {
+    text-indent: 30px;
+    &:focus {
+      border-color: @color-pf-blue-300;
+      box-shadow: 0 0 8px @color-pf-light-blue-200;
+    }
+  }
+  .catalog-search-match-info {
+    flex: 1 1 0%; // for .word-break()
+    .word-break();
+  }
+  .dropdown-menu {
+    margin-top: 0;
+    padding: 0;
+    width: 100%;
+    > li > a {
+      &.catalog-search-match {
+        border-color: @color-pf-black-300;
+        border-width: 0 0 1px 0;
+        display: flex;
+        line-height: 1.5;
+        padding: 3px 10px 3px 5px;
+        white-space: normal;
+      }
+      &.catalog-search-show-all {
+        background-color: @color-pf-black-200;
+        color: @link-color;
+        padding: 5px 0;
+        text-align: center;
+      }
+    }
+    // important needed to override styles declared important in PatternFly
+    .active > a {
+      border-color: @color-pf-blue-100 !important;
+      &.catalog-search-match {
+        background-color: @color-pf-blue-50 !important;
+        color: inherit !important;
+      }
+      &.catalog-search-show-all {
+        background-color: @color-pf-black-200 !important;
+        color: @link-hover-color !important;
+      }
+    }
+
+    .catalog-search-show-none {
+      background-color: @color-pf-black-200;
+      border-color: @color-pf-black-300;
+      border-width: 0 0 1px 0;
+      padding: 5px 0;
+      text-align: center;
+    }
+  }
+  .landing-search-area & {
+    z-index: @zindex-navbar-fixed - 1;
+    .search-pf .has-clear .clear {
+      height: 28px;
+    }
+    .search-pf-input-group {
+      .form-control {
+        font-size: (@font-size-base + 2);
+        height: 30px;
+      }
+      .pficon-close {
+        font-size: (@font-size-base + 4);
+      }
+    }
+  }
+}
+
+// Special styles for mobile Safari
+@media only screen and (max-device-width: 736px) and (-webkit-min-device-pixel-ratio: 0) {
+  .catalog-search {
+    .catalog-search-icon {
+      top: 9px;
+    }
+    .landing-search-form .search-pf-input-group .form-control {
+      // font-size must be at least 16px on iOS to prevent the page from zooming when the search input is focused.
+      font-size: 16px;
+    }
+  }
+}
+
+.catalog-search-match {
+  .catalog-search-match-icon {
+    flex: 0 0 40px;
+    padding-right: 5px;
+    padding-top: 2px;
+    text-align: center;
+  }
+  .catalog-search-match-label {
+    font-weight: 600;
+    .line-clamp(3, 1.5em); // limit to 3 lines
+  }
+  .icon {
+    font-size: 28px;
+  }
+  img {
+    max-height: 28px;
+    max-width: 28px;
+  }
+  .tag {
+    margin-right: 5px;
+    text-transform: uppercase;
+  }
+}
+
+.catalog-search-toggle {
+  padding: 0 5px;
+}
+
+.landing {
+  background: @landing-bg;
+  background-position: @landing-bg-position;
+  background-size: @landing-bg-size;
+  @media (max-width: @screen-xs-max) {
+    .ios & {
+      background-size: @landing-bg-size-ios-phone;
+    }
+  }
+  @media(min-width: @screen-sm-min) {
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    top: @landing-offset-top;
+    width: calc(100% ~"-" @landing-side-bar-width-sm);
+  }
+  @media(min-width: @screen-lg-min) {
+    width: calc(100% ~"-" @landing-side-bar-width-lg);
+  }
+  @media(min-width: @screen-xl-min) {
+    width: calc(100% ~"-" @landing-side-bar-width-xl);
+  }
+}
+
+landingbody,
+.landing-body,
+.landing-body-area,
+.landing-main-area {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.landing-main-area {
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.landing-search-form {
+  margin: 0 auto;
+  width: 100%;
+  @media (min-width: @screen-sm-min) {
+    max-width: 600px;
+    width: 80%;
+  }
+}
+
+.landing-side-bar {
+  background-color: @landing-side-bar-bg;
+  color: @color-pf-white;
+  // Needs to be less than the navbar so dropdown menus don't open under the sidebar.
+  z-index: @zindex-navbar-fixed - 1;
+  @media(min-width: @screen-sm-min) {
+    bottom: 0;
+    overflow-y: auto;
+    position: fixed;
+    right: 0;
+    top: @landing-side-bar-top-offset;
+    width: @landing-side-bar-width-sm;
+  }
+  @media(min-width: @screen-lg-min) {
+    width: @landing-side-bar-width-lg;
+  }
+  @media(min-width: @screen-xl-min) {
+    width: @landing-side-bar-width-xl;
+  }
+}

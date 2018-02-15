@@ -1,0 +1,35 @@
+{
+  "name": "angular-extension-registry",
+  "version": "1.2.6",
+  "authors": [
+    "benjaminapetersen <admin@benjaminapetersen.me>"
+  ],
+  "main": [
+    "dist/angular-extension-registry.min.js",
+    "dist/compiled-templates.js"
+  ],
+  "description": "An angular module allowing arbitrary data to be injected & rendered in UI",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.4.1",
+    "layout.attrs": "~1.0.0",
+    "jquery": "~2.2.1"
+  },
+  "homepage": "https://github.com/openshift/angular-extension-registry",
+  "_release": "1.2.6",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.2.6",
+    "commit": "e33917c95891949d0fb54c2c452c079c4e814053"
+  },
+  "_source": "https://github.com/openshift/angular-extension-registry.git",
+  "_target": "1.2.6",
+  "_originalSource": "angular-extension-registry"
+}

@@ -1,0 +1,16 @@
+@import 'variables';
+
+/* resize
+    - is a shorthand of grow & shrink
+    - use INSTEAD of grow and shrink modules
+    - has a larger footprint in file size, but the syntax is nice
+    <div flex resize="5 5">
+----------------------------------------------- */
+@for $g from 0 through 12 {
+    @for $s from 0 through 12 {
+       [resize="#{$g} #{$s}"] {
+            flex-grow: $g;
+            flex-shrink: $s;
+        }
+    }
+}

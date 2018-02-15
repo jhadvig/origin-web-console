@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .run(function(extensionRegistry, $rootScope, DataService, AuthService) {
+  .run(['extensionRegistry', '$rootScope', 'DataService', 'AuthService', function(extensionRegistry, $rootScope, DataService, AuthService) {
     extensionRegistry
       .add('nav-user-dropdown', function() {
         var items = [];
@@ -31,4 +31,4 @@ angular.module('openshiftConsole')
 
         return items;
       });
-  });
+  }]);

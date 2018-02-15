@@ -1,0 +1,13 @@
+<div>
+    <dl class="dl-horizontal left">
+        <dt ng-if="labels" translate>Labels</dt>
+        <dd ng-repeat="(name, value) in labels" ng-show="name != 'description' && name != 'name'">
+            <tt>{{name}}={{value}}</tt>
+        </dd>
+        <dt ng-if="config.OnBuild.length" translate>On Build</dt>
+        <dd ng-repeat="line in config.OnBuild"><tt>{{line}}</tt></dd>
+        <registry-annotations annotations="image.metadata.annotations"></registry-annotations>
+        <dt translate>Docker Version</dt>
+        <dd>{{image.dockerImageMetadata.DockerVersion}}</dd>
+    </dl>
+</div>

@@ -1,0 +1,157 @@
+body.overlay-open {
+  &,
+  .landing,
+  .landing-side-bar {
+    overflow: hidden;
+  }
+}
+
+.catalogs-overlay-modal {
+  display: block;
+  .modal-backdrop {
+    &.ng-enter {
+      animation: modalBackdropIn 0.15s ease-out forwards;
+    }
+    &.ng-leave {
+      animation: modalBackdropOut .45s ease-out forwards;
+    }
+  }
+}
+
+.catalogs-overlay-panel {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  @media(min-width: @screen-sm-min) {
+    margin: 0 auto;
+    max-width: 900px;
+    position: relative;
+  }
+  @media(min-width: @screen-sm-min) and (min-height: (@catalog-overlay-panel-height + @navbar-pf-height)) {
+    margin-top: @navbar-pf-height;
+  }
+  // make overlay-panel like a bootstrap modal
+  .overlay-panel-as-modal & {
+    position: relative;
+    @media(max-width: @screen-xs-max) {
+      margin: 10px;
+    }
+    @media(min-width: @screen-sm-min) {
+      max-width: 640px;
+    }
+  }
+
+  .wizard-pf-contents {
+    flex: 1 1 auto;
+  }
+
+  .wizard-pf-footer {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    @media(min-width: @screen-sm-min) {
+      position: relative;
+    }
+
+    .btn {
+      font-size: 12px; // so that wizard-pf-footer in the console is 58px tall
+    }
+  }
+
+  .wizard-pf-main {
+    display: flex;
+    overflow-y: auto;
+    padding: 0;
+    .scroll-shadows-vertical();
+    -webkit-overflow-scrolling: touch; // enable momentum scrolling in mobile Safari
+    @media(max-width: @screen-xs-max) {
+      bottom: 58px; // height of .wizard-pf-footer
+      height: auto;
+      left: 1px;
+      position: fixed;
+      right: 1px;
+      top: 99px; // 99px = 98px (.order-service) + 1px (modal top "margin")
+      width: auto;
+    }
+    @media(min-width: @screen-sm-min) {
+      height: @order-service-page-height + @grid-gutter-width;
+      max-height: calc(100vh ~"-" 222px); // 222px =  1px (modal top "margin") + 41px (.modal-header) + 121px (.wizard-stesp) + 58 (.wizard-pf-footer) + 1px (modal bottom "margin")
+      min-height: 200px;
+    }
+  }
+
+  .wizard-pf-main-form-contents {
+    position: relative; // so label.required:before are positioned correctly
+    label.required:before {
+      left: -10px;
+    }
+  }
+
+  .wizard-pf-main-inner-shadow-covers {
+    min-height: 100%;
+    padding: (@grid-gutter-width / 2);
+    .scroll-shadows-vertical-covers();
+    @media(min-width: @screen-sm-min) {
+      padding-left: @grid-gutter-width;
+      padding-right: @grid-gutter-width;
+    }
+    // so that input and textarea form-controls don't mask the inner scroll shadows
+    input, textarea {
+      &.form-control {
+        background-color: transparent;
+        // so that disabled or readonly form-controls get the correct bg-color
+        &[disabled],
+        &[readonly] {
+          background-color: rgba(234, 234, 234, 0.5);
+        }
+      }
+    }
+  }
+
+  .wizard-pf-row {
+    // PatternFly sets this to control the height of the wizard, but our layout
+    // is more complex, so we disable the max-height
+    max-height: none;
+  }
+}
+
+.catalogs-overlay-panel-close {
+  color: @color-pf-black-600;
+  cursor: pointer;
+  font-size: 21px;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+
+  &.pficon-close {
+    color: @color-pf-black-600;
+    cursor: pointer;
+  }
+  &.pficon-close.disabled, .pficon-close:hover.disabled  {
+    color: @color-pf-black-400;
+    cursor: not-allowed;
+  }
+  &.pficon-close:hover {
+    color: @color-pf-black-800;
+  }
+}
+
+.catalogs-overlay-panel-wrapper {
+  bottom: 0;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: @zindex-modal;
+  &.ng-enter {
+    animation: modalSlideDown 0.3s ease-out forwards;
+  }
+  &.ng-leave {
+    animation: modalSlideUp 0.2s ease-out forwards;
+  }
+}

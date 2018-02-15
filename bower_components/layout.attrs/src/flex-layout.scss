@@ -1,0 +1,118 @@
+@import 'variables';
+/*
+    FLEX REFERENCE
+        https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+        - display
+            - set to flex to create a flex container
+        - flex-direction
+            - establish main axis, default row
+        - flex-wrap
+            - allow items to wrap to next line or force to fit on single line
+            - default: nowrap
+        - flex-flow
+            - shorthand for flex-direction, flex-wrap combined
+        - justify-content
+            - align items on main axis
+        - align-items
+            - flex item laid out along cross axis on the current line
+        - align-content
+            - align items on cross axis
+        - order
+            - override source order of layout of children
+        - flex-grow
+            - ability for flex item to grow, default 1
+        - flex-shrink
+            - ability for flex item to shrink, default 1
+        - flex-basis
+            - default size of element before space distributed, default auto
+        - flex
+            - shorthand for flex-grow, flex-shrink, flex-basis combined
+        - align-self
+            - overrides the align-items value on parent
+*/
+
+
+/* basic flex attrs
+----------------------------------------------- */
+
+/* flex container */
+/* @deprecated, 'layout' is superfluous, just use 'column' or 'row' */
+[layout] {
+    display: flex;
+}
+
+/* primary flex child*/
+/* Set to explict values for flex-grow, flex-shrink and flex-basis, so browsers have correct values by default. https://github.com/philipwalton/flexbugs#6-the-default-flex-value-has-changed */
+
+[flex] {
+    flex: 1 1 0%; // 0% flex-basis causes IE 10/11 issues https://connect.microsoft.com/IE/feedback/details/802625/min-height-and-flexbox-flex-direction-column-dont-work-together-in-ie-10-11-preview
+}
+
+// [flex="content"] {
+//     flex: content; // no support
+// }
+
+/* flex-basis - if set to 0, the extra space around content isn't factored in. If set to auto, the extra space is distributed based on its flex-grow value. http://www.w3.org/TR/css3-flexbox/images/rel-vs-abs-flex.svg */
+
+[basis="auto"] {
+    flex-basis: auto;
+}
+
+[basis="0%"] {
+    flex-basis: 0%;
+}
+
+// The element behaves like a block element and lays out its content according to the flexbox model. flex-direction is handled
+[column],
+[layout="column"] {
+    flex-direction: column;
+    display: flex;
+}
+
+[column="reverse"],
+[column][reverse] {
+    flex-direction: column-reverse;
+}
+
+[row],
+[layout="row"] {
+    flex-direction: row;
+    display: flex;
+}
+
+// The element behaves like an inline element and lays out its content according to the flexbox model. flex-direction is handled
+[row="inline"],
+[row][inline] {
+    flex-direction: row;
+    display: inline-flex;
+}
+
+[column="inline"],
+[column][inline] {
+    flex-direction: column;
+    display: inline-flex;
+}
+
+[row="reverse"],
+[row][reverse] {
+    flex-direction: row-reverse;
+}
+[wrap] {
+    flex-wrap: wrap;
+}
+[wrap][reverse] {
+    flex-wrap: wrap-reverse;
+}
+[no-wrap] {
+    flex-wrap: nowrap;
+}
+
+/* sizing
+----------------------------------------------- */
+/* match the parent */
+[fit] {
+    margin: 0px;
+    width: 100%;
+    min-height: auto;
+    height: inherit; /* 100%? */
+}

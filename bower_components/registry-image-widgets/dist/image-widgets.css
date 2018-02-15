@@ -1,0 +1,959 @@
+/* Listing pattern */
+registry-imagestream-listing,
+registry-image-listing,
+registry-imagestream-panel,
+registry-image-panel {
+  /* A listing item is a row in the table */
+  /* only highlight the row if navigation is available */
+  /* if we can't navigate to a row but expand is available, highlight the caret */
+  /* use gray for a row that's expanded or if navigation isn't available */
+  /* always highlight caret when hovering over an expanded row */
+  /* Listing items have decent padding ... */
+  /* The last column of a listing is always right aligned */
+  /* Listing caption is text next to the actions, text should be similar to nav (.nav-tabs-pf > li > a)*/
+  /* Listing actions can be used directly as a cell */
+  /* To display info instead of tabs */
+  /* By default these thincgs are hidden */
+  /* ... unless they are in the right state */
+  /* Used at the end of a group of tbody to show an 'empty' message */
+  /* Listing pattern defaults to using full width of parent */
+  /* Fix up nav-tabs-pf to work properly */
+}
+registry-imagestream-listing table.listing-ct,
+registry-image-listing table.listing-ct,
+registry-imagestream-panel table.listing-ct,
+registry-image-panel table.listing-ct {
+  margin-top: 15px;
+  min-width: 65%;
+}
+registry-imagestream-listing table.listing-ct > caption,
+registry-image-listing table.listing-ct > caption,
+registry-imagestream-panel table.listing-ct > caption,
+registry-image-panel table.listing-ct > caption,
+registry-imagestream-listing table.listing-ct > thead h3,
+registry-image-listing table.listing-ct > thead h3,
+registry-imagestream-panel table.listing-ct > thead h3,
+registry-image-panel table.listing-ct > thead h3 {
+  font-size: 30px;
+  padding: 10px 0px 10px;
+  font-weight: 300;
+  margin-top: 0;
+}
+registry-imagestream-listing table.listing-ct > caption,
+registry-image-listing table.listing-ct > caption,
+registry-imagestream-panel table.listing-ct > caption,
+registry-image-panel table.listing-ct > caption {
+  color: inherit;
+  line-height: 1.1;
+}
+registry-imagestream-listing table.listing-ct > thead:first-child td,
+registry-image-listing table.listing-ct > thead:first-child td,
+registry-imagestream-panel table.listing-ct > thead:first-child td,
+registry-image-panel table.listing-ct > thead:first-child td {
+  padding-top: 0;
+}
+registry-imagestream-listing table.listing-ct > thead td > a,
+registry-image-listing table.listing-ct > thead td > a,
+registry-imagestream-panel table.listing-ct > thead td > a,
+registry-image-panel table.listing-ct > thead td > a {
+  line-height: 30px;
+  padding: 10px 0 10px;
+}
+registry-imagestream-listing table.listing-ct thead th,
+registry-image-listing table.listing-ct thead th,
+registry-imagestream-panel table.listing-ct thead th,
+registry-image-panel table.listing-ct thead th {
+  border-bottom: 1px solid #eeeeee;
+  font-weight: normal;
+  color: #888;
+}
+registry-imagestream-listing table.listing-ct thead th:first-child,
+registry-image-listing table.listing-ct thead th:first-child,
+registry-imagestream-panel table.listing-ct thead th:first-child,
+registry-image-panel table.listing-ct thead th:first-child {
+  padding-left: 20px;
+}
+registry-imagestream-listing table.listing-ct thead th:last-child,
+registry-image-listing table.listing-ct thead th:last-child,
+registry-imagestream-panel table.listing-ct thead th:last-child,
+registry-image-panel table.listing-ct thead th:last-child {
+  text-align: right;
+}
+registry-imagestream-listing tbody tr.listing-ct-item,
+registry-image-listing tbody tr.listing-ct-item,
+registry-imagestream-panel tbody tr.listing-ct-item,
+registry-image-panel tbody tr.listing-ct-item {
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee;
+  cursor: pointer;
+}
+registry-imagestream-listing tr.listing-ct-item tt,
+registry-image-listing tr.listing-ct-item tt,
+registry-imagestream-panel tr.listing-ct-item tt,
+registry-image-panel tr.listing-ct-item tt {
+  color: #888;
+}
+registry-imagestream-listing table.listing-ct tbody:last-child,
+registry-image-listing table.listing-ct tbody:last-child,
+registry-imagestream-panel table.listing-ct tbody:last-child,
+registry-image-panel table.listing-ct tbody:last-child {
+  border-bottom: 1px solid #eeeeee;
+}
+registry-imagestream-listing table.listing-ct tbody + thead,
+registry-image-listing table.listing-ct tbody + thead,
+registry-imagestream-panel table.listing-ct tbody + thead,
+registry-image-panel table.listing-ct tbody + thead {
+  border-top: 1px solid #eeeeee;
+}
+registry-imagestream-listing table.listing-ct tbody.open:last-child,
+registry-image-listing table.listing-ct tbody.open:last-child,
+registry-imagestream-panel table.listing-ct tbody.open:last-child,
+registry-image-panel table.listing-ct tbody.open:last-child {
+  border-bottom: none;
+}
+registry-imagestream-listing table.listing-ct tbody.open + thead,
+registry-image-listing table.listing-ct tbody.open + thead,
+registry-imagestream-panel table.listing-ct tbody.open + thead,
+registry-image-panel table.listing-ct tbody.open + thead {
+  border-top: none;
+}
+registry-imagestream-listing tbody tr.listing-ct-item.listing-ct-warning,
+registry-image-listing tbody tr.listing-ct-item.listing-ct-warning,
+registry-imagestream-panel tbody tr.listing-ct-item.listing-ct-warning,
+registry-image-panel tbody tr.listing-ct-item.listing-ct-warning {
+  background-color: #fbc7c7;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-item,
+registry-image-listing tbody.open tr.listing-ct-item,
+registry-imagestream-panel tbody.open tr.listing-ct-item,
+registry-image-panel tbody.open tr.listing-ct-item {
+  background-color: #ededed;
+  border-bottom: none;
+  border-top: none;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-item td,
+registry-image-listing tbody.open tr.listing-ct-item td,
+registry-imagestream-panel tbody.open tr.listing-ct-item td,
+registry-image-panel tbody.open tr.listing-ct-item td,
+registry-imagestream-listing tbody.open tr.listing-ct-item th,
+registry-image-listing tbody.open tr.listing-ct-item th,
+registry-imagestream-panel tbody.open tr.listing-ct-item th,
+registry-image-panel tbody.open tr.listing-ct-item th {
+  border-top: 1px solid #ccc;
+}
+registry-imagestream-listing tbody.open td div.listing-ct-head,
+registry-image-listing tbody.open td div.listing-ct-head,
+registry-imagestream-panel tbody.open td div.listing-ct-head,
+registry-image-panel tbody.open td div.listing-ct-head {
+  background-color: #fff;
+}
+registry-imagestream-listing tbody.open .listing-ct-panel,
+registry-image-listing tbody.open .listing-ct-panel,
+registry-imagestream-panel tbody.open .listing-ct-panel,
+registry-image-panel tbody.open .listing-ct-panel {
+  border: 1px solid #ccc;
+}
+registry-imagestream-listing tbody.open .listing-ct-panel .listing-ct-body,
+registry-image-listing tbody.open .listing-ct-panel .listing-ct-body,
+registry-imagestream-panel tbody.open .listing-ct-panel .listing-ct-body,
+registry-image-panel tbody.open .listing-ct-panel .listing-ct-body {
+  border: none;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-panel + tr.listing-ct-body,
+registry-image-listing tbody.open tr.listing-ct-panel + tr.listing-ct-body,
+registry-imagestream-panel tbody.open tr.listing-ct-panel + tr.listing-ct-body,
+registry-image-panel tbody.open tr.listing-ct-panel + tr.listing-ct-body {
+  border-top: none;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-panel td div.listing-ct-head,
+registry-image-listing tbody.open tr.listing-ct-panel td div.listing-ct-head,
+registry-imagestream-panel tbody.open tr.listing-ct-panel td div.listing-ct-head,
+registry-image-panel tbody.open tr.listing-ct-panel td div.listing-ct-head {
+  border: none;
+  border-bottom: 1px solid #ccc;
+}
+registry-imagestream-listing tbody:not(.open) tr.listing-ct-item:not(.listing-ct-nonavigate):hover,
+registry-image-listing tbody:not(.open) tr.listing-ct-item:not(.listing-ct-nonavigate):hover,
+registry-imagestream-panel tbody:not(.open) tr.listing-ct-item:not(.listing-ct-nonavigate):hover,
+registry-image-panel tbody:not(.open) tr.listing-ct-item:not(.listing-ct-nonavigate):hover {
+  background-color: #d4edfa;
+}
+registry-imagestream-listing tbody:not(.open) tr.listing-ct-item.listing-ct-nonavigate:hover td.listing-ct-toggle,
+registry-image-listing tbody:not(.open) tr.listing-ct-item.listing-ct-nonavigate:hover td.listing-ct-toggle,
+registry-imagestream-panel tbody:not(.open) tr.listing-ct-item.listing-ct-nonavigate:hover td.listing-ct-toggle,
+registry-image-panel tbody:not(.open) tr.listing-ct-item.listing-ct-nonavigate:hover td.listing-ct-toggle {
+  color: #65bedf;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-item:hover,
+registry-image-listing tbody.open tr.listing-ct-item:hover,
+registry-imagestream-panel tbody.open tr.listing-ct-item:hover,
+registry-image-panel tbody.open tr.listing-ct-item:hover,
+registry-imagestream-listing tr.listing-ct-item.listing-ct-nonavigate:hover,
+registry-image-listing tr.listing-ct-item.listing-ct-nonavigate:hover,
+registry-imagestream-panel tr.listing-ct-item.listing-ct-nonavigate:hover,
+registry-image-panel tr.listing-ct-item.listing-ct-nonavigate:hover {
+  background-color: #ededed;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-item:hover td.listing-ct-toggle,
+registry-image-listing tbody.open tr.listing-ct-item:hover td.listing-ct-toggle,
+registry-imagestream-panel tbody.open tr.listing-ct-item:hover td.listing-ct-toggle,
+registry-image-panel tbody.open tr.listing-ct-item:hover td.listing-ct-toggle {
+  color: #65bedf;
+}
+registry-imagestream-listing tr.listing-ct-item .listing-ct-toggle,
+registry-image-listing tr.listing-ct-item .listing-ct-toggle,
+registry-imagestream-panel tr.listing-ct-item .listing-ct-toggle,
+registry-image-panel tr.listing-ct-item .listing-ct-toggle {
+  padding: 0 !important;
+  width: 35px;
+  color: #030303;
+}
+registry-imagestream-listing table.listing-ct thead .listing-ct-toggle + th,
+registry-image-listing table.listing-ct thead .listing-ct-toggle + th,
+registry-imagestream-panel table.listing-ct thead .listing-ct-toggle + th,
+registry-image-panel table.listing-ct thead .listing-ct-toggle + th,
+registry-imagestream-listing tr.listing-ct-item .listing-ct-toggle + td,
+registry-image-listing tr.listing-ct-item .listing-ct-toggle + td,
+registry-imagestream-panel tr.listing-ct-item .listing-ct-toggle + td,
+registry-image-panel tr.listing-ct-item .listing-ct-toggle + td,
+registry-imagestream-listing tr.listing-ct-item .listing-ct-toggle + th,
+registry-image-listing tr.listing-ct-item .listing-ct-toggle + th,
+registry-imagestream-panel tr.listing-ct-item .listing-ct-toggle + th,
+registry-image-panel tr.listing-ct-item .listing-ct-toggle + th {
+  padding-left: 0;
+}
+registry-imagestream-listing td.listing-ct-toggle:hover,
+registry-image-listing td.listing-ct-toggle:hover,
+registry-imagestream-panel td.listing-ct-toggle:hover,
+registry-image-panel td.listing-ct-toggle:hover {
+  color: #65bedf;
+  background-color: #ededed;
+}
+registry-imagestream-listing td.listing-ct-toggle i,
+registry-image-listing td.listing-ct-toggle i,
+registry-imagestream-panel td.listing-ct-toggle i,
+registry-image-panel td.listing-ct-toggle i {
+  font-size: 24px;
+  visibility: hidden;
+}
+registry-imagestream-listing tr.listing-ct-item:hover td.listing-ct-toggle i,
+registry-image-listing tr.listing-ct-item:hover td.listing-ct-toggle i,
+registry-imagestream-panel tr.listing-ct-item:hover td.listing-ct-toggle i,
+registry-image-panel tr.listing-ct-item:hover td.listing-ct-toggle i,
+registry-imagestream-listing tr.listing-ct-item td.listing-ct-toggle:hover i,
+registry-image-listing tr.listing-ct-item td.listing-ct-toggle:hover i,
+registry-imagestream-panel tr.listing-ct-item td.listing-ct-toggle:hover i,
+registry-image-panel tr.listing-ct-item td.listing-ct-toggle:hover i {
+  visibility: visible;
+}
+registry-imagestream-listing td.listing-ct-toggle i:before,
+registry-image-listing td.listing-ct-toggle i:before,
+registry-imagestream-panel td.listing-ct-toggle i:before,
+registry-image-panel td.listing-ct-toggle i:before {
+  content: "\F105";
+}
+registry-imagestream-listing tbody.open td.listing-ct-toggle i,
+registry-image-listing tbody.open td.listing-ct-toggle i,
+registry-imagestream-panel tbody.open td.listing-ct-toggle i,
+registry-image-panel tbody.open td.listing-ct-toggle i {
+  visibility: visible;
+}
+registry-imagestream-listing tbody.open td.listing-ct-toggle i:before,
+registry-image-listing tbody.open td.listing-ct-toggle i:before,
+registry-imagestream-panel tbody.open td.listing-ct-toggle i:before,
+registry-image-panel tbody.open td.listing-ct-toggle i:before {
+  content: "\F107";
+}
+registry-imagestream-listing td.listing-ct-toggle:hover ~ td,
+registry-image-listing td.listing-ct-toggle:hover ~ td,
+registry-imagestream-panel td.listing-ct-toggle:hover ~ td,
+registry-image-panel td.listing-ct-toggle:hover ~ td,
+registry-imagestream-listing td.listing-ct-toggle:hover ~ th,
+registry-image-listing td.listing-ct-toggle:hover ~ th,
+registry-imagestream-panel td.listing-ct-toggle:hover ~ th,
+registry-image-panel td.listing-ct-toggle:hover ~ th {
+  background-color: #ededed;
+}
+registry-imagestream-listing table.listing-ct > thead th,
+registry-image-listing table.listing-ct > thead th,
+registry-imagestream-panel table.listing-ct > thead th,
+registry-image-panel table.listing-ct > thead th,
+registry-imagestream-listing table.listing-ct > thead td,
+registry-image-listing table.listing-ct > thead td,
+registry-imagestream-panel table.listing-ct > thead td,
+registry-image-panel table.listing-ct > thead td,
+registry-imagestream-listing tr.listing-ct-item td,
+registry-image-listing tr.listing-ct-item td,
+registry-imagestream-panel tr.listing-ct-item td,
+registry-image-panel tr.listing-ct-item td,
+registry-imagestream-listing tr.listing-ct-item th,
+registry-image-listing tr.listing-ct-item th,
+registry-imagestream-panel tr.listing-ct-item th,
+registry-image-panel tr.listing-ct-item th {
+  padding: 10px 0px 10px 20px;
+}
+registry-imagestream-listing table.listing-ct > thead th:last-child,
+registry-image-listing table.listing-ct > thead th:last-child,
+registry-imagestream-panel table.listing-ct > thead th:last-child,
+registry-image-panel table.listing-ct > thead th:last-child,
+registry-imagestream-listing table.listing-ct > thead td:last-child,
+registry-image-listing table.listing-ct > thead td:last-child,
+registry-imagestream-panel table.listing-ct > thead td:last-child,
+registry-image-panel table.listing-ct > thead td:last-child,
+registry-imagestream-listing tr.listing-ct-item td:last-child,
+registry-image-listing tr.listing-ct-item td:last-child,
+registry-imagestream-panel tr.listing-ct-item td:last-child,
+registry-image-panel tr.listing-ct-item td:last-child {
+  text-align: right;
+  padding-right: 10px;
+}
+registry-imagestream-listing .listing-ct-actions > .listing-ct-caption,
+registry-image-listing .listing-ct-actions > .listing-ct-caption,
+registry-imagestream-panel .listing-ct-actions > .listing-ct-caption,
+registry-image-panel .listing-ct-actions > .listing-ct-caption {
+  font-size: 14px;
+  vertical-align: middle;
+  color: #337ab7;
+  padding-right: 5px;
+}
+registry-imagestream-listing tr.listing-ct-item td.listing-ct-actions,
+registry-image-listing tr.listing-ct-item td.listing-ct-actions,
+registry-imagestream-panel tr.listing-ct-item td.listing-ct-actions,
+registry-image-panel tr.listing-ct-item td.listing-ct-actions,
+registry-imagestream-listing td.listing-ct-actions,
+registry-image-listing td.listing-ct-actions,
+registry-imagestream-panel td.listing-ct-actions,
+registry-image-panel td.listing-ct-actions {
+  padding: 5px 10px;
+  text-align: right;
+  float: none;
+}
+registry-imagestream-listing .listing-ct-head .listing-ct-actions,
+registry-image-listing .listing-ct-head .listing-ct-actions,
+registry-imagestream-panel .listing-ct-head .listing-ct-actions,
+registry-image-panel .listing-ct-head .listing-ct-actions {
+  margin-top: -7px;
+}
+registry-imagestream-listing div.listing-ct-panel,
+registry-image-listing div.listing-ct-panel,
+registry-imagestream-panel div.listing-ct-panel,
+registry-image-panel div.listing-ct-panel {
+  box-shadow: 1px 1px 1px 1px #f5f5f5;
+  margin-bottom: 15px;
+}
+registry-imagestream-listing div.listing-ct-maybe,
+registry-image-listing div.listing-ct-maybe,
+registry-imagestream-panel div.listing-ct-maybe,
+registry-image-panel div.listing-ct-maybe {
+  border: 1px dashed #ddd;
+  box-shadow: none;
+}
+registry-imagestream-listing div.listing-ct-head,
+registry-image-listing div.listing-ct-head,
+registry-imagestream-panel div.listing-ct-head,
+registry-image-panel div.listing-ct-head {
+  padding: 10px 10px 0 10px;
+  background-color: #f5f5f5;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
+  overflow: hidden;
+}
+registry-imagestream-listing div.listing-ct-head:last-child,
+registry-image-listing div.listing-ct-head:last-child,
+registry-imagestream-panel div.listing-ct-head:last-child,
+registry-image-panel div.listing-ct-head:last-child {
+  padding-bottom: 10px;
+}
+registry-imagestream-listing div.listing-ct-maybe div.listing-ct-head,
+registry-image-listing div.listing-ct-maybe div.listing-ct-head,
+registry-imagestream-panel div.listing-ct-maybe div.listing-ct-head,
+registry-image-panel div.listing-ct-maybe div.listing-ct-head,
+registry-imagestream-listing div.listing-ct-maybe div.listing-ct-body,
+registry-image-listing div.listing-ct-maybe div.listing-ct-body,
+registry-imagestream-panel div.listing-ct-maybe div.listing-ct-body,
+registry-image-panel div.listing-ct-maybe div.listing-ct-body {
+  background-color: #fff;
+  border: none;
+}
+registry-imagestream-listing tbody.active .listing-ct-head,
+registry-image-listing tbody.active .listing-ct-head,
+registry-imagestream-panel tbody.active .listing-ct-head,
+registry-image-panel tbody.active .listing-ct-head {
+  border-top: 3px solid #0099d3;
+}
+registry-imagestream-listing .listing-ct-head h3,
+registry-image-listing .listing-ct-head h3,
+registry-imagestream-panel .listing-ct-head h3,
+registry-image-panel .listing-ct-head h3 {
+  font-weight: normal;
+  font-size: 18px;
+  margin-top: 0px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+}
+registry-imagestream-listing .listing-ct-head h3 i,
+registry-image-listing .listing-ct-head h3 i,
+registry-imagestream-panel .listing-ct-head h3 i,
+registry-image-panel .listing-ct-head h3 i {
+  float: left;
+  padding-right: 7px;
+}
+registry-imagestream-listing .listing-ct-head .nav li a,
+registry-image-listing .listing-ct-head .nav li a,
+registry-imagestream-panel .listing-ct-head .nav li a,
+registry-image-panel .listing-ct-head .nav li a {
+  padding-top: 0px;
+  font-size: 13px;
+}
+registry-imagestream-listing .listing-ct-head .nav-tabs,
+registry-image-listing .listing-ct-head .nav-tabs,
+registry-imagestream-panel .listing-ct-head .nav-tabs,
+registry-image-panel .listing-ct-head .nav-tabs {
+  border-bottom: none;
+}
+registry-imagestream-listing .listing-ct-head .nav-tabs-pf,
+registry-image-listing .listing-ct-head .nav-tabs-pf,
+registry-imagestream-panel .listing-ct-head .nav-tabs-pf,
+registry-image-panel .listing-ct-head .nav-tabs-pf {
+  margin-left: -10px;
+}
+registry-imagestream-listing .listing-ct-head dl,
+registry-image-listing .listing-ct-head dl,
+registry-imagestream-panel .listing-ct-head dl,
+registry-image-panel .listing-ct-head dl {
+  display: inline-block;
+  height: 1.6em;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  margin-right: 45px;
+  margin-left: 5px;
+}
+registry-imagestream-listing .listing-ct-head dt,
+registry-image-listing .listing-ct-head dt,
+registry-imagestream-panel .listing-ct-head dt,
+registry-image-panel .listing-ct-head dt {
+  font-weight: normal;
+  display: inline;
+  margin-right: 0.5em;
+  color: #888;
+}
+registry-imagestream-listing .listing-ct-head dd,
+registry-image-listing .listing-ct-head dd,
+registry-imagestream-panel .listing-ct-head dd,
+registry-image-panel .listing-ct-head dd {
+  display: inline;
+  color: black;
+}
+registry-imagestream-listing .listing-ct-body,
+registry-image-listing .listing-ct-body,
+registry-imagestream-panel .listing-ct-body,
+registry-image-panel .listing-ct-body {
+  padding: 20px 25px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+registry-imagestream-listing .listing-ct-inline > .listing-ct-body,
+registry-image-listing .listing-ct-inline > .listing-ct-body,
+registry-imagestream-panel .listing-ct-inline > .listing-ct-body,
+registry-image-panel .listing-ct-inline > .listing-ct-body {
+  border: none;
+  padding-top: 0px;
+  padding-left: 20px;
+  padding-bottom: 0px;
+}
+registry-imagestream-listing .listing-ct-inline > h3,
+registry-image-listing .listing-ct-inline > h3,
+registry-imagestream-panel .listing-ct-inline > h3,
+registry-image-panel .listing-ct-inline > h3 {
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+  margin-top: 30px;
+}
+registry-imagestream-listing .listing-ct-inline > h3:first-child,
+registry-image-listing .listing-ct-inline > h3:first-child,
+registry-imagestream-panel .listing-ct-inline > h3:first-child,
+registry-image-panel .listing-ct-inline > h3:first-child {
+  border-top: none;
+  padding-top: 0px;
+  margin-top: 20px;
+}
+registry-imagestream-listing .listing-ct-actions,
+registry-image-listing .listing-ct-actions,
+registry-imagestream-panel .listing-ct-actions,
+registry-image-panel .listing-ct-actions {
+  float: right;
+  min-height: 26px;
+}
+registry-imagestream-listing .listing-ct-status,
+registry-image-listing .listing-ct-status,
+registry-imagestream-panel .listing-ct-status,
+registry-image-panel .listing-ct-status {
+  float: right;
+  clear: right;
+}
+registry-imagestream-listing .listing-ct-error,
+registry-image-listing .listing-ct-error,
+registry-imagestream-panel .listing-ct-error,
+registry-image-panel .listing-ct-error {
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+registry-imagestream-listing .listing-ct-error.alert,
+registry-image-listing .listing-ct-error.alert,
+registry-imagestream-panel .listing-ct-error.alert,
+registry-image-panel .listing-ct-error.alert {
+  margin-bottom: 0;
+}
+registry-imagestream-listing .listing-ct-body tt,
+registry-image-listing .listing-ct-body tt,
+registry-imagestream-panel .listing-ct-body tt,
+registry-image-panel .listing-ct-body tt {
+  font-size: 12px;
+}
+registry-imagestream-listing .listing-ct-body dl,
+registry-image-listing .listing-ct-body dl,
+registry-imagestream-panel .listing-ct-body dl,
+registry-image-panel .listing-ct-body dl {
+  margin: 0;
+}
+registry-imagestream-listing .listing-ct-body dl dd dl.inline-dl dt,
+registry-image-listing .listing-ct-body dl dd dl.inline-dl dt,
+registry-imagestream-panel .listing-ct-body dl dd dl.inline-dl dt,
+registry-image-panel .listing-ct-body dl dd dl.inline-dl dt,
+registry-imagestream-listing .listing-ct-body dt,
+registry-image-listing .listing-ct-body dt,
+registry-imagestream-panel .listing-ct-body dt,
+registry-image-panel .listing-ct-body dt {
+  clear: left;
+  float: left;
+  width: 100px;
+  min-height: 26px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #888;
+  font-weight: normal;
+}
+registry-imagestream-listing .listing-ct-body dt,
+registry-image-listing .listing-ct-body dt,
+registry-imagestream-panel .listing-ct-body dt,
+registry-image-panel .listing-ct-body dt {
+  text-align: right;
+}
+registry-imagestream-listing .listing-ct-body dl dd dl dt,
+registry-image-listing .listing-ct-body dl dd dl dt,
+registry-imagestream-panel .listing-ct-body dl dd dl dt,
+registry-image-panel .listing-ct-body dl dd dl dt {
+  text-align: left;
+}
+registry-imagestream-listing .listing-ct-body dd,
+registry-image-listing .listing-ct-body dd,
+registry-imagestream-panel .listing-ct-body dd,
+registry-image-panel .listing-ct-body dd {
+  margin-left: 110px;
+  min-height: 26px;
+  max-width: 1000px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+registry-imagestream-listing .listing-ct-body dl.full-width dt,
+registry-image-listing .listing-ct-body dl.full-width dt,
+registry-imagestream-panel .listing-ct-body dl.full-width dt,
+registry-image-panel .listing-ct-body dl.full-width dt {
+  text-align: left;
+  min-width: none;
+  max-width: none;
+  float: none;
+  width: auto;
+}
+registry-imagestream-listing .listing-ct-body dl.full-width dd,
+registry-image-listing .listing-ct-body dl.full-width dd,
+registry-imagestream-panel .listing-ct-body dl.full-width dd,
+registry-image-panel .listing-ct-body dl.full-width dd {
+  margin-left: 0px;
+}
+registry-imagestream-listing table.listing-ct tbody.open,
+registry-image-listing table.listing-ct tbody.open,
+registry-imagestream-panel table.listing-ct tbody.open,
+registry-image-panel table.listing-ct tbody.open {
+  box-shadow: 1px 1px 1px 1px #f5f5f5;
+}
+registry-imagestream-listing tbody tr.listing-ct-panel,
+registry-image-listing tbody tr.listing-ct-panel,
+registry-imagestream-panel tbody tr.listing-ct-panel,
+registry-image-panel tbody tr.listing-ct-panel,
+registry-imagestream-listing tbody tr.listing-ct-body,
+registry-image-listing tbody tr.listing-ct-body,
+registry-imagestream-panel tbody tr.listing-ct-body,
+registry-image-panel tbody tr.listing-ct-body {
+  display: none;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-head,
+registry-image-listing tbody.open tr.listing-ct-head,
+registry-imagestream-panel tbody.open tr.listing-ct-head,
+registry-image-panel tbody.open tr.listing-ct-head,
+registry-imagestream-listing tbody.open tr.listing-ct-panel,
+registry-image-listing tbody.open tr.listing-ct-panel,
+registry-imagestream-panel tbody.open tr.listing-ct-panel,
+registry-image-panel tbody.open tr.listing-ct-panel,
+registry-imagestream-listing tbody.open tr.listing-ct-body,
+registry-image-listing tbody.open tr.listing-ct-body,
+registry-imagestream-panel tbody.open tr.listing-ct-body,
+registry-image-panel tbody.open tr.listing-ct-body {
+  display: table-row;
+}
+registry-imagestream-listing tbody.open tr.listing-ct-head,
+registry-image-listing tbody.open tr.listing-ct-head,
+registry-imagestream-panel tbody.open tr.listing-ct-head,
+registry-image-panel tbody.open tr.listing-ct-head {
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
+  border-top: 3px solid #0099d3;
+  background-color: #f5f5f5;
+}
+registry-imagestream-listing tr.listing-ct-head + tr.listing-ct-head,
+registry-image-listing tr.listing-ct-head + tr.listing-ct-head,
+registry-imagestream-panel tr.listing-ct-head + tr.listing-ct-head,
+registry-image-panel tr.listing-ct-head + tr.listing-ct-head {
+  border-top: none;
+}
+registry-imagestream-listing tr.listing-ct-head + tr.listing-ct-head td,
+registry-image-listing tr.listing-ct-head + tr.listing-ct-head td,
+registry-imagestream-panel tr.listing-ct-head + tr.listing-ct-head td,
+registry-image-panel tr.listing-ct-head + tr.listing-ct-head td {
+  padding: 0px 10px 0px 10px;
+}
+registry-imagestream-listing tr.listing-ct-body td,
+registry-image-listing tr.listing-ct-body td,
+registry-imagestream-panel tr.listing-ct-body td,
+registry-image-panel tr.listing-ct-body td {
+  padding: 20px 150px;
+  font-size: 13px;
+}
+registry-imagestream-listing .listing-ct-empty,
+registry-image-listing .listing-ct-empty,
+registry-imagestream-panel .listing-ct-empty,
+registry-image-panel .listing-ct-empty {
+  color: #888;
+  text-align: center;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+registry-imagestream-listing thead.listing-ct-empty td,
+registry-image-listing thead.listing-ct-empty td,
+registry-imagestream-panel thead.listing-ct-empty td,
+registry-image-panel thead.listing-ct-empty td,
+registry-imagestream-listing table.listing-ct > thead.listing-ct-empty td,
+registry-image-listing table.listing-ct > thead.listing-ct-empty td,
+registry-imagestream-panel table.listing-ct > thead.listing-ct-empty td,
+registry-image-panel table.listing-ct > thead.listing-ct-empty td {
+  padding: 10px;
+  text-align: center;
+}
+registry-imagestream-listing tbody + thead.listing-ct-empty,
+registry-image-listing tbody + thead.listing-ct-empty,
+registry-imagestream-panel tbody + thead.listing-ct-empty,
+registry-image-panel tbody + thead.listing-ct-empty {
+  display: none;
+}
+registry-imagestream-listing .listing-ct-wide,
+registry-image-listing .listing-ct-wide,
+registry-imagestream-panel .listing-ct-wide,
+registry-image-panel .listing-ct-wide {
+  width: 100%;
+}
+registry-imagestream-listing div.listing-ct-head,
+registry-image-listing div.listing-ct-head,
+registry-imagestream-panel div.listing-ct-head,
+registry-image-panel div.listing-ct-head {
+  overflow: visible;
+}
+registry-imagestream-listing .listing-ct-head .btn-group,
+registry-image-listing .listing-ct-head .btn-group,
+registry-imagestream-panel .listing-ct-head .btn-group,
+registry-image-panel .listing-ct-head .btn-group,
+registry-imagestream-listing .listing-ct-head button:not(.dropdown-toggle),
+registry-image-listing .listing-ct-head button:not(.dropdown-toggle),
+registry-imagestream-panel .listing-ct-head button:not(.dropdown-toggle),
+registry-image-panel .listing-ct-head button:not(.dropdown-toggle) {
+  margin-left: 0.3em;
+}
+registry-imagestream-listing table.listing-ct > caption a,
+registry-image-listing table.listing-ct > caption a,
+registry-imagestream-panel table.listing-ct > caption a,
+registry-image-panel table.listing-ct > caption a {
+  font-size: 16px;
+}
+registry-imagestream-listing tbody tr.listing-ct-noexpand,
+registry-image-listing tbody tr.listing-ct-noexpand,
+registry-imagestream-panel tbody tr.listing-ct-noexpand,
+registry-image-panel tbody tr.listing-ct-noexpand {
+  cursor: default;
+}
+registry-imagestream-listing .nav-tabs-pf > li:first-child a,
+registry-image-listing .nav-tabs-pf > li:first-child a,
+registry-imagestream-panel .nav-tabs-pf > li:first-child a,
+registry-image-panel .nav-tabs-pf > li:first-child a {
+  margin-left: 0px !important;
+  padding-left: 15px !important;
+}
+registry-imagestream-listing .nav-tabs-pf > li a:before,
+registry-image-listing .nav-tabs-pf > li a:before,
+registry-imagestream-panel .nav-tabs-pf > li a:before,
+registry-image-panel .nav-tabs-pf > li a:before {
+  right: 0px !important;
+}
+registry-imagestream-listing .nav-tabs-pf > li > a:active:before,
+registry-image-listing .nav-tabs-pf > li > a:active:before,
+registry-imagestream-panel .nav-tabs-pf > li > a:active:before,
+registry-image-panel .nav-tabs-pf > li > a:active:before,
+registry-imagestream-listing .nav-tabs-pf > li > a:focus:before,
+registry-image-listing .nav-tabs-pf > li > a:focus:before,
+registry-imagestream-panel .nav-tabs-pf > li > a:focus:before,
+registry-image-panel .nav-tabs-pf > li > a:focus:before,
+registry-imagestream-listing .nav-tabs-pf > li > a:hover:before,
+registry-image-listing .nav-tabs-pf > li > a:hover:before,
+registry-imagestream-panel .nav-tabs-pf > li > a:hover:before,
+registry-image-panel .nav-tabs-pf > li > a:hover:before,
+registry-imagestream-listing .nav-tabs-pf > li.active a:before,
+registry-image-listing .nav-tabs-pf > li.active a:before,
+registry-imagestream-panel .nav-tabs-pf > li.active a:before,
+registry-image-panel .nav-tabs-pf > li.active a:before {
+  height: 3px;
+  left: 0px;
+}
+dl.registry-image-tags dt {
+  line-height: 30px;
+}
+dl.registry-image-tags .registry-image-tag {
+  padding: 2px 5px;
+  line-height: 30px;
+}
+dd.indentifier {
+  word-break: break-all;
+}
+.registry-image-tag {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  background-color: #fff;
+}
+a.registry-image-tag {
+  color: inherit;
+  text-decoration: none;
+  max-width: 76px;
+  height: 22px;
+  display: inline;
+  text-align: center;
+  padding: 0 5px;
+  margin-left: 2px;
+  font-weight: normal;
+  -webkit-border-radius: 3;
+  -moz-border-radius: 3;
+  border-radius: 3px;
+}
+@media (max-width: 768px) {
+  a.registry-image-tag {
+    max-width: 50px;
+  }
+}
+a.registry-image-tag:hover,
+a.registry-image-tag:focus {
+  color: inherit;
+  text-decoration: none;
+}
+registry-imagestream-body a[ng-click] {
+  cursor: pointer;
+}
+registry-image-pull,
+registry-imagestream-push {
+  display: block;
+}
+registry-image-pull code,
+registry-imagestream-push code {
+  display: block;
+  white-space: pre;
+  overflow-x: auto;
+}
+registry-image-pull code em,
+registry-imagestream-push code em,
+registry-image-pull code span.placeholder,
+registry-imagestream-push code span.placeholder {
+  font-weight: bold;
+  font-style: normal;
+  color: #888;
+}
+registry-image-pull .fa-info-circle,
+registry-imagestream-push .fa-info-circle {
+  font-size: 15px;
+  color: #888;
+  padding: 0px 5px;
+}
+.registry-imagestream-lock {
+  color: #deaa87;
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+/* ----------------------------------------------------------------------
+ * Imagestream listing styles
+ */
+registry-imagestream-listing table.listing-ct,
+registry-image-listing table.listing-ct {
+  max-width: 2000px;
+  min-width: 85%;
+}
+registry-imagestream-listing table.listing-ct tbody:hover,
+registry-image-listing table.listing-ct tbody:hover {
+  background-color: #d4edfa;
+}
+registry-imagestream-listing table.listing-ct td.image-identifier,
+registry-image-listing table.listing-ct td.image-identifier {
+  max-width: 0;
+}
+registry-imagestream-listing table.listing-ct td.image-identifier div.col,
+registry-image-listing table.listing-ct td.image-identifier div.col {
+  max-width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+registry-imagestream-listing table.listing-ct td.image-identifier div.col tt,
+registry-image-listing table.listing-ct td.image-identifier div.col tt {
+  color: inherit;
+}
+registry-imagestream-listing table.listing-ct tbody.open .listing-ct-panel .listing-ct-body,
+registry-image-listing table.listing-ct tbody.open .listing-ct-panel .listing-ct-body {
+  border-right: 1px solid #ccc;
+}
+registry-imagestream-listing table.listing-ct tbody.open tr.listing-ct-panel td div.listing-ct-head,
+registry-image-listing table.listing-ct tbody.open tr.listing-ct-panel td div.listing-ct-head {
+  border-right: 1px solid #ccc;
+}
+registry-imagestream-listing table.listing-ct thead th,
+registry-image-listing table.listing-ct thead th {
+  border-top: none;
+}
+registry-imagestream-listing table.listing-ct tr.listing-ct-item td,
+registry-image-listing table.listing-ct tr.listing-ct-item td {
+  padding-bottom: 10px;
+}
+registry-imagestream-listing table.listing-ct tr.registry-listing-imagestream-item,
+registry-image-listing table.listing-ct tr.registry-listing-imagestream-item {
+  border-top: 1px solid #eeeeee;
+}
+registry-imagestream-listing table.listing-ct tr.registry-listing-imagestream-item th,
+registry-image-listing table.listing-ct tr.registry-listing-imagestream-item th,
+registry-imagestream-listing table.listing-ct tr.registry-listing-imagestream-item td,
+registry-image-listing table.listing-ct tr.registry-listing-imagestream-item td {
+  border-bottom: 2px solid #ccc;
+  font-size: 14px;
+  padding-bottom: 5px;
+}
+registry-imagestream-listing table.listing-ct .inline-tabs,
+registry-image-listing table.listing-ct .inline-tabs {
+  width: 100%;
+  max-height: 400px;
+  overflow: auto;
+}
+registry-imagestream-listing table.listing-ct .inline-tabs table,
+registry-image-listing table.listing-ct .inline-tabs table {
+  margin-top: 0;
+  width: 100%;
+}
+registry-imagestream-listing table.listing-ct .inline-tabs tr.listing-ct-item,
+registry-image-listing table.listing-ct .inline-tabs tr.listing-ct-item {
+  background-color: unset;
+  border-bottom: 1px solid #eeeeee;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+}
+registry-imagestream-listing table.listing-ct tbody,
+registry-image-listing table.listing-ct tbody {
+  border-right: 1px solid #eeeeee;
+  border-left: 1px solid #eeeeee;
+}
+registry-imagestream-listing table.listing-ct tbody tr.listing-ct-item td,
+registry-image-listing table.listing-ct tbody tr.listing-ct-item td,
+registry-imagestream-listing table.listing-ct tbody tr.listing-ct-item th,
+registry-image-listing table.listing-ct tbody tr.listing-ct-item th {
+  border: none;
+}
+registry-imagestream-listing table.listing-ct registry-image-listing .listing-ct-toggle,
+registry-image-listing table.listing-ct registry-image-listing .listing-ct-toggle {
+  display: none;
+}
+registry-image-listing a.registry-image-tag {
+  display: block;
+}
+registry-image-layers {
+  border: 1px solid #d1d1d1;
+  display: block;
+  overflow-y: auto;
+  max-height: 200px;
+}
+ul.registry-image-layers {
+  list-style: none;
+  background-image: -webkit-linear-gradient(top, #fff 12px, #d3d3d3 15px);
+  background-image: -moz-linear-gradient(top, #fff 12px, #d3d3d3 15px);
+  background-image: -o-linear-gradient(top, #fff 12px, #d3d3d3 15px);
+  background-image: linear-gradient(top, #fff 12px, #d3d3d3 15px);
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  margin: 8px 10px 15px 15px;
+  padding-left: 0px;
+  font-size: 13px;
+}
+ul.registry-image-layers li {
+  clear: both;
+}
+ul.registry-image-layers li:before {
+  content: "\F111";
+  /* circle */
+  font-family: FontAwesome;
+  font-size: 19px;
+  line-height: 19px;
+  float: left;
+  display: block;
+  color: #0099ff;
+  position: relative;
+  left: -7px;
+  top: 1px;
+  padding-bottom: 9px;
+}
+ul.registry-image-layers li.hint-add:before {
+  color: #555753;
+}
+ul.registry-image-layers li.hint-run:before {
+  color: #4e9a06;
+}
+ul.registry-image-layers li:first-child:before {
+  content: "\F0AB";
+  /* fa-circle-arrow */
+}
+ul.registry-image-layers li:last-child:before {
+  top: 2px;
+  background-color: white;
+}
+ul.registry-image-layers span {
+  display: block;
+  float: right;
+}
+ul.registry-image-layers p {
+  font-family: monospace;
+  margin-bottom: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 15px;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+/*# sourceMappingURL=image-widgets.css.map*/

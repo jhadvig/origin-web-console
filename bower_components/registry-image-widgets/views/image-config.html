@@ -1,0 +1,35 @@
+<dl class="dl-horizontal">
+    <dt translate>Command</dt>
+    <dd><code>{{ configCommand(config) }}</code></dd>
+</dl>
+
+<div class="row">
+    <dl class="col-xs-12 col-sm-12 col-md-4 dl-horizontal">
+        <dt translate>Run as</dt>
+        <dd ng-if="config.User">{{config.User}}</dd>
+        <dd ng-if="!config.User"><em translate>Default</em></dd>
+        <dt translate>Directory</dt>
+        <dd ng-if="config.WorkingDir">{{config.WorkingDir}}</dd>
+        <dd ng-if="!config.WorkingDir">/</dd>
+        <dt ng-if="config.StopSignal" translate>Stop with</dt>
+        <dd ng-if="config.StopSignal">{{config.StopSignal}}</dd>
+        <dt translate>Architecture</dt>
+        <dd ng-if="config.architecture">{{config.architecture}}</dd>
+        <dd ng-if="!config.architecture">{{image.dockerImageMetadata.Architecture}}</dd>
+    </dl>
+    <dl class="col-xs-12 col-sm-12 col-md-8 dl-horizontal full-width">
+        <dt ng-if="config.Env.length" translate>Environment</dt>
+        <dd ng-repeat="env in config.Env"><tt>{{env}}</tt></dd>
+    </dl>
+</div>
+<div class="row">
+    <dl class="col-xs-12 col-sm-12 col-md-4 dl-horizontal">
+        <dt translate>Ports</dt>
+        <dd ng-repeat="(port, data) in config.ExposedPorts">{{port}}</dd>
+        <dd ng-if="!config.ExposedPorts"><em translate>None</em></dd>
+    </dl>
+    <dl class="col-xs-12 col-sm-12 col-md-8 dl-horizontal full-width">
+        <dt ng-if="config.Volumes" translate>Volumes</dt>
+        <dd ng-repeat="(volume, data) in config.Volumes">{{volume}}</dd>
+    </dl>
+</div>

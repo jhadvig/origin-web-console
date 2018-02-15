@@ -1,0 +1,287 @@
+.catalog-edit-project .origin-modal-popup {
+  @media (min-width: @screen-sm-min) {
+    margin-left: 5px;
+    margin-top: -25px;
+  }
+
+  &.position-above {
+    @media (min-width: @screen-sm-min) {
+      margin-top: 0;
+    }
+  }
+}
+
+.catalog-projects-summary-panel {
+  padding: (@grid-gutter-width / 2);
+  position: relative;
+
+  @media(min-width: @screen-lg-min) {
+    padding-left: @grid-gutter-width;
+    padding-right: @grid-gutter-width;
+  }
+
+  .code-block {
+    background: @color-pf-black;
+    margin-top: 5px;
+    padding: 4px;
+  }
+
+  .create-button {
+    font-size: @font-size-base + 1;
+    float: right;
+  }
+
+  .create-button-text {
+    padding-left: 4px;
+  }
+
+  .getting-started-button {
+    width: 100%;
+    font-size: @font-size-base + 1;
+
+    &.with-projects {
+      margin-top: 15px;
+    }
+  }
+
+  .getting-started-button-text {
+    padding-left: 4px;
+  }
+
+  .getting-started-panel {
+    margin-top: @grid-gutter-width / 2;
+  }
+
+  h2 {
+    &.primary {
+      margin-top: 0;
+    }
+    &.secondary {
+      font-size: @font-size-base + 6;
+    }
+  }
+
+  .origin-modal-popup {
+    @media (min-width: @screen-sm-min) {
+      width: @landing-side-bar-width-sm - (.75 * @grid-gutter-width);
+    }
+    @media(min-width: @screen-lg-min) {
+      width: @landing-side-bar-width-lg - (2 * @grid-gutter-width);
+    }
+    @media(min-width: @screen-xl-min) {
+      width: @landing-side-bar-width-xl - (2 * @grid-gutter-width);
+    }
+  }
+
+  .projects-instructions-link {
+    background: transparent;
+    color: @color-pf-black-400;
+    padding: 0;
+    white-space: normal;
+    .command-arg {
+      // Prevent word breaks in awkward places in the middle of an argument.
+      white-space: nowrap;
+    }
+  }
+
+  .resources-panel {
+    margin-top: @grid-gutter-width / 2;
+
+    ul {
+      padding-left: @grid-gutter-width / 2;
+    }
+  }
+
+  .services-view {
+    .services-item {
+      color: @color-pf-white;
+      display: block;
+      margin-bottom: 50px;
+      min-height: 140px;
+      padding-bottom: 0;
+      padding-top: 0;
+      width: 33.3%;
+      &:focus,
+      &:hover {
+        color: @landing-side-bar-link-color-hover;
+        .services-item-name {
+          color: @landing-side-bar-link-color-hover;
+        }
+      }
+      // Number of recent items displayed based on sidebar width at different viewport sizes
+      @media (max-width: @screen-xxs-max), (min-width: @screen-sm-min) and (max-width: @screen-md-max) {
+        width: 50%;
+        &:nth-child(n+3) {
+          display: none; // display first 2
+        }
+      }
+      @media (min-width: @screen-xs-min) {
+        &:nth-child(n+4) {
+          display: none; // display first 3
+        }
+      }
+      @media (min-width: @screen-xl-min) {
+        width: 25%;
+        &:nth-child(n+3) {
+          display: block; // display first 4
+        }
+      }
+      .icon-ruby, .fa-question {
+        right: 1px;
+      }
+      .services-item-icon {
+        color: @text-color;
+        font-size: 30px;
+        height: 90px;
+        &:after {
+          background: @color-pf-white;
+          border-color: @landing-side-bar-bg;
+          height: 60px;
+          margin: -30px 0 0 -30px;
+          width: 60px;
+        }
+        img {
+          max-height: 32px;
+          max-width: 32px;
+        }
+      }
+      .services-item-name {
+        color: @color-pf-white;
+        font-size: 12px;
+        font-weight: 300;
+        padding: 0 5px;
+      }
+    }
+  }
+
+  .summary-title {
+    margin-top: 5px;
+    a {
+      color: @color-pf-white;
+      &:hover {
+        color: @landing-side-bar-link-color-hover;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.catalog-projects-spinner-container {
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+.catalog-project-summary-list {
+  margin-bottom: @grid-gutter-width;
+  margin-top: 30px;
+
+  a {
+    color: @landing-side-bar-link-color;
+    &:focus,
+    &:hover {
+      color: @landing-side-bar-link-color-hover;
+      text-decoration: none;
+    }
+  }
+
+  .dropdown-kebab-pf {
+    float: right;
+
+    .btn-link {
+      color: @color-pf-white;
+      margin-left: 0;
+    }
+
+    .dropdown-menu {
+      &:after {
+        border: 7px solid transparent;
+        border-bottom-color: @color-pf-white;
+        border-top-width: 0;
+        content: "";
+        display: block;
+        height: 0;
+        position: absolute;
+        right: 9px;
+        top: -7px;
+        vertical-align: middle;
+        width: 0;
+      }
+
+      &:before {
+        display: none;
+      }
+
+      &.dropdown-menu-right {
+        margin-top: 5px;
+        right: -14px;
+      }
+    }
+  }
+
+  .project-date {
+    color: @color-pf-black-500;
+    margin-bottom: 0;
+
+    + .project-description {
+      margin-top: 7px;
+      .truncation-block {
+        margin-right: 0; // remove the margin as it creates a gap since .truncated-content is display block for IE11
+      }
+      .truncated-content {
+        display: block; // so word-break() works in IE11
+        white-space: pre-line; // preserve newlines in descriptions
+        .word-break(); // break long, unbroken strings
+      }
+    }
+  }
+
+  .project-tile {
+    border-bottom: solid 1px @color-pf-black-700;
+    border-top: solid 1px @color-pf-black-700;
+    margin: -1px 0 0;
+    padding: 10px;
+    position: relative;
+    &.tile-click:hover {
+      background: rgba(255,255,255,.03);
+      .tile-target {
+        color: @landing-side-bar-link-color-hover;
+      }
+    }
+  }
+
+  .project-tile-header {
+    align-items: baseline;
+    display: flex;
+    line-height: 1.6;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .project-title {
+    overflow: hidden;
+    margin-right: 7px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .project-status {
+    padding-right: 5px;
+    font-size: 14px;
+    position: relative;
+    top: 4px;
+  }
+
+  .projects-count {
+    margin-bottom: 5px;
+  }
+
+  .projects-view-all {
+    float: right;
+  }
+}
+
+.catalogs-resources {
+  .resources-description {
+    margin-top: 7px;
+  }
+}

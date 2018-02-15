@@ -1,0 +1,24 @@
+// Rollup of all the modules into a single file, if desired.
+// dist will also have broken down versions of each component,
+// in case someone desires to import only portions of the lib.
+// note that 'variables' is more or less required for each...
+@import 'variables';
+@import 'functions';
+@import 'flex-layout';
+@import 'flex-ordering';
+@import 'flex-axis';
+@import 'flex-media-query';
+@import 'flex-shrink';
+@import 'flex-grow';
+@import 'misc';
+
+// NOT included to avoid file bloat for the average project:
+// @import 'flex-resize';
+// @import 'flex-axis-shorthand';
+
+// non-flex but still handy
+@import 'positioning';
+
+// utils
+
+// flourishes

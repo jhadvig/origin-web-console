@@ -3,7 +3,7 @@
 angular.module('openshiftConsole')
   // prepopulating extension points with some of our own data
   // (ensures a single interface for extending the UI)
-  .run(function(extensionRegistry) {
+  .run(['extensionRegistry', function(extensionRegistry) {
     extensionRegistry
       .add('nav-help-dropdown', function() {
         var options = [];
@@ -40,4 +40,4 @@ angular.module('openshiftConsole')
         );
         return options;
       })
-  });
+  }]);

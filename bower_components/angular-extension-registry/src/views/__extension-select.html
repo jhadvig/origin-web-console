@@ -1,0 +1,7 @@
+<select
+  name="item.nameText"
+  ng-model="selected"
+  ng-init="selected = item.options[0]"
+  ng-change="item.onChange(selected)"
+  class="extension-select extension-{{index}} {{item.className}}"
+  ng-options="foo.label for foo in item.options"></select>

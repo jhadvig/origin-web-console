@@ -1,0 +1,103 @@
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/* self, for overriding the parent settings (below)
+    - experimental, 2 possible ways to do syntax:
+        div self-center
+        or:
+        self="center"
+----------------------------------------------- */
+[self-start], [self="start"] {
+  -ms-flex-item-align: start;
+      align-self: flex-start; }
+
+[self-end], [self="end"] {
+  -ms-flex-item-align: end;
+      align-self: flex-end; }
+
+[self-center], [self="center"] {
+  -ms-flex-item-align: center;
+      align-self: center; }
+
+[self-stretch], [self="stretch"] {
+  -ms-flex-item-align: stretch;
+      align-self: stretch; }
+
+[self-baseline], [self="baseline"] {
+  -ms-flex-item-align: baseline;
+      align-self: baseline; }
+
+/* main axis only
+----------------------------------------------- */
+[main-axis="start"] {
+  -ms-flex-pack: start;
+      justify-content: flex-start; }
+
+[main-axis="end"] {
+  -ms-flex-pack: end;
+      justify-content: flex-end; }
+
+[main-axis="center"] {
+  -ms-flex-pack: center;
+      justify-content: center; }
+
+[main-axis="space-between"] {
+  -ms-flex-pack: justify;
+      justify-content: space-between; }
+
+[main-axis="space-around"] {
+  -ms-flex-pack: distribute;
+      justify-content: space-around; }
+
+/* cross axis only
+----------------------------------------------- */
+[cross-axis="start"] {
+  -ms-flex-align: start;
+      align-items: flex-start; }
+
+[cross-axis="end"] {
+  -ms-flex-align: end;
+      align-items: flex-end; }
+
+[cross-axis="center"] {
+  -ms-flex-align: center;
+      align-items: center; }
+
+[cross-axis="stretch"] {
+  -ms-flex-align: stretch;
+      align-items: stretch; }
+
+[cross-axis="baseline"] {
+  -ms-flex-align: baseline;
+      align-items: baseline; }
+
+/*  cross axis align only
+    TODO: dislike the name.
+    - this does nothing if there is a
+    single line of content in the container (spec)
+----------------------------------------------- */
+[cross-axis-align="start"] {
+  -ms-flex-line-pack: start;
+      align-content: flex-start; }
+
+[cross-axis-align="end"] {
+  -ms-flex-line-pack: end;
+      align-content: flex-end; }
+
+[cross-axis-align="center"] {
+  -ms-flex-line-pack: center;
+      align-content: center; }
+
+[cross-axis-align="stretch"] {
+  -ms-flex-line-pack: stretch;
+      align-content: stretch; }
+
+[cross-axis-align="space-between"] {
+  -ms-flex-line-pack: justify;
+      align-content: space-between; }
+
+[cross-axis-align="space-around"] {
+  -ms-flex-line-pack: distribute;
+      align-content: space-around; }

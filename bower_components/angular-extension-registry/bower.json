@@ -1,0 +1,25 @@
+{
+  "name": "angular-extension-registry",
+  "version": "1.2.6",
+  "authors": [
+    "benjaminapetersen <admin@benjaminapetersen.me>"
+  ],
+  "main": [
+    "dist/angular-extension-registry.min.js",
+    "dist/compiled-templates.js"
+  ],
+  "description": "An angular module allowing arbitrary data to be injected & rendered in UI",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.4.1",
+    "layout.attrs": "~1.0.0",
+    "jquery": "~2.2.1"
+  }
+}

@@ -1,0 +1,668 @@
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/*
+    - generates values in ems based on px sizes
+    - $base-font variable in variables.scss can change scale
+    - defaults to 14 if $base-font is not defined
+*/
+/*
+    handy functions borrowed from hugo
+    http://hugogiraudel.com/2013/08/12/sass-functions/
+*/
+/* http://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/ */
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/*
+    FLEX REFERENCE
+        https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+        - display
+            - set to flex to create a flex container
+        - flex-direction
+            - establish main axis, default row
+        - flex-wrap
+            - allow items to wrap to next line or force to fit on single line
+            - default: nowrap
+        - flex-flow
+            - shorthand for flex-direction, flex-wrap combined
+        - justify-content
+            - align items on main axis
+        - align-items
+            - flex item laid out along cross axis on the current line
+        - align-content
+            - align items on cross axis
+        - order
+            - override source order of layout of children
+        - flex-grow
+            - ability for flex item to grow, default 1
+        - flex-shrink
+            - ability for flex item to shrink, default 1
+        - flex-basis
+            - default size of element before space distributed, default auto
+        - flex
+            - shorthand for flex-grow, flex-shrink, flex-basis combined
+        - align-self
+            - overrides the align-items value on parent
+*/
+/* basic flex attrs
+----------------------------------------------- */
+/* flex container */
+/* @deprecated, 'layout' is superfluous, just use 'column' or 'row' */
+[layout] {
+  display: -ms-flexbox;
+  display: flex; }
+
+/* primary flex child*/
+/* Set to explict values for flex-grow, flex-shrink and flex-basis, so browsers have correct values by default. https://github.com/philipwalton/flexbugs#6-the-default-flex-value-has-changed */
+[flex] {
+  -ms-flex: 1 1 0%;
+      flex: 1 1 0%; }
+
+/* flex-basis - if set to 0, the extra space around content isn't factored in. If set to auto, the extra space is distributed based on its flex-grow value. http://www.w3.org/TR/css3-flexbox/images/rel-vs-abs-flex.svg */
+[basis="auto"] {
+  -ms-flex-preferred-size: auto;
+      flex-basis: auto; }
+
+[basis="0%"] {
+  -ms-flex-preferred-size: 0%;
+      flex-basis: 0%; }
+
+[column], [layout="column"] {
+  -ms-flex-direction: column;
+      flex-direction: column;
+  display: -ms-flexbox;
+  display: flex; }
+
+[column="reverse"], [column][reverse] {
+  -ms-flex-direction: column-reverse;
+      flex-direction: column-reverse; }
+
+[row], [layout="row"] {
+  -ms-flex-direction: row;
+      flex-direction: row;
+  display: -ms-flexbox;
+  display: flex; }
+
+[row="inline"], [row][inline] {
+  -ms-flex-direction: row;
+      flex-direction: row;
+  display: -ms-inline-flexbox;
+  display: inline-flex; }
+
+[column="inline"], [column][inline] {
+  -ms-flex-direction: column;
+      flex-direction: column;
+  display: -ms-inline-flexbox;
+  display: inline-flex; }
+
+[row="reverse"], [row][reverse] {
+  -ms-flex-direction: row-reverse;
+      flex-direction: row-reverse; }
+
+[wrap] {
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap; }
+
+[wrap][reverse] {
+  -ms-flex-wrap: wrap-reverse;
+      flex-wrap: wrap-reverse; }
+
+[no-wrap] {
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap; }
+
+/* sizing
+----------------------------------------------- */
+/* match the parent */
+[fit] {
+  margin: 0px;
+  width: 100%;
+  min-height: auto;
+  height: inherit;
+  /* 100%? */ }
+
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/* ordering of children
+----------------------------------------------- */
+/* order="1|2|3" */
+[order="0"] {
+  -ms-flex-order: 0;
+      order: 0; }
+
+[order="1"] {
+  -ms-flex-order: 1;
+      order: 1; }
+
+[order="2"] {
+  -ms-flex-order: 2;
+      order: 2; }
+
+[order="3"] {
+  -ms-flex-order: 3;
+      order: 3; }
+
+[order="4"] {
+  -ms-flex-order: 4;
+      order: 4; }
+
+[order="5"] {
+  -ms-flex-order: 5;
+      order: 5; }
+
+[order="6"] {
+  -ms-flex-order: 6;
+      order: 6; }
+
+[order="7"] {
+  -ms-flex-order: 7;
+      order: 7; }
+
+[order="8"] {
+  -ms-flex-order: 8;
+      order: 8; }
+
+[order="9"] {
+  -ms-flex-order: 9;
+      order: 9; }
+
+[order="10"] {
+  -ms-flex-order: 10;
+      order: 10; }
+
+[order="11"] {
+  -ms-flex-order: 11;
+      order: 11; }
+
+[order="12"] {
+  -ms-flex-order: 12;
+      order: 12; }
+
+[order="13"] {
+  -ms-flex-order: 13;
+      order: 13; }
+
+[order="14"] {
+  -ms-flex-order: 14;
+      order: 14; }
+
+[order="15"] {
+  -ms-flex-order: 15;
+      order: 15; }
+
+/* alt: first, second.... */
+[first] {
+  -ms-flex-order: 1;
+      order: 1; }
+
+[second] {
+  -ms-flex-order: 2;
+      order: 2; }
+
+[third] {
+  -ms-flex-order: 3;
+      order: 3; }
+
+[fourth] {
+  -ms-flex-order: 4;
+      order: 4; }
+
+[fifth] {
+  -ms-flex-order: 5;
+      order: 5; }
+
+[sixth] {
+  -ms-flex-order: 6;
+      order: 6; }
+
+[seventh] {
+  -ms-flex-order: 7;
+      order: 7; }
+
+[eigth] {
+  -ms-flex-order: 8;
+      order: 8; }
+
+[ninth] {
+  -ms-flex-order: 9;
+      order: 9; }
+
+[tenth] {
+  -ms-flex-order: 10;
+      order: 10; }
+
+[eleven] {
+  -ms-flex-order: 11;
+      order: 11; }
+
+[twelve] {
+  -ms-flex-order: 12;
+      order: 12; }
+
+[thirteen] {
+  -ms-flex-order: 13;
+      order: 13; }
+
+[fourteen] {
+  -ms-flex-order: 14;
+      order: 14; }
+
+[fifteen] {
+  -ms-flex-order: 15;
+      order: 15; }
+
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/* self, for overriding the parent settings (below)
+    - experimental, 2 possible ways to do syntax:
+        div self-center
+        or:
+        self="center"
+----------------------------------------------- */
+[self-start], [self="start"] {
+  -ms-flex-item-align: start;
+      align-self: flex-start; }
+
+[self-end], [self="end"] {
+  -ms-flex-item-align: end;
+      align-self: flex-end; }
+
+[self-center], [self="center"] {
+  -ms-flex-item-align: center;
+      align-self: center; }
+
+[self-stretch], [self="stretch"] {
+  -ms-flex-item-align: stretch;
+      align-self: stretch; }
+
+[self-baseline], [self="baseline"] {
+  -ms-flex-item-align: baseline;
+      align-self: baseline; }
+
+/* main axis only
+----------------------------------------------- */
+[main-axis="start"] {
+  -ms-flex-pack: start;
+      justify-content: flex-start; }
+
+[main-axis="end"] {
+  -ms-flex-pack: end;
+      justify-content: flex-end; }
+
+[main-axis="center"] {
+  -ms-flex-pack: center;
+      justify-content: center; }
+
+[main-axis="space-between"] {
+  -ms-flex-pack: justify;
+      justify-content: space-between; }
+
+[main-axis="space-around"] {
+  -ms-flex-pack: distribute;
+      justify-content: space-around; }
+
+/* cross axis only
+----------------------------------------------- */
+[cross-axis="start"] {
+  -ms-flex-align: start;
+      align-items: flex-start; }
+
+[cross-axis="end"] {
+  -ms-flex-align: end;
+      align-items: flex-end; }
+
+[cross-axis="center"] {
+  -ms-flex-align: center;
+      align-items: center; }
+
+[cross-axis="stretch"] {
+  -ms-flex-align: stretch;
+      align-items: stretch; }
+
+[cross-axis="baseline"] {
+  -ms-flex-align: baseline;
+      align-items: baseline; }
+
+/*  cross axis align only
+    TODO: dislike the name.
+    - this does nothing if there is a
+    single line of content in the container (spec)
+----------------------------------------------- */
+[cross-axis-align="start"] {
+  -ms-flex-line-pack: start;
+      align-content: flex-start; }
+
+[cross-axis-align="end"] {
+  -ms-flex-line-pack: end;
+      align-content: flex-end; }
+
+[cross-axis-align="center"] {
+  -ms-flex-line-pack: center;
+      align-content: center; }
+
+[cross-axis-align="stretch"] {
+  -ms-flex-line-pack: stretch;
+      align-content: stretch; }
+
+[cross-axis-align="space-between"] {
+  -ms-flex-line-pack: justify;
+      align-content: space-between; }
+
+[cross-axis-align="space-around"] {
+  -ms-flex-line-pack: distribute;
+      align-content: space-around; }
+
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/*  *Experimental*
+    - mobile, tablet, laptop, desktop?
+    - borrowing the media queries from Bootstrap 2
+      http://getbootstrap.com/2.3.2/scaffolding.html
+      under 'Supported Devices' as a good starting
+      point for experimenting with very basic support
+      for media queries.
+    - this is very much in an infancy stage, really
+      not entirely sure how this should be designed
+      yet.
+----------------------------------------------- */
+/* media queries by device name,
+   - mobile, tablet, laptop, desktop
+----------------------------------------------- */
+@media (max-width: 479px) {
+  [mobile="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [mobile="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="mobile"] {
+    display: none !important; } }
+
+@media (max-width: 767px) {
+  [tablet="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [tablet="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="tablet"] {
+    display: none !important; } }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  [laptop="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [laptop="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="laptop"] {
+    display: none !important; } }
+
+@media (min-width: 1200px) {
+  [desktop="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [desktop="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="desktop"] {
+    display: none !important; } }
+
+/* media queries by size name,
+   - sm, md, lg, xl
+----------------------------------------------- */
+@media (max-width: 479px) {
+  [sm="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [sm="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="sm"] {
+    display: none !important; } }
+
+@media (max-width: 767px) {
+  [md="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [md="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="md"] {
+    display: none !important; } }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  [lg="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [lg="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="lg"] {
+    display: none !important; } }
+
+@media (min-width: 1200px) {
+  [xl="column"] {
+    -ms-flex-direction: column !important;
+        flex-direction: column !important; }
+  [xl="row"] {
+    -ms-flex-direction: row !important;
+        flex-direction: row !important; }
+  [conceal~="xl"] {
+    display: none !important; } }
+
+/* hiding components by device name
+   - sm, md, lg, xl
+----------------------------------------------- */
+/* hiding components by size name
+   - sm, md, lg, xl
+----------------------------------------------- */
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/* flex shrink
+----------------------------------------------- */
+[shrink="0"] {
+  -ms-flex-negative: 0;
+      flex-shrink: 0; }
+
+[shrink="1"] {
+  -ms-flex-negative: 1;
+      flex-shrink: 1; }
+
+[shrink="2"] {
+  -ms-flex-negative: 2;
+      flex-shrink: 2; }
+
+[shrink="3"] {
+  -ms-flex-negative: 3;
+      flex-shrink: 3; }
+
+[shrink="4"] {
+  -ms-flex-negative: 4;
+      flex-shrink: 4; }
+
+[shrink="5"] {
+  -ms-flex-negative: 5;
+      flex-shrink: 5; }
+
+[shrink="6"] {
+  -ms-flex-negative: 6;
+      flex-shrink: 6; }
+
+[shrink="7"] {
+  -ms-flex-negative: 7;
+      flex-shrink: 7; }
+
+[shrink="8"] {
+  -ms-flex-negative: 8;
+      flex-shrink: 8; }
+
+[shrink="9"] {
+  -ms-flex-negative: 9;
+      flex-shrink: 9; }
+
+[shrink="10"] {
+  -ms-flex-negative: 10;
+      flex-shrink: 10; }
+
+[shrink="11"] {
+  -ms-flex-negative: 11;
+      flex-shrink: 11; }
+
+[shrink="12"] {
+  -ms-flex-negative: 12;
+      flex-shrink: 12; }
+
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/* flex grow
+----------------------------------------------- */
+[grow="0"] {
+  -ms-flex-positive: 0;
+      flex-grow: 0; }
+
+[grow="1"] {
+  -ms-flex-positive: 1;
+      flex-grow: 1; }
+
+[grow="2"] {
+  -ms-flex-positive: 2;
+      flex-grow: 2; }
+
+[grow="3"] {
+  -ms-flex-positive: 3;
+      flex-grow: 3; }
+
+[grow="4"] {
+  -ms-flex-positive: 4;
+      flex-grow: 4; }
+
+[grow="5"] {
+  -ms-flex-positive: 5;
+      flex-grow: 5; }
+
+[grow="6"] {
+  -ms-flex-positive: 6;
+      flex-grow: 6; }
+
+[grow="7"] {
+  -ms-flex-positive: 7;
+      flex-grow: 7; }
+
+[grow="8"] {
+  -ms-flex-positive: 8;
+      flex-grow: 8; }
+
+[grow="9"] {
+  -ms-flex-positive: 9;
+      flex-grow: 9; }
+
+[grow="10"] {
+  -ms-flex-positive: 10;
+      flex-grow: 10; }
+
+[grow="11"] {
+  -ms-flex-positive: 11;
+      flex-grow: 11; }
+
+[grow="12"] {
+  -ms-flex-positive: 12;
+      flex-grow: 12; }
+
+/* axis maps
+----------------------------------------------- */
+/* media queries
+    - currently considering two name options...
+----------------------------------------------- */
+/*
+    if you hide something, you really want it hidden!
+    - todo:
+       - generate attr, data-attr, class
+*/
+[hide] {
+  display: none !important; }
+
+/* various outlines
+----------------------------------------------- */
+[outline], [outline="red"] {
+  outline: 1px solid #990000; }
+
+[outline="333"] {
+  outline: 1px solid #333; }
+
+[outline="666"] {
+  outline: 1px solid #666; }
+
+[outline="999"] {
+  outline: 1px solid #999; }
+
+/* attrs describing functionality
+----------------------------------------------- */
+[height-max] {
+  height: 100%; }
+
+[overflow-hidden] {
+  overflow: hidden; }
+
+[scrollable] {
+  overflow: scroll; }
+
+[truncate] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
+[break-word] {
+  word-break: break-all;
+  word-break: break-word; }
+
+[nowrap] {
+  white-space: nowrap; }
+
+/* display alternates
+----------------------------------------------- */
+[block] {
+  display: block; }
+
+[inline] {
+  display: inline-block; }
+
+/* positioning alternates
+----------------------------------------------- */
+[absolute] {
+  position: absolute; }
+
+[relative] {
+  position: relative; }
+
+[top] {
+  top: 0px; }
+
+[bottom] {
+  bottom: 0px; }
+
+[left] {
+  left: 0px; }
+
+[right] {
+  right: 0px; }

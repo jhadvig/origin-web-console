@@ -1,0 +1,102 @@
+.bind-form {
+  h3 {
+    margin-top: 0;
+  }
+
+  .application-select {
+    margin-top: 10px;
+    padding-left: 20px;
+    // Fixes bug https://github.com/openshift/origin-web-console/issues/1814
+    .ui-select-bootstrap > .ui-select-choices {
+      max-height: 100px;
+      @media(min-width: @screen-sm-min) {
+        max-height: 170px;
+      }
+    }
+  }
+
+  .bind-description {
+    padding-left: 20px;
+  }
+
+  .bind-choice {
+    margin-top: 10px;
+    &:first-of-type {
+      margin-top: 0;
+    }
+    strong {
+      .word-break();
+    }
+  }
+
+  .help-block {
+    &.service-instance-name {
+      display: inline-block;
+      margin-top: 0;
+    }
+  }
+
+  .radio label[disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.bind-service-selection {
+  margin-bottom: 5px;
+}
+
+// the following rules are shared by origin-web-catalog
+.results-info {
+  margin-bottom: 20px;
+  margin-top: 30px;
+}
+
+.results-message {
+  flex: 1 1 0%; // IE
+  padding-left: 10px;
+  @media(min-width: @screen-sm-min) {
+    padding-left: 15px;
+  }
+  h3,
+  .h3 {
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 0;
+    margin-top: 0;
+    @media(min-width: @screen-sm-min) {
+      font-size: 20px;
+      font-weight: 300;
+    }
+    strong {
+      font-weight: 600;
+      .word-break();
+    }
+  }
+  .results-status-unknown & {
+    padding-left: 0;
+  }
+}
+
+.results-message-details {
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+.results-status {
+  display: flex;
+  margin-bottom: 15px;
+  .fa,
+  .pficon {
+    font-size: 24px;
+    @media(min-width: @screen-sm-min) {
+      font-size: 32px;
+    }
+  }
+  // make fa-clock-o slightly bigger so it matches pficon-ok, pficon-error-circle-o
+  .fa-clock-o {
+    font-size: 30px;
+    @media(min-width: @screen-sm-min) {
+      font-size: 36px;
+    }
+  }
+}

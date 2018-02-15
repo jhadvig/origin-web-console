@@ -1,0 +1,19 @@
+{
+  "name": "layout.attrs",
+  "version": "2.1.1",
+  "authors": [
+    "benjaminapetersen <admin@benjaminapetersen.me>",
+		"sg00dwin <sgoodwin@redhat.com"
+  ],
+  "description": "An experiment in composable  css attributes for building UI with flexbox in mind. Inspired by Polymer layout &amp; Angular Material.",
+  "license": "MIT",
+  "main": [
+    "dist/layout.attrs.min.css"
+  ],
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

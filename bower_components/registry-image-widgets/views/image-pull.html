@@ -1,0 +1,9 @@
+<div ng-if="names" class="registry-image-pull">
+    <p>
+        <i class="fa fa-info-circle"></i>
+        <span translate>To pull this image:</span>
+    </p>
+    <code ng-if="imagestream.status.publicDockerImageRepository">$ sudo docker pull <span>{{imagestream.status.publicDockerImageRepository}}</span>/{{names[0]}}</code>
+    <code ng-if="!settings.registry.host && !imagestream.status.publicDockerImageRepository">$ sudo docker pull <span class="placeholder">registry</span>/{{names[0]}}</code>
+    <code ng-if="settings.registry.host && !imagestream.status.publicDockerImageRepository">$ sudo docker pull <span>{{settings.registry.host}}</span>/{{names[0]}}</code>
+</div>

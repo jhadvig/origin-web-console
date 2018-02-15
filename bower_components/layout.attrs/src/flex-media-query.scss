@@ -1,0 +1,72 @@
+@import 'variables';
+
+/*  *Experimental*
+    - mobile, tablet, laptop, desktop?
+    - borrowing the media queries from Bootstrap 2
+      http://getbootstrap.com/2.3.2/scaffolding.html
+      under 'Supported Devices' as a good starting
+      point for experimenting with very basic support
+      for media queries.
+    - this is very much in an infancy stage, really
+      not entirely sure how this should be designed
+      yet.
+----------------------------------------------- */
+
+
+
+/* media queries by device name,
+   - mobile, tablet, laptop, desktop
+----------------------------------------------- */
+@each $device, $query in $media-devices {
+    @media (unquote($query)) {
+        @each $orientation in $media-orientation {
+            [#{$device}="#{$orientation}"] {
+                flex-direction: $orientation !important;
+            }
+        }
+
+        [conceal~="#{$device}"] {
+            display: none !important;
+        }
+    }
+}
+
+/* media queries by size name,
+   - sm, md, lg, xl
+----------------------------------------------- */
+@each $size, $query in $media-sizes {
+    @media (unquote($query)) {
+        @each $orientation in $media-orientation {
+            [#{$size}="#{$orientation}"] {
+                flex-direction: $orientation !important;
+            }
+        }
+
+        [conceal~="#{$size}"] {
+            display: none !important;
+        }
+    }
+}
+
+
+/* hiding components by device name
+   - sm, md, lg, xl
+----------------------------------------------- */
+
+// hide="mobile tablet"
+// hide="laptop desktop"
+
+
+/* hiding components by size name
+   - sm, md, lg, xl
+----------------------------------------------- */
+
+// hide="sm md"
+// hide="lg xl"
+
+
+
+
+//
+
+

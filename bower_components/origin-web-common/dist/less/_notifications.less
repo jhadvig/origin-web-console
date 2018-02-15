@@ -1,0 +1,44 @@
+.toast-action-divider {
+  color: @gray-light;
+}
+
+.toast-notification-details {
+  // so that expanded text isn't unbounded
+  // fixes https://github.com/openshift/origin-web-console/issues/2284
+  margin-right: -15px;
+  max-height: 300px;
+  overflow-y: auto;
+  .truncated-content {
+    white-space: pre-line;
+  }
+}
+
+.toast-notification-message {
+  font-weight: 700;
+  margin-right: 5px;
+}
+
+.toast-notifications-list-pf {
+  @media(max-width: @screen-xs-max) {
+    // Set max-width when < 769, so that word-break functions on Firefox & IE.
+    // Subtract 40px to align edges with content within container-fluid that has left & right 20px margin
+    max-width: calc(~"100% - 40px");
+  }
+  top: 28px;
+  .word-break();
+  z-index: @zindex-modal + 5;  // Override Patternfly's z-index to keep toasts above modals but below popovers
+
+  > div {
+    &.ng-enter {
+      animation: toastSlideIn .2s ease-out;
+    }
+    &.ng-leave {
+      animation: toastSlideOut .2s ease-in;
+    }
+    .toast-pf {
+      border-color: @color-pf-white;
+      margin-bottom: 5px;
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,141 @@
+.build-applications-view {
+  background: linear-gradient(fade(@color-pf-blue-700, 20%), fade(@color-pf-blue-700, 0%));
+
+  h1 {
+    color: @saas-text;
+    padding: (@grid-gutter-width / 2);
+  }
+}
+
+.saas-offerings-container {
+
+  .saas-list {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0;
+    overflow-x: hidden;
+
+    @media (min-width: @screen-lg-min) {
+      justify-content: space-around;
+    }
+
+    &.expanded {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      .card {
+        &:nth-child(n+3) {
+          display: flex; // display all in expanded mode
+        }
+      }
+    }
+
+    .card {
+      color: @saas-text;
+      display: flex;
+      width: 25%;
+
+      @media (max-width: @screen-md-max) {
+        width: 50%;
+        &:nth-child(n+3) {
+          display: none; // display first 2
+        }
+      }
+      @media (min-width: @screen-lg-min) {
+        &:nth-child(n+5) {
+          display: none; // display first 4
+        }
+      }
+
+      &:hover {
+        background-color: @saas-hover;
+      }
+    }
+
+    .card-content {
+      align-items: center;
+      color: @saas-text;
+      display: flex;
+      flex: 1 1 0%; // IE 11
+      flex-direction: column;
+      padding: (@grid-gutter-width / 2);
+      text-align: center;
+      text-shadow: 1px 1px 3px rgba(0,0,0,.5);
+
+      &:focus,
+      &:hover {
+        text-decoration: none;
+      }
+
+      .card-description {
+        font-size: @font-size-base;
+        line-height: 1.5;
+        max-width: 100%; // IE 11
+      }
+
+      .card-icon {
+        .icon {
+          font-size: @card-icon-sm;
+        }
+        img {
+          height: @card-icon-sm;
+        }
+      }
+
+      .card-title {
+        font-size: @font-size-base + 2;
+
+        @media (min-width: 480px) {
+          font-size: @font-size-base + 4;
+        }
+
+        font-weight: 700;
+        line-height: 1.4;
+        margin-bottom: 10px;
+        margin-top: 15px;
+        max-width: 100%; // IE 11
+        padding-left: 0;
+
+        @media (min-width: @screen-lg-min) {
+          font-size: @font-size-base + 6;
+        }
+      }
+    }
+  }
+  .sass-list-expander {
+    color: @color-pf-white;
+    font-size: @font-size-base;
+    &:hover, &:focus {
+      color: @color-pf-white;
+      text-decoration: none;
+    }
+    &:after {
+      content: @fa-var-angle-down;
+      font-family: @icon-font-name-fa;
+      font-size: (@font-size-base + 2);
+      padding: 0 5px;
+    }
+    &.expanded {
+      &:after {
+        content: @fa-var-angle-up;
+      }
+      .less {
+        display: inline;
+      }
+      .more {
+        display: none;
+      }
+    }
+    .less {
+      display: none;
+    }
+  }
+  .sass-list-expander-container {
+    margin-bottom: (@grid-gutter-width / 4);
+    text-align: center;
+  }
+
+  .spinner-container {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+}

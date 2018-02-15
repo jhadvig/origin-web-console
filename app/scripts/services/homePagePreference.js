@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module("openshiftConsole")
-  .service("HomePagePreferenceService", function($location, $timeout, $q, $uibModal, AuthService, Logger, Navigate, NotificationsService){
+  .service("HomePagePreferenceService", ['$location', '$timeout', '$q', '$uibModal', 'AuthService', 'Logger', 'Navigate', 'NotificationsService', function($location, $timeout, $q, $uibModal, AuthService, Logger, Navigate, NotificationsService){
 
     function getHomePagePreferenceKey() {
       return "openshift/home-page-pref/";
@@ -85,4 +85,4 @@ angular.module("openshiftConsole")
       getHomePagePath: getHomePagePath,
       notifyInvalidProjectHomePage: notifyInvalidProjectHomePage
     };
-  });
+  }]);

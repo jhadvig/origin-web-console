@@ -96,6 +96,22 @@ module.exports = function (grunt) {
         ]
       }
     },
+    ts: {
+      base : {
+        src: ["app/scripts/*.ts", "!node_modules/**"],
+        options: {
+          module: 'commonjs', 
+          moduleResolution: 'node',
+          target: 'es6',
+          experimentalDecorators: true,
+          emitDecoratorMetadata: true,
+          noImplicitAny: false,
+          typeRoots: ["node_modules/@types"],
+          types: ["angular"],
+          allowSyntheticDefaultImports: true
+        }
+      }
+    },
 
     // The actual grunt server settings
     connect: {
@@ -683,6 +699,7 @@ module.exports = function (grunt) {
       'wiredep',
       'development-build',
       'postcss',
+      'ts',
       'connect:livereload',
       'watch'
     ]);
@@ -727,6 +744,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-htmlhint');
 
   grunt.loadNpmTasks('grunt-angular-templates');
+
+  grunt.loadNpmTasks('grunt-ts');
+
+  grunt.registerTask('compile-ts', ['ts']);
 
   // karma must run prior to coverage since karma will generate the coverage results
   grunt.registerTask('test-unit', [
